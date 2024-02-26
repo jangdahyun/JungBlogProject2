@@ -129,13 +129,13 @@ public class JungMemberServiceImpl implements JungMemberService{
 		try {
 			HashMap<String, Object> map = new HashMap<>();
 			cv.setS(20);
-			
-			int totalCount = memberDAO.selectCountUser(); // 서치가 되면 서치가 되게 수정해함!
+			cv.setB(5);
+			map.put("search", cv.getSearch());
+			int totalCount = memberDAO.selectCountUser(map); // 서치가 되면 서치가 되게 수정해함!
 			pv = new PagingVO<>(totalCount, cv.getCurrentPage(), cv.getSizeOfPage(), cv.getSizeOfBlock()); // 페이지 계산 완료
 			
 			map.put("startNo", pv.getStartNo());
 			map.put("endNo", pv.getEndNo());
-			map.put("condition", cv.getCondition());
 			
 			
 			List<JungMemberVO> userList = memberDAO.selectUser(map);
