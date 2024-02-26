@@ -6,4 +6,5 @@ import lombok.Data;
 public class CategoryVO {
 	private int idx;
 	private String categoryName;
+	
 }
