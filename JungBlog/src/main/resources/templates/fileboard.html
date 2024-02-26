@@ -7,7 +7,7 @@
 <body>
 	<h1>자료실</h1>
 	<div th:if="${#lists.isEmpty(pv.list)}">
-		<p>현재 자료가 없습니다.</p>
+		<p>현재 자료가 없습니다.ss</p>
 	</div>
 	<div th:each="board : ${pv.list}">
 		<div th:if="${not #lists.isEmpty(board.fileboardVO)}">
