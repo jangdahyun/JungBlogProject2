@@ -86,12 +86,15 @@
 							*
 						from
 							jung_member
-						<if test="condition != null">
-							order by username
-						</if>
-						<if test="condition == null">
-							order by idx desc
-						</if>
+						<where>
+							<if test="search != null">
+								username like '%' || #{search} || '%'
+								or name like '%' || #{search} || '%'
+								or nickName like '%' || #{search} || '%'
+							</if>
+						</where>
+						order by
+							idx desc
 					) Q
 				where
 					<![CDATA[
@@ -103,8 +106,18 @@
 				rnum >= #{startNo}
 			]]>
 	</select>
-	<select id="selectCountUser" resultType="int">
-		select count(*) from jung_member
+	<select id="selectCountUser" parameterType="hashmap" resultType="int">
+		select
+			count(*)
+		from
+			jung_member
+		<where>
+			<if test="search != null">
+				username like '%' || #{search} || '%'
+				or name like '%' || #{search} || '%'
+				or nickName like '%' || #{search} || '%'
+			</if>
+		</where>
 	</select>
 
 	<update id="updateRole" parameterType="JungMemberVO">

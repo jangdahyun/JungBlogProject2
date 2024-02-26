@@ -3,28 +3,35 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>관리자 유저관리</title>
+    <title>관리자 메일보내기</title>
     <!-- font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- Core theme CSS (includes Bootstrap)-->
     <!-- UIkit CSS -->
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
-
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <!-- axios 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	<link rel="stylesheet" href="/css/adminHeader.css">
     <style type="text/css">
-    	
+    	.btn-right{text-align: right;}
+    	.hr{
+			width: 100%; height: 1px; background: #A4A5A3; border-radius: 50%; margin: 12px 0;
+		}
+		#right-area .label{
+			font-weight: 400;
+			font-size: 24px;
+		}
+		#content{resize: none; width: 100%; height: 400px;
     </style>
 </head>
 <body>
 <div id="wrap">
-    
     <div id="content">
     	<header>
 			<div id="logo"><a href="/adm">ADMINISTRATOR</a></div>
@@ -69,55 +76,19 @@
 	        </div>
 	    	
 	        <div id="right-area">
-	        	<h3>회원상태보기</h3>
-	        	<div style="display: flex; justify-content: end; align-items: center;">
-        			<label for="" style="margin-right:10px;">정렬기준</label>
-	        		<div class="uk-inline" style="margin-right:40px;">
-	        			<select id="sort" class="uk-select">
-	        				<option value="">최신순</option>
-	        				<option value="">이름순</option>
-	        			</select>
-	        		</div>
-					<label style="margin-right:10px;">검색</label>
-					<div class="uk-inline">
-			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
-			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
-			        </div>
+	        	<h3>회원메일보내기</h3>
+	        	<p class="label">유저목록</p>
+	        	<div id="userList">
+		        	[[${list}]]	        		
 	        	</div>
-	        	
-	        	<table class="uk-table uk-table-striped">
-				    <thead>
-				        <tr>
-				            <th>No</th>
-				            <th>아이디</th>
-				            <th>이름</th>
-				            <th>닉네임</th>
-				            <th>주소</th>
-				            <th>권한</th>
-				            <th>생일</th>
-				            <th>휴대폰번호</th>
-				            <th>성별</th>
-				            <th>게시글수</th>
-				            <th>권한변경하기</th>
-				        </tr>
-				    </thead>
-				    <tbody>
-				    	<tr th:each="user : ${pv.list}">
-				    		<td>[[${user.idx}]]번째로 가입한 회원</td>
-				    		<td>[[${user.username}]]</td>
-				    		<td>[[${user.name}]]</td>
-				    		<td>[[${user.nickName}]]</td>
-				    		<td>[[${user.stAddress}]] , [[${user.dtAddress}]]</td>
-				    		<td>[[${user.role}]]</td>
-				    		<td>[[${#dates.format(user.birthDate, 'yyyy-MM-dd HH:mm')}]]</td>
-				    		<td>[[${user.phone}]]</td>
-				    		<td>[[${user.gender}]]</td>
-				    		<td>[[${user.boardCount}]]</td>
-				    	</tr>
-				    </tbody>
-				</table>
-				<div id="" style="display:flex; align-items: center; justify-content: center;">
-					[(${pv.pageList})]				
+	        	<p class="label">제목</p>
+	        	<input id="title" name="title" class="uk-input" required="required" placeholder="제목을 입력해주세요.">
+	        	<div class="hr"></div>
+	        	<p class="label">내용</p>
+	        	<textarea id="content" name="content" class="uk-textarea" required="required" placeholder="내용을 입력해주세요."></textarea>
+	        	<div class="hr"></div>
+	        	<div class="btn-right">
+					<button id="sendMail" type="submit" class="uk-button uk-button-small uk-button-primary">메일 발송하기</button>
 				</div>
 	        </div>
         </div>

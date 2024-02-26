@@ -32,6 +32,7 @@ import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungMemberService;
+import kr.ezen.jung.service.JungQnaBoardService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
 import kr.ezen.jung.vo.JungBoardVO;
@@ -55,6 +56,8 @@ public class JungController {
 	@Autowired
 	private JungMemberService jungMemberService;
 	
+	@Autowired
+	private JungQnaBoardService JungQnaBoardService;
 	
 
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })

@@ -7,15 +7,25 @@
 <body>
 	<h1>자료실</h1>
 	<div th:if="${#lists.isEmpty(pv.list)}">
-		<p>현재 자료가 없습니다.</p>
+		<p>현재 자료가 없습니다.ss</p>
 	</div>
 	<div th:each="board : ${pv.list}">
 		<div th:if="${not #lists.isEmpty(board.fileboardVO)}">
 			<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}"
 				alt="" />	
 		</div>
-		asdasdasd
+		
 	</div>
+	<table>
+		<tr>
+			<td>[[${board.title}]]</td>
+			<td>[[${board.content}]]</td>
+			<td>[[${fileboard.filepath]]</td>
+			<td>[[${board.readCount]] views</td>
+			<td>download</td>
+
+		</tr>
+	</table>
 	[[${pv.list}]]
 </body>
 </html>
