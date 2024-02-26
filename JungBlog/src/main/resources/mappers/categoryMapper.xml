@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.CategoryDAO">
+	<!-- 1. 카테고리 목록 보여주기 -->
+	<select id="selectCategory" resultType="string">
+		select categoryName from jungcategort_tb
+	</select>
+	<!-- 2. categoryNum => categoryName -->
+	<select id="selectCategoryBycategoryNum" parameterType="int" resultType="string">
+		select categoryName from jungcategort_tb where idx = #{categoryNum}
+	</select>
+</mapper>

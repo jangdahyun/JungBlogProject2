@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>Document</title>
+</head>
+<script type="text/javascript">
+			function deleteForm(idx){
+			// alert('삭제 : ' + idx);
+			$("#resetBtn").css('display','inline'); // 취소 버튼을 보인다.
+			$("#submitBtn").val("삭제"); // 전송버튼의 이름을 변경
+			$("#idx").val(idx); // idx값을 idx로
+			$("#mode").val("delete"); // mode의 값을 delete로
+			
+			// 값을 DB에서 읽어와서 채워줘야 한다.
+			axios
+			.get("/api/selectByIdx?idx="+idx)
+			.then(function(response){
+				console.log(response.data);
+				$("#name").val(response.data.name); // name을 채우고
+				$("#password").val(""); // password을 지우고
+				$("#content").val(response.data.content); // content을 채우고
+				$("#password").focus();
+			})
+			.catch(function(error){
+				console.log(error)
+			});
+		}
+	</script>
+<body>
+	<h2> 유저 정보 조회 </h2>
+	<table border:"1">
+		<thead>
+			<tr>
+				<td>ID(E-mail)</td>
+				<td>권한</td>
+				<td>이름</td>
+				<td>닉네임</td>
+				<td>전화번호</td>
+				<td>도로명 주소</td>
+				<td>상세 주소</td>
+				<td>생년월일</td>
+				<td>성별</td>
+				<td>회원계정 삭제</td>
+			</tr>
+		</thead>
+		<tbody>
+			
+				<tr th:each="vo, vs : ${memberList}">
+						<td>[[${vo.username}]]</td>
+						<td>[[${vo.role}]]</td> 
+						<td>[[${vo.name}]]</td>
+						<td>[[${vo.nickName}]]</td>
+						<td>[[${vo.phone}]]</td>
+						<td>[[${vo.stAddress}]]</td>
+						<td>[[${vo.dtAddress}]]</td>
+						<td>[[${vo.birthDate}]]</td>
+						<td>[[${vo.gender}]]</td>
+						<td>
+							<input type="button" value="계정삭제" th:onclick="deleteForm([[${vo.idx}]])" class="btn btn-sm btn-outline-danger"/>
+						</td>
+				</tr>
+			
+			
+		</tbody>
+	</table>
+
+	
+</body>
+</html>

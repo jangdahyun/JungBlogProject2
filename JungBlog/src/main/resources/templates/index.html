@@ -1,0 +1,129 @@
+<!DOCTYPE html >
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>Clean Blog - Start Bootstrap Theme</title>
+<!-- font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- Core theme CSS (includes Bootstrap)-->
+<!-- UIkit CSS -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+
+<link rel="stylesheet" href="/css/index.css">
+<script src="/js/index.js"></script>
+</head>
+<body>
+	<!-- 헤더 -->
+	<header>
+		<nav>
+            <div class="logo">
+                <img src="Spotify_Logo_RGB_White.png" alt="logo">
+            </div>
+            <div class="menuBar">
+                <a href="">fileupload</a>
+                <a href="">fileupload</a>
+                <a href="">Support</a>
+                <a href="">Download</a>
+                <span>|</span>
+                <th:block th:if="${session.user != null}">
+                	<th:block th:if="${session.user.role == 'ROLE_ADMIN'}">
+		                <a href="/adm">관리자 페이지</a>                               	
+                	</th:block>
+                	<th:block th:if="${session.user.role == 'ROLE_USER'}">
+		                <a href="/member/mypage">My Page</a>                               	
+                	</th:block>
+	                <a href="/logout">Logout</a>
+                </th:block>
+                <th:block th:if="${session.user == null}">
+	                <a href="/member/join">Sign up</a>
+	                <a href="/member/login">Log in</a>                
+                </th:block>
+            </div>
+        </nav>
+	</header>
+	
+	<div id="inner" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
+		<div id="board-header"
+			style="display: flex; justify-content: space-between; width: 100%">
+			<div>
+				<h3>게시판</h3>
+			</div>
+			<div>
+				<form action="/" method="get">
+					<div class="uk-inline">
+			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+			        </div>
+				</form>
+			</div>
+		</div>
+		<table id="incident_list_table" class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-small">
+			<colgroup>
+				<col width="75px" />
+				<col width="150px" />
+				<col width="400px" />
+				<col width="125px" />
+				<col width="120px" />
+				<col width="50px" />
+				<col width="50px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="" style="line-height: 2">NO</th>
+					<th class="" >
+						<select class="uk-select" id="selectBox" style="height: 25px">
+			                <option selected value="0">카테고리</option>
+			                <option th:each="category : ${categoryList}" th:value="${category}">[[${category}]]</option>
+			            </select>
+					</th>
+					<th class="" style="line-height: 2">제목</th>
+					<th class="" style="line-height: 2">글쓴이</th>
+					<th class="" style="line-height: 2">게시일</th>
+					<th class="" style="line-height: 2">조회수</th>
+					<th class="" style="line-height: 2">좋아요</th>
+				</tr>
+			</thead>
+			<tbody>
+			<th:block th:if="${pv.totalCount > 0}">
+				<tr th:each="vo, vs : ${pv.list}" th:onclick="view([[${vo.idx}]])"
+					style="cursor: pointer;">
+					<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
+						vs.index}]]</td>
+					<td>[[${vo.categoryName}]]</td>
+					<td>[[${vo.title}]]</td>
+					<td>글쓴이</td>
+					<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
+					<td>[[${vo.readCount}]]</td>
+					<td>[[${vo.countHeart}]]</td>
+				</tr>
+			</th:block>
+			</tbody>
+		</table>
+		<div style="text-align: right;">
+			<form action="/ckeditor2" method="post" id="writeBtn">
+				<input type="hidden" name="p" th:value="${cv.p}">
+				<input type="hidden" name="search" th:value="${cv.search}">
+				<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+				
+				<input type="submit" class="uk-button uk-button-default" value="글 쓰 기"/>			
+			</form>
+		</div>
+		<div style="display: flex; align-items: center;justify-content: center;">
+			[(${pv.pageList})]
+		</div>
+	</div>
+</body>
+</html>

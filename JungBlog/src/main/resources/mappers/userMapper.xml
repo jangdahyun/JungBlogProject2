@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.JungMemberDAO">
+	<!-- 1. 유저용 -->
+	<!-- 로그인 확인용 -->
+	<select id="selectByUsername" parameterType="string" resultType="JungMemberVO">
+		select * from jung_member where username = #{username}
+	</select>
+	
+	<select id="selectByIdx" parameterType="int" resultType="JungMemberVO">
+		select * from jung_member where idx = #{idx}
+	</select>
+	
+	<!-- 중복확인 -->
+	<select id="selectCountByUsername" parameterType="string" resultType="int">
+		select count(*) from jung_member where username = #{username}
+	</select>
+	<!-- 
+	<select id="selectByUsernameAndPassword" parameterType="string" resultType="JungMemberVO">
+		select * from jung_member where username = #{username} and password = #{password}
+	</select>	
+	id,pw로 찾기 -->
+	
+	<!-- jung_member 테이블에 새로운 계정 정보를 추가. -->
+	<insert id="insert" parameterType="JungMemberVO">
+		INSERT INTO jung_member
+			(
+				idx
+				, username
+				, password
+				, name
+				, nickName
+				, phone
+				, stAddress
+				, dtAddress
+				, birthDate
+				, gender
+				, role
+			)
+		VALUES
+			(
+				jung_member_idx_seq.nextval
+				, #{username}
+				, #{password}
+				, #{name}
+				, #{nickName}
+				, #{phone}
+				, #{stAddress}
+				, #{dtAddress}
+				, #{birthDate}
+				, #{gender}
+				, #{role}
+			)
+	</insert>
+
+	<!-- jung_member 테이블에 계정 정보를 수정. -->
+	<update id="update" parameterType="JungMemberVO">
+		UPDATE jung_member SET
+			password = #{password}
+			, nickName = #{nickName}
+			, stAddress = #{stAddress}
+			, dtAddress = #{dtAddress}
+			, phone = #{phone}
+		WHERE
+			username = #{username}
+	</update>
+	<!-- jung_member 테이블에 계정 정보를 삭제. -->
+	<delete id="delete" parameterType="string">
+		DELETE FROM jung_member
+		WHERE username = #{username}
+	</delete>
+	
+	
+	<!-- 관리자용 -->
+	<!-- jung_member 테이블에서 모든 멤버의 정보를 조회. -->
+	<select id="selectUser" parameterType="hashmap" resultType="JungMemberVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						select
+							*
+						from
+							jung_member
+						<if test="condition != null">
+							order by username
+						</if>
+						<if test="condition == null">
+							order by idx desc
+						</if>
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]> 
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
+	</select>
+	<select id="selectCountUser" resultType="int">
+		select count(*) from jung_member
+	</select>
+
+	<update id="updateRole" parameterType="JungMemberVO">
+		UPDATE jung_member SET
+			role = #{role}
+		WHERE
+			username = #{username}
+	</update>
+
+
+</mapper>
+

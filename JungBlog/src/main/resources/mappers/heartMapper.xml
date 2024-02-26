@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.HeartDAO">
+
+	<insert id="insertHeart" parameterType="HeartVO">
+		insert into heart_tb
+	    values(heart_tb_heart_seq.nextval,#{boardRef},#{userRef})
+	</insert>
+	
+	
+	<delete id="deleteHeart" parameterType="HeartVO">
+		delete from	heart_tb
+	    where userRef=#{userRef} and boardRef =#{boardRef}
+	    	   
+	</delete>
+	
+	<!-- 좋아요 개수 가져오기 -->
+	<select id="countHeart" parameterType="int" resultType="int">
+		select count(*) from  heart_tb where boardRef=#{boardRef}
+	</select>
+	
+	<!-- 유저가 누른 좋아요 개수 가져오기 -->
+	<select id="selectHeartByUseridx" parameterType="int" resultType="int">
+		select boardRef from  heart_tb where userRef=#{userRef}
+	</select>
+	
+	<!-- 하트 중복확인 -->
+	<select id="select" parameterType="hashmap" resultType="int">
+		select count(*) from  heart_tb where userRef=#{userRef} and boardRef=#{boardRef}
+	</select>
+	  
+</mapper>

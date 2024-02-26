@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+function fileDragEnter(event){
+    event.stopPropagation();
+    event.preventDefault();
+    // 드롭다운 영역 css
+    $(this).css('background-color','#E3F2FC');
+}
+function fileDragLeave(event){
+     event.stopPropagation();
+    event.preventDefault();
+    // 드롭다운 영역 css
+    $(this).css('background-color','#E3F2FC');
+}
+function fileDragOver(event){
+    event.stopPropagation();
+    event.preventDefault();
+    // 드롭다운 영역 css
+    $(this).css('background-color','#E3F2FC');
+}
+function fileDrop(ev){
+    ev.preventDefault();
+    // 드롭다운 영역 css
+    $(this).css('background-color','#FFFFFF');
+    var files = ev.target.files||ev.dataTransfer.files;
+    var strHtml="";
+    $("#files").html("");
+    $("input[type='file']")
+    .prop("files",files)  // put files into element
+    .closest("form")
+    for(var i=0;i<files.length;i++){
+        strHtml+=files[i].name+"<br/>";
+        var reader = new FileReader();
+        reader.readAsDataURL(files[i]);
+        reader.onload = function (e) {
+            
+        }
+    }
+    $("#file-div").html(strHtml);
+    if(files != null){
+            if(files.length < 1){
+                    alert("폴더 업로드 불가");
+                    return;
+            }
+            //selectFile(no,cnt,files)
+    }else{
+            alert("ERROR");
+    }
+}
+</script>
+<input type="file" name="file[]" id="file" multiple style="display:none" onchange="fileDrop(event)">
+    <div style="width:100%;border:2px dashed #f0f0f0;height:400px;overflow-y:scroll" id="file-div" onclick="$('#file').click();" ondragenter="fileDragEnter(event)" ondragleave="fileDragLeave(event)" ondragover="fileDragOver(event)" ondrop="fileDrop(event)">
+        드래그해서 파일첨부를 하거나 또는 클릭해서 파일 첨부 하시길 바랍니다.
+</div>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.JungBoardDAO">
+	<!-- 페이징을 위한 List 뿌리기 -->
+	<select id="selectList" parameterType="hashmap" resultType="JungBoardVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						select
+							*
+						from
+							jung_board
+						<where>						
+							<if test="1 == 1">
+								deleted = 0
+							</if>
+							<if test="search != null">
+								and (
+									title like '%' || #{search} || '%'
+									or content like '%' || #{search} || '%'
+								)
+							</if>
+							<if test="categoryNum != null ">
+								and categoryNum = #{categoryNum}
+							</if>
+						</where>
+						order by
+							idx desc
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]> 
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
+	</select>
+	
+	
+	<select id="selectByIdx" parameterType="int" resultType="JungBoardVO">
+		select * from jung_board where idx = #{idx}
+	</select>
+	
+	<select id="selectCount" parameterType="hashmap" resultType="int">
+		select
+			count(*)
+		from
+			jung_board
+		<where>						
+			<if test="1 == 1">
+				deleted = 0
+			</if>
+			<if test="search != null">
+				and (
+					title like '%' || #{search} || '%'
+					or content like '%' || #{search} || '%'
+				)
+			</if>
+			<if test="categoryNum != null ">
+				and categoryNum = #{categoryNum}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insert" parameterType="JungBoardVO">
+      <selectKey resultType="int" keyProperty="idx" order="BEFORE" keyColumn="idx">
+           SELECT jung_board_idx_seq.nextval FROM dual      
+       </selectKey> 
+      insert into jung_board values(#{idx, jdbcType=INTEGER},#{ref},#{categoryNum},#{title},#{content},0,sysdate,0)
+   </insert>
+	
+	<update id="update" parameterType="JungBoardVO">
+		update jung_board set title=#{title}, content = #{content}, regdate = sysdate where idx = #{idx}
+	</update>
+	
+	<update id="updateReadCount" parameterType="int">
+		update jung_board set readCount = readCount + 1 where idx = #{idx}
+	</update>
+	
+	<update id="deleteFake" parameterType="int">
+		update jung_board set deleted = 1 where idx = #{idx}
+	</update>
+	
+	<delete id="deleteReal" parameterType="int">
+		delete from jung_board where idx = #{idx}
+	</delete>
+	
+	
+	<!-- 관리자용 및 마이페이지용-->
+	<select id="selectCountByUserIdx" parameterType="int" resultType="int">
+		select count(*) from jung_board where ref = #{userIdx}
+	</select>
+	
+	<select id="selectByUserIdx" parameterType="int" resultType="JungBoardVO">
+		select * from jung_board where ref = #{idx} order by idx desc
+	</select>
+</mapper>

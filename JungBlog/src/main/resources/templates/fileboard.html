@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>자료실</title>
+</head>
+<body>
+	<h1>자료실</h1>
+	<div th:if="${#lists.isEmpty(pv.list)}">
+		<p>현재 자료가 없습니다.</p>
+	</div>
+	<div th:each="board : ${pv.list}">
+		<div th:if="${not #lists.isEmpty(board.fileboardVO)}">
+			<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}"
+				alt="" />	
+		</div>
+		asdasdasd
+	</div>
+	[[${pv.list}]]
+</body>
+</html>

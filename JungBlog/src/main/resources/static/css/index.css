@@ -1,0 +1,46 @@
+@charset 'UTF-8';
+
+body {color: #333;font-family: "Noto Sans KR", sans-serif;}
+
+nav{
+    width: 100%;
+    height: 80px;
+    background-color:#ff0080;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+#nv{
+	background: none;
+}
+div.logo img{
+    width: 150px;
+    color: white;
+}
+
+/* 메뉴바 */
+div.menuBar{
+    padding: 28px 17px;
+}
+div.menuBar > a{
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 28px 17px 28px 17px;
+}
+div.menuBar > span{
+    color: white;
+}
+div.menuBar > a:hover{
+    color: #1ed760;
+}
+.uk-select:focus{
+	border-color: #ff0080;
+}
+.uk-input:focus {
+	border-color: #ff0080;
+}
+tbody tr:hover {
+	background: #F9BBE6 !important;
+}
