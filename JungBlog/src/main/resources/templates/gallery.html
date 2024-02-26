@@ -25,6 +25,57 @@
 <link rel="stylesheet" href="/css/index.css">
 <script src="/js/index.js"></script>
 </head>
+ <style>
+        /* 갤러리 스타일 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4열 */
+            grid-template-rows: repeat(4, auto); /* 4행 */
+            gap: 10px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-bottom: 100%; /* 이미지를 정사각형으로 유지 */
+        }
+        
+        .gallery-item img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 이미지를 적절히 자르고 확대하여 채움 */
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-item-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .gallery-item-overlay:hover {
+            opacity: 1;
+        }
+        
+        .gallery-item-overlay-content {
+            text-align: center;
+        }
+    </style>
 <body>
 	<!-- 헤더 -->
 	<header>
@@ -51,81 +102,25 @@
         </nav>
 	</header>
 	
-	<div id="inner" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
-		<div id="board-header"
-			style="display: flex; justify-content: space-between; width: 100%">
-			<div>
-				<h3>게시판</h3>
-			</div>
-            <div th:each="board : ${pv.list}">
-			    <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
-			        <img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
-			    </div>
-			    asdasdasd
-			</div>
-			<div>
-				<form action="/" method="get">
-					<div class="uk-inline">
-			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
-			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
-			        </div>
-				</form>
-			</div>
-		</div>
-		<table id="incident_list_table" class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-small">
-			<colgroup>
-				<col width="75px" />
-				<col width="150px" />
-				<col width="400px" />
-				<col width="125px" />
-				<col width="120px" />
-				<col width="50px" />
-				<col width="50px" />
-			</colgroup>
-			<thead>
-				<tr>
-					<th class="" style="line-height: 2">NO</th>
-					<th class="" >
-						<select class="uk-select" id="selectBox" style="height: 25px">
-			                <option selected value="0">카테고리</option>
-			                <option th:each="category : ${categoryList}" th:value="${category}">[[${category}]]</option>
-			            </select>
-					</th>
-					<th class="" style="line-height: 2">제목</th>
-					<th class="" style="line-height: 2">글쓴이</th>
-					<th class="" style="line-height: 2">게시일</th>
-					<th class="" style="line-height: 2">조회수</th>
-					<th class="" style="line-height: 2">좋아요</th>
-				</tr>
-			</thead>
-			<tbody>
-			<th:block th:if="${pv.totalCount > 0}">
-				<tr th:each="vo, vs : ${pv.list}" th:onclick="view([[${vo.idx}]])"
-					style="cursor: pointer;">
-					<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
-						vs.index}]]</td>
-					<td>[[${vo.categoryName}]]</td>
-					<td>[[${vo.title}]]</td>
-					<td>글쓴이</td>
-					<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
-					<td>[[${vo.readCount}]]</td>
-					<td>[[${vo.countHeart}]]</td>
-				</tr>
-			</th:block>
-			</tbody>
-		</table>
-		<div style="text-align: right;">
-			<form action="/ckeditor2" method="post" id="writeBtn">
-				<input type="hidden" name="p" th:value="${cv.p}">
-				<input type="hidden" name="search" th:value="${cv.search}">
-				<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
-				
-				<input type="submit" class="uk-button uk-button-default" value="글 쓰 기"/>			
-			</form>
-		</div>
-		<div style="display: flex; align-items: center;justify-content: center;">
-			[(${pv.pageList})]
-		</div>
-	</div>
+           
+	
+	 <div class="gallery">
+	   <div th:each="board : ${pv.list}">
+        <div class="gallery-item">
+             <div th:each="board : ${pv.list}">
+             <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
+             <img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
+             </div>
+         	</div>
+            <div class="gallery-item-overlay">
+                <div class="gallery-item-overlay-content">
+                    <h3 th:text="${board.title}">Title</h3>
+                    <p th:text="${board.content}">
+                </div>
+            </div>
+        </div>
+       </div>
+        <!-- 추가 이미지들 -->
+    </div>
 </body>
 </html>
