@@ -34,7 +34,7 @@ public interface JungMemberDAO {
 	List<JungMemberVO> selectUser(HashMap<String, Object> map) throws SQLException;
 	
 	// 페이징용
-	int selectCountUser() throws SQLException;
+	int selectCountUser(HashMap<String, Object> map) throws SQLException;
 	
 	// 관리자가 유저에게 권한 부여하기
 	void updateRole(JungMemberVO memberVO) throws SQLException;
