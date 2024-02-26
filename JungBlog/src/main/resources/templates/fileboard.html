@@ -14,8 +14,18 @@
 			<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}"
 				alt="" />	
 		</div>
-		asdasdasd
+		
 	</div>
+	<table>
+		<tr>
+			<td>[[${board.title}]]</td>
+			<td>[[${board.content}]]</td>
+			<td>[[${fileboard.filepath]]</td>
+			<td>[[${board.readCount]] views</td>
+			<td>download</td>
+
+		</tr>
+	</table>
 	[[${pv.list}]]
 </body>
 </html>
