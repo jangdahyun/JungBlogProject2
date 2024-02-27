@@ -13,14 +13,12 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <!-- Core theme CSS (includes Bootstrap)-->
 <!-- UIkit CSS -->
-<link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+<!-- 구글 폰트 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 <!-- UIkit JS -->
-<script
-    src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
-<script
-    src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 
 <link rel="stylesheet" href="/css/index.css">
 <script src="/js/index.js"></script>
@@ -31,10 +29,11 @@
         .gallery {
     		display: grid;
     		grid-template-columns: repeat(4, 1fr);
-   	 		grid-template-rows: repeat(4, auto);
+    		grid-auto-rows: minmax(100px, auto); /* 각 행의 높이를 자동으로 조절합니다. */
+   	 	
     		gap: 10px;
     		border: 1px solid #ccc; /* 선 스타일 추가 */
-   			padding: 80px; /* 간격 조정 */
+   			padding: 70px; /* 간격 조정 */
 		}
         
         .gallery-item {
@@ -44,12 +43,14 @@
             height: 457px;
             padding-bottom: 40%; /* 이미지를 정사각형으로 유지 */
             align-items: center;
-            padding-right: 15px; 
+            padding-right: 30px; 
+            padding-left: 30px;
         }
         .img-container{
         	height: 357px;
         	position:relative;
         	overflow: hidden;
+        	
         }
         .image {
         	width:100%;
@@ -145,26 +146,79 @@
        <div style="padding: 10px">
         <div class="gallery" style="width: 100%">
 
-            <div th:each="board : ${pv.list}" class="gallery-item">
+            <div th:each="board : ${pv.list}" class="gallery-item" th:onclick="view([[${board.idx}]])">
             	<div class="img-container">
 					<div class="image" th:if="${not #lists.isEmpty(board.fileboardVO)}">
 						<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
 					</div>
-					<div class="gallery-item-overlay">
+					<div class="gallery-item-overlay" >
 	                    <div class="gallery-item-overlay-content">
 	                        <p th:text="${board.content}">Description</p>
 	                    </div>
 	                </div>            	
             	</div>
                 <div class="titla-area">
-                	<div th:text="${board.title}" style="font-weight: bold; font-size: 25px;">title</div>
+                	<div th:text="${board.title}" style="font-weight: bold; font-size: 23px;">title</div>
                 	<div th:text="${board.member.name}">name</div>
-
+					<div style="font-size: 14px; align-items: center; display: flex;">
+						<span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span>
+               			<span class="time" style="padding-right: 10px;">[[${#dates.format(board.regDate, 'yy-MM-dd')}]] </span>ㆍ<span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">chat</span>
+               			<span> [[${board.commentCount}]]</span>ㆍ<span class="material-symbols-outlined" style="font-size: 20px; margin-right: 5px;">visibility</span><span>[[${board.readCount}]]</span>
+               		</div>
+               			<span class="elapsed" th:text="${#dates.format(board.regDate, 'yyyy-MM-dd HH:mm:ss')}">게시일</span>
                 </div>
             </div>
         </div>
-    </div>
+     </div>
+    
    </div>
+   <script type="text/javascript">
+   function elapsedTime(date) {
+       const start = new Date(date);
+       const end = new Date();
+
+       const diff = (end - start) / 1000;
+       
+       const times = [
+         { name: '년', milliSeconds: 60 * 60 * 24 * 365 },
+         { name: '개월', milliSeconds: 60 * 60 * 24 * 30 },
+         { name: '일', milliSeconds: 60 * 60 * 24 },
+         { name: '시간', milliSeconds: 60 * 60 },
+         { name: '분', milliSeconds: 60 },
+       ];
+
+       for (const value of times) {
+         const betweenTime = Math.floor(diff / value.milliSeconds);
+
+         if (betweenTime > 0) {
+           return `${betweenTime}${value.name} 전`;
+         }
+       }
+       return '방금 전';
+     }
+
+     // 경과 시간 표시 엘리먼트를 찾고 업데이트합니다.
+     const elapsedElements = document.querySelectorAll('.elapsed');
+     elapsedElements.forEach((element) => {
+         const regDate = element.textContent; // regDate를 엘리먼트의 텍스트로 설정합니다.
+         const elapsed = elapsedTime(regDate); // 경과 시간을 가져옵니다.
+         element.textContent = elapsed; // 엘리먼트의 텍스트를 업데이트합니다.
+     });
+     
+     function view(idx) {
+    		location.href = "/blog/" + idx
+    	}
+   //back 눌렀을때 리로드하는 함수
+     window.onpageshow = function(event) {
+     	if (event.persisted) {
+     		document.location.reload();
+     	}
+     };
+     
+     
+     
+    
+   </script>
 
 </body>
 </html>

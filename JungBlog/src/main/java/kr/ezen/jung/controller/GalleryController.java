@@ -54,6 +54,8 @@ public class GalleryController {
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
 	public String gallery(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
 		cv.setCategoryNum(4); //갤러리 번호 5번인데 일단 4번으로 함
+		// psb search
+		cv.setS(20);
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		
 		List<JungBoardVO> list = pv.getList();
