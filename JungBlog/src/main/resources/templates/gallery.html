@@ -1,8 +1,8 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
 <title>Clean Blog - Start Bootstrap Theme</title>
@@ -14,44 +14,66 @@
 <!-- Core theme CSS (includes Bootstrap)-->
 <!-- UIkit CSS -->
 <link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
 
 <!-- UIkit JS -->
 <script
-	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
 <script
-	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 
 <link rel="stylesheet" href="/css/index.css">
 <script src="/js/index.js"></script>
 </head>
  <style>
+ 		*{padding: 0; margin: 0; box-sizing: border-box;}
         /* 갤러리 스타일 */
         .gallery {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4열 */
-            grid-template-rows: repeat(4, auto); /* 4행 */
-            gap: 10px;
-        }
+    		display: grid;
+    		grid-template-columns: repeat(4, 1fr);
+   	 		grid-template-rows: repeat(4, auto);
+    		gap: 10px;
+    		border: 1px solid #ccc; /* 선 스타일 추가 */
+   			padding: 80px; /* 간격 조정 */
+		}
         
         .gallery-item {
             position: relative;
             overflow: hidden;
             width: 100%;
-            padding-bottom: 100%; /* 이미지를 정사각형으로 유지 */
+            height: 457px;
+            padding-bottom: 40%; /* 이미지를 정사각형으로 유지 */
+            align-items: center;
+            padding-right: 15px; 
+        }
+        .img-container{
+        	height: 357px;
+        	position:relative;
+        	overflow: hidden;
+        }
+        .image {
+        	width:100%;
+        	height:357px;
+        	display:flex;
+        	align-items:center;
+        	justify-content:center;
+        	position: absolute;
+        	top: 50%;
+        	left: 50%;
+        	transform: translate(-50%, -50%);
+        	transition: 0.7s ease-in-out;
+        }
+        .image img {
+        	width: 100%;
+        }
+        .titla-area{
+        	height: 100px;
         }
         
-        .gallery-item img {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 이미지를 적절히 자르고 확대하여 채움 */
-            transition: transform 0.3s ease;
+        .img-container:hover .image{
+        	left: 100%;
         }
         
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
         
         .gallery-item-overlay {
             position: absolute;
@@ -75,11 +97,13 @@
         .gallery-item-overlay-content {
             text-align: center;
         }
+
+      
     </style>
 <body>
-	<!-- 헤더 -->
-	<header>
-		<nav>
+    <!-- 헤더 -->
+    <header>
+        <nav>
             <div class="logo">
                 <img src="Spotify_Logo_RGB_White.png" alt="logo">
             </div>
@@ -92,33 +116,55 @@
                 <a href="">Download</a>
                 <span>|</span>
                 <th:block th:if="${session.user != null}">
-	                <a href="/logout">Logout</a>                
+                    <a href="/logout">Logout</a>                
                 </th:block>
                 <th:block th:if="${session.user == null}">
-	                <a href="/member/join">Sign up</a>
-	                <a href="/member/login">Log in</a>                
+                    <a href="/member/join">Sign up</a>
+                    <a href="/member/login">Log in</a>                
                 </th:block>
             </div>
         </nav>
-	</header>
-	
-           
-	
-	 <div class="gallery">
-    <div th:each="board : ${pv.list}">
-        <div class="gallery-item">
-            <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
-                <img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
-            </div>
-            <div class="gallery-item-overlay">
-                <div class="gallery-item-overlay-content">
-                    <h3 th:text="${board.title}">Title</h3>
-                    <p th:text="${board.content}">Description</p>
+    </header>
+    
+    
+    <div id="container" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
+       
+		<div id="board-header" style="display: flex; justify-content: space-between; width: 100%">
+			<div>
+				<h3>게시판</h3>
+			</div>
+			<div>
+				<form action="/" method="get">
+					<div class="uk-inline">
+			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+			        </div>
+				</form>
+			</div>
+		</div>
+       <div style="padding: 10px">
+        <div class="gallery" style="width: 100%">
+
+            <div th:each="board : ${pv.list}" class="gallery-item">
+            	<div class="img-container">
+					<div class="image" th:if="${not #lists.isEmpty(board.fileboardVO)}">
+						<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
+					</div>
+					<div class="gallery-item-overlay">
+	                    <div class="gallery-item-overlay-content">
+	                        <p th:text="${board.content}">Description</p>
+	                    </div>
+	                </div>            	
+            	</div>
+                <div class="titla-area">
+                	<div th:text="${board.title}" style="font-weight: bold; font-size: 25px;">title</div>
+                	<div th:text="${board.member.name}">name</div>
+
                 </div>
             </div>
         </div>
     </div>
-</div>
+   </div>
 
 </body>
 </html>
