@@ -34,6 +34,9 @@ public class JungBoardServiceImpl implements JungBoardService {
 	
 	@Autowired
 	private JungFileBoardDAO jungFileBoardDAO;
+	
+	@Autowired
+	private JungCommentService jungCommentService;
 
 	@Override
 	/**
@@ -68,6 +71,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 				// 파일
 				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				//댓글 수
+				board.setCommentCount(jungCommentService.selectCountByRef(board.getIdx()));
 			}
 			pv.setList(list);
 		} catch (SQLException e) {
