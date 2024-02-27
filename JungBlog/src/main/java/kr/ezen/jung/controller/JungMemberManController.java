@@ -152,15 +152,16 @@ public class JungMemberManController {
 	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
 	        return "redirect:/";
 	    }
+		model.addAttribute("name",memberVO.getName());
 	    log.info("title : {}",title);
 	    log.info("subject : {}", subject);
 	    log.info("userList : {}", userList);
 	    model.addAttribute("title", title);
 	    model.addAttribute("subject", subject);
 	    
-	    Map<String, List<String>> mailResultMap = mailService.adminMailSend(userList, title, subject);
-	    model.addAttribute("mailResultMap",mailResultMap);
-	    return "admin/test";
+	    Map<String, List<JungMemberVO>> mailResultMap = mailService.adminMailSend(userList, title, subject);
+	    model.addAttribute("mailResultMap", mailResultMap);
+	    return "admin/mailToUserResult";
 	}
 	
 }
