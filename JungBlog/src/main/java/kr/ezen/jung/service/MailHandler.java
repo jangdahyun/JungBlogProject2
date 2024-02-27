@@ -42,11 +42,7 @@ public class MailHandler {
 	}
 
 	// 실제로 메일을 보내는 메서드..
-	public void send() {
-		try {
-			javaMailSender.send(message);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void send() throws MessagingException{
+		javaMailSender.send(message);
 	}
 }

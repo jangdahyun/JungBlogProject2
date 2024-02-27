@@ -147,7 +147,7 @@ function submitForm() {
 		return;
 	}
 
-	let email = $("#message").val();
+	let email = $("#email").val();
 	if (email === "0") {
 		alert("이메일을 선택해주세요.");
 		return;
@@ -237,7 +237,8 @@ function submitForm() {
 		alert("사용자 상세 주소를 입력해주세요.");
 		return;
 	}
-
+	const realUserName = username + "@" + email;
+	$("#realUserName").val(realUserName);
 	if (checkPasswordMatch()) {
 		showRegistrationMessage();
 		// 로그인 페이지로 이동
