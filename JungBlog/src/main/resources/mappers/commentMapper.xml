@@ -3,8 +3,33 @@
 <mapper namespace="kr.ezen.jung.dao.JungCommentDAO">
 	
 	<!-- board의 idx에 해당하는 댓글 주기 -->
-	<select id="selectByRef" parameterType="int" resultType="JungCommentVO">
-		select * from jung_comment where boardRef = #{boardRef} order by idx desc
+	<select id="selectByRef" parameterType="hashmap" resultType="JungCommentVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						select
+							*
+						from
+							jung_comment
+						where
+							boardRef = #{boardRef}
+						order by
+							idx desc
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]>
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
 	</select>
 	<!-- board의 idx에 해당하는 댓글갯수 -->
 	<select id="selectCountByRef" parameterType="int" resultType="int">
