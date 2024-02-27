@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.MessagingException;
+import kr.ezen.jung.vo.JungMemberVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Service(value = "mailService")
@@ -28,7 +29,7 @@ public class MailServiceImpl implements MailService{
 		try {
 			mailHandler = new MailHandler(javaMailSender);
 		     
-			mailHandler.setFrom("보내는사람이메일", "jungBlogCompany");   // 누가
+			mailHandler.setFrom("tjdtlr12349@naver.com", "jungBlogCompany");   // 누가
 			mailHandler.setTo(to);                                    // 누구에게
 			mailHandler.setSubject("jungBlog 회원가입 인증 번호");           // 제목
 		 
@@ -79,10 +80,10 @@ public class MailServiceImpl implements MailService{
 	 * @return Map<String, List<String>>
 	 */
 	@Override
-	public Map<String, List<String>> adminMailSend(List<Integer> userIdxList, String title, String subject) {
-		Map<String, List<String>> map = new HashMap<>();
-		List<String> successList = new ArrayList<>();
-	    List<String> failureList = new ArrayList<>();
+	public Map<String, List<JungMemberVO>> adminMailSend(List<Integer> userIdxList, String title, String subject) {
+		Map<String, List<JungMemberVO>> map = new HashMap<>();
+		List<JungMemberVO> successList = new ArrayList<>();
+	    List<JungMemberVO> failureList = new ArrayList<>();
 		MailHandler mailHandler = null;
 		for (Integer userIdx : userIdxList) {
 	        String email = null; // 이메일 변수를 선언하고 초기화
@@ -90,7 +91,7 @@ public class MailServiceImpl implements MailService{
 	            mailHandler = new MailHandler(javaMailSender);
 	            
 	            email = jungMemberService.selectByIdx(userIdx).getUsername();
-	            mailHandler.setFrom("보내는사람이메일", "jungBlogCompany");
+	            mailHandler.setFrom("tjdtlr12349@naver.com", "jungBlogCompany");
 	            
 	            mailHandler.setTo(email);
 	            
@@ -101,12 +102,18 @@ public class MailServiceImpl implements MailService{
 	            log.info("메일 전송 중...");
 	            mailHandler.send();
 	            log.info("메일 전송 성공!!!!!!");
-	            successList.add(email); // 성공한 경우에는 성공 리스트에 추가
+	            JungMemberVO memberVO = new JungMemberVO();
+	            memberVO.setIdx(userIdx);
+	            memberVO.setUsername(email);
+	            successList.add(memberVO); // 성공한 경우에는 성공 리스트에 추가
 	        } catch (MessagingException | UnsupportedEncodingException e) {
 	            log.info("메일 전송 실패!!!!!!");
 	            e.printStackTrace();
 	            if (email != null) {
-	                failureList.add(email); // 실패한 경우에는 실패 리스트에 추가
+	            	JungMemberVO memberVO = new JungMemberVO();
+		            memberVO.setIdx(userIdx);
+		            memberVO.setUsername(email);
+	                failureList.add(memberVO); // 실패한 경우에는 실패 리스트에 추가
 	            }
 	        }
 	    }
