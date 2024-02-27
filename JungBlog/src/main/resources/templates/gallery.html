@@ -105,22 +105,20 @@
            
 	
 	 <div class="gallery">
-	   <div th:each="board : ${pv.list}">
+    <div th:each="board : ${pv.list}">
         <div class="gallery-item">
-             <div th:each="board : ${pv.list}">
-             <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
-             <img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
-             </div>
-         	</div>
+            <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
+                <img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
+            </div>
             <div class="gallery-item-overlay">
                 <div class="gallery-item-overlay-content">
                     <h3 th:text="${board.title}">Title</h3>
-                    <p th:text="${board.content}">
+                    <p th:text="${board.content}">Description</p>
                 </div>
             </div>
         </div>
-       </div>
-        <!-- 추가 이미지들 -->
     </div>
+</div>
+
 </body>
 </html>
