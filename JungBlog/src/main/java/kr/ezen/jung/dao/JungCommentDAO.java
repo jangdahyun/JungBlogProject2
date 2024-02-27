@@ -1,6 +1,7 @@
 package kr.ezen.jung.dao;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -10,7 +11,7 @@ import kr.ezen.jung.vo.JungCommentVO;
 @Mapper
 public interface JungCommentDAO {
 	
-	List<JungCommentVO> selectByRef(int boardRef) throws SQLException;
+	List<JungCommentVO> selectByRef(HashMap<String, Object> map) throws SQLException;
 	
 	List<JungCommentVO> selectByUserRef(int userRef) throws SQLException;
 	

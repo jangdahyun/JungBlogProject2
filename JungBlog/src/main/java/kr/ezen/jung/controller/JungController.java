@@ -105,12 +105,6 @@ public class JungController {
 		
 		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
 		
-		List<JungCommentVO> commentVOs = jungCommentService.selectByRef(boardVO.getIdx());
-		commentVOs.forEach((cv)->{
-			cv.setMember(jungMemberService.selectByIdx(cv.getUserRef()));
-		});
-		boardVO.setCommentList(commentVOs);
-		
 		boardVO.setCountHeart(jungBoardService.countHeart(idx));
 		
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
@@ -164,15 +158,29 @@ public class JungController {
 		return "redirect:/blog/" + boardidx;
 	}
 	
-	@PostMapping(value = "/comment/{boardIdx}")
+	/**
+	 * boardIdx와 currentPage를 넘기면 boardIdx의 댓글중 currentPage의 댓글을 보내주는 api
+	 * @param map
+	 * @return List<JungCommentVO>
+	 */
+	@PostMapping(value = "/comments")
 	@ResponseBody
-	public List<JungCommentVO> asd(@PathVariable(value = "boardIdx") int boardIdx){
-		List<JungCommentVO> commentList = null;
-		commentList = jungCommentService.selectByRef(boardIdx);
-		for(JungCommentVO commentVO : commentList) {
-//			commentVO.setMemberVO();
-		}
-		return commentList;
+	public List<JungCommentVO> getComments(@RequestBody HashMap<String, Integer> map){
+		log.info("map : {}", map);
+		PagingVO<JungCommentVO> pv = null;
+		int boardIdx = map.get("boardIdx");
+		CommonVO cv = new CommonVO();
+		cv.setP(map.get("currentPage"));
+		pv = jungCommentService.selectByRef(boardIdx, cv);
+		return pv.getList();
+	}
+	@PostMapping(value = "/commentsTotalCount")
+	@ResponseBody
+	public int getCommentsTotalCount(@RequestBody HashMap<String, Integer> map){
+		int result = 0;
+		int boardIdx = map.get("boardIdx");
+		result = jungCommentService.selectCountByRef(boardIdx);
+		return result;
 	}
 	
 	@PostMapping(value = "/heartUpload")
