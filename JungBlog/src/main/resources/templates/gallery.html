@@ -172,7 +172,7 @@
      </div>
     
    </div>
-   <script type="text/javascript">
+   <script type="text/javascript" th:inline="javascript">
    function elapsedTime(date) {
        const start = new Date(date);
        const end = new Date();
@@ -215,6 +215,50 @@
      	}
      };
      
+   
+     // 페이지 로드 시 실행되는 함수
+     document.addEventListener('DOMContentLoaded', function () {
+         // 스크롤 이벤트를 감지하여 handleScroll 함수 호출
+         window.addEventListener('scroll', handleScroll);
+     });
+
+     // 스크롤 이벤트 핸들러
+     function handleScroll() {
+         // 현재 스크롤 위치
+         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+         // 뷰포트의 높이
+         const viewportHeight = window.innerHeight;
+         // 문서의 전체 높이
+         const documentHeight = document.documentElement.scrollHeight;
+
+         // 스크롤이 문서 하단에 도달하면 다음 페이지를 로드
+         if (scrollTop + viewportHeight >= documentHeight) {
+             loadNextPage();
+         }
+     }
+
+     // 다음 페이지 로드 함수
+     function loadNextPage() {
+         // 여기에 다음 페이지를 로드하는 코드를 추가
+         axios.post('/gallery/paged', { 
+        	'currentPage': currentPage,
+ 			'search': search,
+ 		})
+         .then(function (res) {
+        	 const data = res.data;
+        	 content=``;
+        	 data.forEach(board=>{
+        		 const date = new Date(board.regDate);
+        		 const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+ 				    year: 'numeric',
+ 				    month: '2-digit',
+ 				    day: '2-digit'
+ 				}).format(date);
+        	 })
+         });
+     }
+
+   
      
      
     

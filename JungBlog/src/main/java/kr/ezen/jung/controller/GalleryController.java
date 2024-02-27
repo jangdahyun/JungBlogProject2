@@ -2,6 +2,7 @@ package kr.ezen.jung.controller;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,16 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
+import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.vo.CommonVO;
@@ -43,6 +47,9 @@ public class GalleryController {
 	
 	@Autowired
 	private JungFileBoardService jungFileBoardService;
+	
+	@Autowired
+	private JungCommentService jungCommentService;
 	
 	@GetMapping("/galleryboardUpload")
 	public String galleryboard(Model model, @ModelAttribute(value = "cv") CommonVO cv) {
@@ -69,6 +76,8 @@ public class GalleryController {
 			
 			// 파일넣기
 			board.setFileboardVO(jungFileBoardService.selectfileByRef(board.getIdx()));
+			//댓글 수
+			board.setCommentCount(jungCommentService.selectCountByRef(board.getIdx()));
 		
 		});
 		pv.setList(list);
@@ -77,6 +86,20 @@ public class GalleryController {
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "gallery";
 	}
+	
+	@PostMapping(value = "/paged")
+	@ResponseBody()
+	public List<JungBoardVO> paging(@RequestBody Map<String, Object> map){
+		CommonVO cv = new CommonVO();
+		cv.setP((Integer) map.get("currentPage"));
+		cv.setSearch((String) map.get("search"));
+		cv.setS(20);
+		cv.setB(5);
+		cv.setCategoryNum(4);
+		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
+		return pv.getList();
+	}
+	
 	
 	@GetMapping("/galleryboardUploadOk")
 	public String galleryboardUploadOk(Model model) {
