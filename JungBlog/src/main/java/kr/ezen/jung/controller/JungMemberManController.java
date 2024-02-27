@@ -1,6 +1,6 @@
 package kr.ezen.jung.controller;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungMemberService;
+import kr.ezen.jung.service.MailService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
@@ -57,7 +58,7 @@ public class JungMemberManController {
     	model.addAttribute("users", memberList);
     	model.addAttribute("boards", boardList);
     	
-		return "adminMainPage"; // 관리자 메인페이지
+		return "admin/index"; // 관리자 메인페이지
 	}
 	
 	// 회원관리페이지
@@ -74,7 +75,7 @@ public class JungMemberManController {
 		model.addAttribute("name",memberVO.getName());
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
-		return "adminUserManagement"; // 관리자 메인페이지
+		return "admin/userManagement"; // 관리자 메인페이지
 	}
 	
 	
@@ -90,7 +91,7 @@ public class JungMemberManController {
     	}
     	
 		model.addAttribute("name",memberVO.getName());
-		return "adminMailToUser"; // 관리자 메일선택창
+		return "admin/mailToUser"; // 관리자 메일선택창
 	}
 	
 	
@@ -129,13 +130,37 @@ public class JungMemberManController {
 	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
 	        return "redirect:/";
 	    }
-	    List<String> userEmailList = new ArrayList<>();
-	    for(int i : mailList) {
-	    	userEmailList.add(jungMemberService.selectByIdx(i).getUsername());
-	    }
+	    model.addAttribute("name",memberVO.getName());
 	    
-	    model.addAttribute("userIdxList", mailList);
-	    return "adminMailSendToUser";
+	    Map<String, Object> map = new HashMap<>();
+	    for(int i : mailList) {
+	    	map.put(jungMemberService.selectByIdx(i).getUsername(), i);
+	    }
+	    model.addAttribute("userMap", map);
+	    return "admin/mailSendToUser";
+	}
+	
+	@Autowired
+	private MailService mailService;
+	
+	@PostMapping(value = "/sendToUserOk")
+	public String sendToUserOk(HttpSession session, Model model, @RequestParam("userIdx") List<Integer> userList, @RequestParam("title") String title, @RequestParam("subject") String subject) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    log.info("title : {}",title);
+	    log.info("subject : {}", subject);
+	    log.info("userList : {}", userList);
+	    model.addAttribute("title", title);
+	    model.addAttribute("subject", subject);
+	    
+	    Map<String, List<String>> mailResultMap = mailService.adminMailSend(userList, title, subject);
+	    model.addAttribute("mailResultMap",mailResultMap);
+	    return "admin/test";
 	}
 	
 }
