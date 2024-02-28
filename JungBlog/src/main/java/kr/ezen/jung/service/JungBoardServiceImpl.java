@@ -216,7 +216,6 @@ public class JungBoardServiceImpl implements JungBoardService {
 			heartDAO.insertHeart(heartVO);
 			result = 1;
 		} catch (SQLException e) {
-			
 			e.printStackTrace();
 		}
 		return result;
