@@ -94,7 +94,7 @@ public class GalleryController {
 		cv.setP((Integer) map.get("currentPage"));
 		cv.setSearch((String) map.get("search"));
 		cv.setS(20);
-		cv.setB(5);
+		cv.setB(4);
 		cv.setCategoryNum(4);
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		return pv.getList();
