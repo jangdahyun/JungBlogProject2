@@ -13,6 +13,8 @@ public interface JungCommentDAO {
 	
 	List<JungCommentVO> selectByRef(HashMap<String, Object> map) throws SQLException;
 	
+	int selectCountByRef(int boardRef) throws SQLException;
+	
 	List<JungCommentVO> selectByUserRef(int userRef) throws SQLException;
 	
 	void insert(JungCommentVO jungCommentVO) throws SQLException;
@@ -25,5 +27,5 @@ public interface JungCommentDAO {
 
 	void deleteByUserRef(int userRef) throws SQLException;
 	
-	int selectCountByRef(int boardRef) throws SQLException;
+	
 }
