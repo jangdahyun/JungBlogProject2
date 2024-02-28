@@ -19,6 +19,7 @@
 <!-- UIkit JS -->
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <link rel="stylesheet" href="/css/index.css">
 <script src="/js/index.js"></script>
@@ -99,9 +100,23 @@
             text-align: center;
         }
 
-      
+      	#writeBtn{
+      		position: fixed;
+      		bottom: 6%;
+      		right: 3%;
+  			color: #D44252;
+  			cursor: pointer;
+			
+		}
+		#icon{
+		font-size: 50px;
+		}
     </style>
 <body>
+	<input type="hidden" th:value="${pv.totalPage}" id="totalPage">
+	<div id="writeBtn">
+		<span class="material-symbols-outlined" id="icon">stylus</span><span>글쓰기</span>	
+	</div>
     <!-- 헤더 -->
     <header>
         <nav>
@@ -135,7 +150,7 @@
 				<h3>게시판</h3>
 			</div>
 			<div>
-				<form action="/" method="get">
+				<form action="/gallery" method="get">
 					<div class="uk-inline">
 			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
 			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
@@ -173,37 +188,65 @@
     
    </div>
    <script type="text/javascript" th:inline="javascript">
-   function elapsedTime(date) {
-       const start = new Date(date);
-       const end = new Date();
+	   let currentPage = 1; // 초기 페이지
+	   let totalPage = 0;
+	   let search = ''; // 초기 검색어
+   		$(function(){
+   			updateTimer();
+   			totalPage = $("#totalPage").val();
+   		})
+   		window.addEventListener('scroll', function() {
+  	         // 현재 스크롤 위치를 가져옵니다.
+  	         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  	         // 현재 브라우저 창의 높이를 가져옵니다.
+  	         const windowHeight = window.innerHeight;
+  	         // 문서의 총 높이를 가져옵니다.
+  	         const documentHeight = Math.max(
+  	             document.body.scrollHeight, document.documentElement.scrollHeight,
+  	             document.body.offsetHeight, document.documentElement.offsetHeight,
+  	             document.body.clientHeight, document.documentElement.clientHeight
+  	         );
 
-       const diff = (end - start) / 1000;
-       
-       const times = [
-         { name: '년', milliSeconds: 60 * 60 * 24 * 365 },
-         { name: '개월', milliSeconds: 60 * 60 * 24 * 30 },
-         { name: '일', milliSeconds: 60 * 60 * 24 },
-         { name: '시간', milliSeconds: 60 * 60 },
-         { name: '분', milliSeconds: 60 },
-       ];
-
-       for (const value of times) {
-         const betweenTime = Math.floor(diff / value.milliSeconds);
-
-         if (betweenTime > 0) {
-           return `${betweenTime}${value.name} 전`;
-         }
-       }
-       return '방금 전';
+  	         // 현재 스크롤 위치와 브라우저 창의 높이, 문서의 총 높이를 비교하여 맨 아래에 도달했는지 확인합니다.
+  	         if (scrollTop + windowHeight >= documentHeight) {
+  	            
+  	             NextPage();
+  	         }
+  	     });
+	   
+	   function elapsedTime(date) {
+	       const start = new Date(date);
+	       const end = new Date();
+	
+	       const diff = (end - start) / 1000;
+	       
+	       const times = [
+				{ name: '년', milliSeconds: 60 * 60 * 24 * 365 },
+				{ name: '개월', milliSeconds: 60 * 60 * 24 * 30 },
+				{ name: '일', milliSeconds: 60 * 60 * 24 },
+				{ name: '시간', milliSeconds: 60 * 60 },
+				{ name: '분', milliSeconds: 60 },
+	       ];
+	
+	       for (const value of times) {
+	    	   const betweenTime = Math.floor(diff / value.milliSeconds);
+	
+	         if (betweenTime > 0) {
+	           return `${betweenTime}${value.name} 전`;
+	         }
+	       }
+	       return '방금 전';
      }
 
      // 경과 시간 표시 엘리먼트를 찾고 업데이트합니다.
-     const elapsedElements = document.querySelectorAll('.elapsed');
-     elapsedElements.forEach((element) => {
-         const regDate = element.textContent; // regDate를 엘리먼트의 텍스트로 설정합니다.
-         const elapsed = elapsedTime(regDate); // 경과 시간을 가져옵니다.
-         element.textContent = elapsed; // 엘리먼트의 텍스트를 업데이트합니다.
-     });
+     function updateTimer(){
+	     const elapsedElements = document.querySelectorAll('.elapsed');
+	     elapsedElements.forEach((element) => {
+	         const regDate = element.textContent; // regDate를 엘리먼트의 텍스트로 설정합니다.
+	         const elapsed = elapsedTime(regDate); // 경과 시간을 가져옵니다.
+	         element.textContent = elapsed; // 엘리먼트의 텍스트를 업데이트합니다.
+	     });
+     }
      
      function view(idx) {
     		location.href = "/blog/" + idx
@@ -216,53 +259,75 @@
      };
      
    
-     // 페이지 로드 시 실행되는 함수
-     document.addEventListener('DOMContentLoaded', function () {
-         // 스크롤 이벤트를 감지하여 handleScroll 함수 호출
-         window.addEventListener('scroll', handleScroll);
-     });
-
-     // 스크롤 이벤트 핸들러
-     function handleScroll() {
-         // 현재 스크롤 위치
-         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-         // 뷰포트의 높이
-         const viewportHeight = window.innerHeight;
-         // 문서의 전체 높이
-         const documentHeight = document.documentElement.scrollHeight;
-
-         // 스크롤이 문서 하단에 도달하면 다음 페이지를 로드
-         if (scrollTop + viewportHeight >= documentHeight) {
-             loadNextPage();
-         }
-     }
-
-     // 다음 페이지 로드 함수
-     function loadNextPage() {
-         // 여기에 다음 페이지를 로드하는 코드를 추가
-         axios.post('/gallery/paged', { 
-        	'currentPage': currentPage,
- 			'search': search,
- 		})
-         .then(function (res) {
-        	 const data = res.data;
-        	 content=``;
-        	 data.forEach(board=>{
-        		 const date = new Date(board.regDate);
-        		 const formattedDate = new Intl.DateTimeFormat('ko-KR', {
- 				    year: 'numeric',
- 				    month: '2-digit',
- 				    day: '2-digit'
- 				}).format(date);
-        	 })
-         });
-     }
-
-   
      
+
      
-    
+
+     // 다음 페이지를 로드하는 함수
+     function NextPage() {
+    	 currentPage++;
+    	 if(currentPage<=totalPage){
+		    axios.post('/gallery/paged', {
+		        'currentPage': currentPage,
+		        'search': search,
+		    }).then(function (res) {
+		        const data = res.data;
+		        data.forEach(board => {
+		            const date = new Date(board.regDate);
+		            console.log(date);
+		            const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+		                year: 'numeric',
+		                month: '2-digit',
+		                day: '2-digit',
+		            }).format(date);
+		            const formattedDate2 = new Intl.DateTimeFormat('ko-KR', {
+		                year: 'numeric',
+		                month: '2-digit',
+		                day: '2-digit',
+		                hour: '2-digit',
+		                minute: '2-digit',
+		                second: '2-digit',
+		                hour12: false // 24시간 형식
+		            }).format(date);
+		            const newFormattedDate = elapsedTime(formattedDate2);
+		            console.log(newFormattedDate);
+		           const content = `
+		                <div class="gallery-item" onclick="view(${board.idx})">
+		                    <div class="img-container">
+		                        <div class="image" ${board.fileboardVO.length > 0 ? '' : 'style="display: none;"'}>
+		                            <img src="./upload/${board.fileboardVO[0].filepath}" alt="" />
+		                        </div>
+		                        <div class="gallery-item-overlay" >
+		                            <div class="gallery-item-overlay-content">
+		                                <p>${board.content}</p>
+		                            </div>
+		                        </div>              
+		                    </div>
+		                    <div class="titla-area">
+		                        <div style="font-weight: bold; font-size: 23px;">${board.title}</div>
+		                        <div>${board.member.name}</div>
+		                        <div style="font-size: 14px; align-items: center; display: flex;">
+		                            <span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span>
+		                            <span class="time" style="padding-right: 10px;">${formattedDate}</span>ㆍ<span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">chat</span>
+		                            <span>${board.commentCount}</span>ㆍ<span class="material-symbols-outlined" style="font-size: 20px; margin-right: 5px;">visibility</span><span>${board.readCount}</span>
+		                        </div>
+		                        <span class="elapsed">${newFormattedDate}</span>
+		                    </div>
+		                </div>
+		            `;
+		            // 새로운 내용을 기존의 내용 아래에 추가
+		            $(".gallery").append(content);
+		        });
+		    }).catch(function (error) {
+		        console.error('다음 페이지 로드 실패:', error);
+		    });
+    	 } else {
+    		 alert('더없음');
+    	 }
+	}
+
    </script>
+    
 
 </body>
 </html>
