@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import kr.ezen.jung.dao.CategoryDAO;
 import kr.ezen.jung.dao.HeartDAO;
 import kr.ezen.jung.dao.JungBoardDAO;
+import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
 import kr.ezen.jung.vo.CommonVO;
@@ -36,7 +37,9 @@ public class JungBoardServiceImpl implements JungBoardService {
 	private JungFileBoardDAO jungFileBoardDAO;
 	
 	@Autowired
-	private JungCommentService jungCommentService;
+
+	private JungCommentDAO jungCommentDAO;
+
 
 	@Override
 	/**
@@ -71,8 +74,11 @@ public class JungBoardServiceImpl implements JungBoardService {
 				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 				// 파일
 				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-				//댓글 수
-				board.setCommentCount(jungCommentService.selectCountByRef(board.getIdx()));
+
+				// 댓글수
+				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+
+			
 			}
 			pv.setList(list);
 		} catch (SQLException e) {
