@@ -1,8 +1,8 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
 <title>Clean Blog - Start Bootstrap Theme</title>
@@ -13,45 +13,68 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <!-- Core theme CSS (includes Bootstrap)-->
 <!-- UIkit CSS -->
-<link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+<!-- 구글 폰트 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 <!-- UIkit JS -->
-<script
-	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
-<script
-	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 
 <link rel="stylesheet" href="/css/index.css">
 <script src="/js/index.js"></script>
 </head>
  <style>
+ 		*{padding: 0; margin: 0; box-sizing: border-box;}
         /* 갤러리 스타일 */
         .gallery {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4열 */
-            grid-template-rows: repeat(4, auto); /* 4행 */
-            gap: 10px;
-        }
+    		display: grid;
+    		grid-template-columns: repeat(4, 1fr);
+    		grid-auto-rows: minmax(100px, auto); /* 각 행의 높이를 자동으로 조절합니다. */
+   	 	
+    		gap: 10px;
+    		border: 1px solid #ccc; /* 선 스타일 추가 */
+   			padding: 70px; /* 간격 조정 */
+		}
         
         .gallery-item {
             position: relative;
             overflow: hidden;
             width: 100%;
-            padding-bottom: 100%; /* 이미지를 정사각형으로 유지 */
+            height: 457px;
+            padding-bottom: 40%; /* 이미지를 정사각형으로 유지 */
+            align-items: center;
+            padding-right: 30px; 
+            padding-left: 30px;
+        }
+        .img-container{
+        	height: 357px;
+        	position:relative;
+        	overflow: hidden;
+        	
+        }
+        .image {
+        	width:100%;
+        	height:357px;
+        	display:flex;
+        	align-items:center;
+        	justify-content:center;
+        	position: absolute;
+        	top: 50%;
+        	left: 50%;
+        	transform: translate(-50%, -50%);
+        	transition: 0.7s ease-in-out;
+        }
+        .image img {
+        	width: 100%;
+        }
+        .titla-area{
+        	height: 100px;
         }
         
-        .gallery-item img {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 이미지를 적절히 자르고 확대하여 채움 */
-            transition: transform 0.3s ease;
+        .img-container:hover .image{
+        	left: 100%;
         }
         
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
         
         .gallery-item-overlay {
             position: absolute;
@@ -75,11 +98,13 @@
         .gallery-item-overlay-content {
             text-align: center;
         }
+
+      
     </style>
 <body>
-	<!-- 헤더 -->
-	<header>
-		<nav>
+    <!-- 헤더 -->
+    <header>
+        <nav>
             <div class="logo">
                 <img src="Spotify_Logo_RGB_White.png" alt="logo">
             </div>
@@ -92,35 +117,152 @@
                 <a href="">Download</a>
                 <span>|</span>
                 <th:block th:if="${session.user != null}">
-	                <a href="/logout">Logout</a>                
+                    <a href="/logout">Logout</a>                
                 </th:block>
                 <th:block th:if="${session.user == null}">
-	                <a href="/member/join">Sign up</a>
-	                <a href="/member/login">Log in</a>                
+                    <a href="/member/join">Sign up</a>
+                    <a href="/member/login">Log in</a>                
                 </th:block>
             </div>
         </nav>
-	</header>
-	
-           
-	
-	 <div class="gallery">
-	   <div th:each="board : ${pv.list}">
-        <div class="gallery-item">
-             <div th:each="board : ${pv.list}">
-             <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
-             <img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
-             </div>
-         	</div>
-            <div class="gallery-item-overlay">
-                <div class="gallery-item-overlay-content">
-                    <h3 th:text="${board.title}">Title</h3>
-                    <p th:text="${board.content}">
+    </header>
+    
+    
+    <div id="container" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
+       
+		<div id="board-header" style="display: flex; justify-content: space-between; width: 100%">
+			<div>
+				<h3>게시판</h3>
+			</div>
+			<div>
+				<form action="/" method="get">
+					<div class="uk-inline">
+			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+			        </div>
+				</form>
+			</div>
+		</div>
+       <div style="padding: 10px">
+        <div class="gallery" style="width: 100%">
+
+            <div th:each="board : ${pv.list}" class="gallery-item" th:onclick="view([[${board.idx}]])">
+            	<div class="img-container">
+					<div class="image" th:if="${not #lists.isEmpty(board.fileboardVO)}">
+						<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
+					</div>
+					<div class="gallery-item-overlay" >
+	                    <div class="gallery-item-overlay-content">
+	                        <p th:text="${board.content}">Description</p>
+	                    </div>
+	                </div>            	
+            	</div>
+                <div class="titla-area">
+                	<div th:text="${board.title}" style="font-weight: bold; font-size: 23px;">title</div>
+                	<div th:text="${board.member.name}">name</div>
+					<div style="font-size: 14px; align-items: center; display: flex;">
+						<span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span>
+               			<span class="time" style="padding-right: 10px;">[[${#dates.format(board.regDate, 'yy-MM-dd')}]] </span>ㆍ<span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">chat</span>
+               			<span> [[${board.commentCount}]]</span>ㆍ<span class="material-symbols-outlined" style="font-size: 20px; margin-right: 5px;">visibility</span><span>[[${board.readCount}]]</span>
+               		</div>
+               			<span class="elapsed" th:text="${#dates.format(board.regDate, 'yyyy-MM-dd HH:mm:ss')}">게시일</span>
                 </div>
             </div>
         </div>
-       </div>
-        <!-- 추가 이미지들 -->
-    </div>
+     </div>
+    
+   </div>
+   <script type="text/javascript" th:inline="javascript">
+   function elapsedTime(date) {
+       const start = new Date(date);
+       const end = new Date();
+
+       const diff = (end - start) / 1000;
+       
+       const times = [
+         { name: '년', milliSeconds: 60 * 60 * 24 * 365 },
+         { name: '개월', milliSeconds: 60 * 60 * 24 * 30 },
+         { name: '일', milliSeconds: 60 * 60 * 24 },
+         { name: '시간', milliSeconds: 60 * 60 },
+         { name: '분', milliSeconds: 60 },
+       ];
+
+       for (const value of times) {
+         const betweenTime = Math.floor(diff / value.milliSeconds);
+
+         if (betweenTime > 0) {
+           return `${betweenTime}${value.name} 전`;
+         }
+       }
+       return '방금 전';
+     }
+
+     // 경과 시간 표시 엘리먼트를 찾고 업데이트합니다.
+     const elapsedElements = document.querySelectorAll('.elapsed');
+     elapsedElements.forEach((element) => {
+         const regDate = element.textContent; // regDate를 엘리먼트의 텍스트로 설정합니다.
+         const elapsed = elapsedTime(regDate); // 경과 시간을 가져옵니다.
+         element.textContent = elapsed; // 엘리먼트의 텍스트를 업데이트합니다.
+     });
+     
+     function view(idx) {
+    		location.href = "/blog/" + idx
+    	}
+   //back 눌렀을때 리로드하는 함수
+     window.onpageshow = function(event) {
+     	if (event.persisted) {
+     		document.location.reload();
+     	}
+     };
+     
+   
+     // 페이지 로드 시 실행되는 함수
+     document.addEventListener('DOMContentLoaded', function () {
+         // 스크롤 이벤트를 감지하여 handleScroll 함수 호출
+         window.addEventListener('scroll', handleScroll);
+     });
+
+     // 스크롤 이벤트 핸들러
+     function handleScroll() {
+         // 현재 스크롤 위치
+         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+         // 뷰포트의 높이
+         const viewportHeight = window.innerHeight;
+         // 문서의 전체 높이
+         const documentHeight = document.documentElement.scrollHeight;
+
+         // 스크롤이 문서 하단에 도달하면 다음 페이지를 로드
+         if (scrollTop + viewportHeight >= documentHeight) {
+             loadNextPage();
+         }
+     }
+
+     // 다음 페이지 로드 함수
+     function loadNextPage() {
+         // 여기에 다음 페이지를 로드하는 코드를 추가
+         axios.post('/gallery/paged', { 
+        	'currentPage': currentPage,
+ 			'search': search,
+ 		})
+         .then(function (res) {
+        	 const data = res.data;
+        	 content=``;
+        	 data.forEach(board=>{
+        		 const date = new Date(board.regDate);
+        		 const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+ 				    year: 'numeric',
+ 				    month: '2-digit',
+ 				    day: '2-digit'
+ 				}).format(date);
+        	 })
+         });
+     }
+
+   
+     
+     
+    
+   </script>
+
 </body>
 </html>
