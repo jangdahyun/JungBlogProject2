@@ -1,7 +1,6 @@
 package kr.ezen.jung.controller;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +11,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,7 +29,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
@@ -151,6 +151,20 @@ public class JungController {
 		return "blog"; // 임시값 blog.html
 	}
 	
+	@DeleteMapping(value = "/blog/{boardIdx}")
+	@ResponseBody
+	public String deleteblog(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
+		log.info("deleteblog({}) 실행", boardIdx);
+		int result = jungBoardService.deleteFake(boardIdx);
+		return result+"";
+	}
+	
+	@PostMapping(value = "/updateBolg/{boardIdx}")
+	public String updateBolg(HttpSession session,@PathVariable(value = "boardIdx") int boardIdx) {
+		
+		
+		return "redirect:/blog/"+ boardIdx;
+	}
 	
 	
 	@PostMapping(value = "/commentupload")
@@ -195,23 +209,86 @@ public class JungController {
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		heartVO.setUserRef(memberVO.getIdx());
 		heartVO.setBoardRef(map.get("boardRef"));
-		log.debug("좋아요 정보 : {}",heartVO);
-		int result = jungBoardService.insertHeart(heartVO); 
+		log.debug("dsds : {}",heartVO);
+		int result = jungBoardService.insertHeart(heartVO);
 		return result+"";
 	}
 	
 	@PostMapping(value = "/heartDelete")
 	@ResponseBody
-	public String heartdelete(HttpSession session,@RequestBody HashMap<String, Integer>map) {
+	public String heartdelet(HttpSession session,@RequestBody HashMap<String, Integer>map) {
 		HeartVO heartVO =new HeartVO();
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		heartVO.setUserRef(memberVO.getIdx());
 		heartVO.setBoardRef(map.get("boardRef"));
-		log.debug("좋아요 정보 : {}",heartVO);
+		log.debug("dsds : {}",heartVO);
 		int result = jungBoardService.deleteHeart(heartVO);
 		return result+"";
 	}
 	
+
+//	@GetMapping(value = { "/login" })
+//	public String login(@RequestParam(value = "error", required = false) String error,
+//			@RequestParam(value = "logout", required = false) String logout, Model model) {
+//		if (error != null)
+//			model.addAttribute("error", "error");
+//		if (logout != null)
+//			model.addAttribute("logout", "logout");
+//		return "login";
+//	}
+//	//회원가입 폼
+//	@GetMapping(value = {"/join"})
+//	public String join(HttpSession session) {
+//		// 현재 로그인이 되어있는데 회원가입을 하려고 한다. 막아야 한다.
+//		if(session.getAttribute("user")!=null) {
+//			session.removeAttribute("user");// 세션에 회원정보만 지운다.
+//			session.invalidate();// 세션자체를 끊고 다시 연결한다.
+//			return "redirect:/";
+//		}
+//		return "join";
+//	}
+//	@GetMapping(value = "/test/userIdCheck", produces = "text/plain;charset=UTF-8")
+//	@ResponseBody
+//	public String userIdCheck(@RequestParam(value = "username")String username) {
+//		return jungMemberService.selectByUsername(username)+"";
+//	}
+//	//회원가입 완료
+//	@GetMapping("/joinok")
+//	public String joinOkGet() {
+//		return "redirect:/";
+//	}
+//	@PostMapping("/joinok")
+//	public String joinOkPost(@ModelAttribute(value = "vo") JungMemberVO vo,Model model,@RequestParam(value = "bd")String bd ) {
+//		// 내용 검증을 해줘야 한다.
+//		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
+//		Date date = null;
+//		try {
+//			date = formatter.parse(bd);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+//		vo.setBirthDate(date);
+//		vo.setRole("ROLE_USER");
+//		model.addAttribute("vo",vo);
+////		memberService.insert(vo); // 저장
+//		return "joinOk";
+//	}
+//	
+//	@GetMapping(value = "/myblog/{idx}")
+//	public String myblog(@PathVariable(value = "idx") int idx, Model model) {
+//		JungMemberVO jungMemberVO=jungMemberService.selectByRef
+//		
+////		boardVO.setMember();
+//		List<JungCommentVO> commentList = jungCommentService.selectByRef(idx);
+//		
+//		boardVO.setCommentList(commentList);
+//		
+//		model.addAttribute("board",boardVO);
+//		return "myblog"; // 임시값 blog.html
+//	}
+	
+	
+
 	// 파일 업로드 처리 함
 	@PostMapping("/ckeditor2")
 	public String ckeditor2(Model model, @ModelAttribute(value = "cv") CommonVO cv ){

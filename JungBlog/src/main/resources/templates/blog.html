@@ -51,13 +51,13 @@
       <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
          <article style="width: 740px; margin: 20px auto;">
          	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
-            <div id="user">[[${board.member.name}]] ㆍ<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp;ㆍ </div>
+            <div id="user">[[${board.member.name}]] ㆍ<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp; </div>
             <div id="title"><h1>[[${board.title}]]</h1></div>
             <div class="hr"></div>
             <div id="image" th:each="fileboard : ${board.fileboardVO}">
-    			<img th:src="@{'/upload/' + ${fileboard.filepath}}" alt="Image" />
+    			<img style="margin-bottom: 10px;" th:src="@{'/upload/' + ${fileboard.filepath}}" alt="Image" />
+    			
 			</div>
-
             <div id="content">
                [(${board.content})]
             </div>
@@ -119,11 +119,27 @@
 					</ul>
 					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
 					<section>
+						<!-- 게시글 삭제 버튼 -->
 						
 					</section>
 				</div>
 	       </article>
       </div>
+      	<th:block th:if="${session.user.idx == board.ref}">
+      		<input type="hidden" id="deleteCk" value="0">
+				<div style="text-align: right; ">
+    				<!-- 게시글 삭제 버튼 -->
+   					<button id="deleteButton">게시글 삭제</button>    				
+				</div>
+		</th:block>
+		
+		<th:block th:if="${session.user.idx == board.ref}">
+				<div style="text-align: right; ">
+    				<!-- 게시글 삭제 버튼 -->
+   					<button id="updateBtn">게시글 수정</button>    				
+				</div>
+		</th:block>
+
    </main>
 </body>
 </html>

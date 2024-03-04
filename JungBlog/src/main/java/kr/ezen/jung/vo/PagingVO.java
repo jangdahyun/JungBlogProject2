@@ -138,7 +138,7 @@ public class PagingVO<T> {
 	         // 페이지 이동
 	         for(int i=startPage;i<=endPage;i++) {
 	            if(i==currentPage) { // 현재 페이지는 링크를 걸지 않는다.
-	               sb.append("<li><a href=''>" + i + "</a></li>");
+	               sb.append("<li><a class='active' href=''>" + i + "</a></li>");
 	            }else {
 	               sb.append("<li><a href='?p=" + i +"'>" + i + "</a></li>");
 	            }

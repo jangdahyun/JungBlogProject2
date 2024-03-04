@@ -124,7 +124,7 @@
 		UPDATE jung_member SET
 			role = #{role}
 		WHERE
-			username = #{username}
+			idx = #{idx}
 	</update>
 
 
