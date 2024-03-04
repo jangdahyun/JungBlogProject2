@@ -57,7 +57,7 @@ public class GalleryController {
 //	}
 	
 	@GetMapping("/galleryboardUpload")
-	public String galleryboard2() {
+	public String galleryboard() {
 		return "gallery/galleryboardupload";
 	}
 	
@@ -108,7 +108,7 @@ public class GalleryController {
 	     }
 	    log.info("서버 실제 경로 : " + uploadPath); // 확인용
 	    
-	    
+	    int count =1;
 	    // 여러개 파일 받기
         List<MultipartFile> list = request.getFiles("file"); // form에 있는 name과 일치
         String url = "";
@@ -133,6 +133,8 @@ public class GalleryController {
                     fileBoardVO.setFilepath(filepath);
                     fileBoardVO.setRef(boardVO.getIdx());
                     jungFileBoardService.insert(fileBoardVO);
+                    log.info("COUNT2:{}" , count++);
+                   
                  }
               }
            }
