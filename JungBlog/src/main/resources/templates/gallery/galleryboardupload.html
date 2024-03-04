@@ -162,6 +162,7 @@
                     fileInfo.files = newFileList;
 
                     fileBox.appendChild(fileInfo);
+                
                 }
                 showFileInfo();
             } else {
@@ -174,6 +175,7 @@
             // 선택한 파일 정보를 화면에 출력
             const files = Array.from($(this)[0].files);
             handleFileSelect(files);
+           
         });
 
         // 드래그 앤 드롭 영역 설정

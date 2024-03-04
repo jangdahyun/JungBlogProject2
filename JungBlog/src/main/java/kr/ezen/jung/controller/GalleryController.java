@@ -51,50 +51,36 @@ public class GalleryController {
 	@Autowired
 	private JungCommentService jungCommentService;
 	
-	@GetMapping("/galleryboardUpload")
-	public String galleryboard(Model model, @ModelAttribute(value = "cv") CommonVO cv) {
+//	@PostMapping("/galleryboardUpload")
+//	public String galleryboard() {
+//		return "gallery/galleryboardupload";
+//	}
 	
-		model.addAttribute("cv", cv);
-		return "galleryboardupload";
+	@GetMapping("/galleryboardUpload")
+	public String galleryboard2() {
+		return "gallery/galleryboardupload";
 	}
 	
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
-	public String gallery(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
+	public String gallery(@ModelAttribute(value = "cv") CommonVO cv, Model model) {
 		cv.setCategoryNum(4); //갤러리 번호 5번인데 일단 4번으로 함
 		// psb search
 		cv.setS(20);
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
-		
-		List<JungBoardVO> list = pv.getList();
-		list.forEach((board)->{
-			// 유저정보 넣어주기
-			board.setMember(jungMemberService.selectByIdx(board.getRef()));
-			// 좋아요 갯수 넣어주기
-			board.setCountHeart(jungBoardService.countHeart(board.getIdx()));
-			// 카테고리 이름넣기
-			board.setCategoryName(jungBoardService.findCategoryName(board.getCategoryNum()));
-			
-			// 파일넣기
-			board.setFileboardVO(jungFileBoardService.selectfileByRef(board.getIdx()));
-			//댓글 수
-			board.setCommentCount(jungCommentService.selectCountByRef(board.getIdx()));
-		
-		});
-		pv.setList(list);
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
-		return "gallery";
+		return "gallery/gallery";
 	}
 	
+	
 	@PostMapping(value = "/paged")
-	@ResponseBody()
+	@ResponseBody() //응답을 객체로 받는다. 
 	public List<JungBoardVO> paging(@RequestBody Map<String, Object> map){
 		CommonVO cv = new CommonVO();
 		cv.setP((Integer) map.get("currentPage"));
 		cv.setSearch((String) map.get("search"));
 		cv.setS(20);
-		cv.setB(4);
 		cv.setCategoryNum(4);
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		return pv.getList();
@@ -105,7 +91,8 @@ public class GalleryController {
 	public String galleryboardUploadOk(Model model) {
 		return "redirect:/gallery";
 	}
-	@Transactional
+	//MultipartHttpServletRequest 파일을 받을 수 있는.
+	@Transactional //한꺼번에 저장하기 위해 하나가 에러가되면 모든게 막히게
 	@PostMapping("/galleryboardUploadOk")
 	public String galleryboardOk(HttpSession session, @ModelAttribute(value = "boardVO") JungBoardVO boardVO, MultipartHttpServletRequest request) {
 		// 1.board 저장
