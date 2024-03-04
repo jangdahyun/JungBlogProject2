@@ -86,6 +86,8 @@ public class JungFileBoardController {
 		
 		return "file/fileboard";
 	}
+	
+	
 	@GetMapping("/fileuploadOk")
 	public String fileuploadOk(Model model) {
 		return "redirect:/fileboard";
