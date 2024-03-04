@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- UIkit CSS -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+<head>
+<meta charset="UTF-8">
+<title>자료실</title>
+</head>
+<body>
+    <h1>자료실</h1>
+    <div th:if="${#lists.isEmpty(pv.list)}">
+        <p>현재 자료가 없습니다.</p>
+    </div>
+    <div th:each="board : ${pv.list}">
+        <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
+            <img th:src="@{'./static/fileicon'}"
+                alt="" />    
+        </div>
+        
+    </div>
+    
+  <div>
+	<form action="/" method="get">
+		<div class="uk-inline">
+			<span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+	            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+        </div>
+	</form>
+  </div>
+
+	<div th:each="board : ${pv.list}">
+	    <button style="display: block; border-radius: 5em; padding: 0.6em 1em; background: #F9F9F9; box-shadow: 1px 2px 10px rgba(0,0,0,0.2); margin: 5px 0;">
+	        <span th:text="${board.title}"></span>
+	        <span th:text="${board.content}"></span>
+	        <span th:if="${not #lists.isEmpty(board.fileboardVO)}">
+	            <!-- 이미지 경로 설정 -->
+	            <img th:src="@{'./static/fileicons/' + #strings.substringAfterLast(board.fileboardVO[2].filepath, '.')} + '.gif'" alt="" />
+	            <span th:text="${board.fileboardVO[0].filepath}"></span> <!-- 파일 이름 -->
+	        </span>
+	        <span th:text="${board.readCount + ' views'}"></span>
+	    </button>
+	</div>
+    
+    
+    <!-- [[${pv.list}]] -->
+</body>
+</html>
