@@ -164,4 +164,45 @@ public class JungMemberManController {
 	    return "admin/mailToUserResult";
 	}
 	
+	
+	/**
+	 * 회원 권한 변경 페이지
+	 * @param session
+	 * @param model
+	 * @param cv
+	 * @return
+	 */
+	@GetMapping(value = "/user-roles")
+	public String userRoles(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+	    cv.setS(20);
+	    log.info("userRoles 실행 cv: {}", cv);
+	    PagingVO<JungMemberVO> pv = jungMemberService.getUsers(cv);
+		model.addAttribute("pv", pv);
+		model.addAttribute("cv", cv);
+		return "admin/userRoles";
+	}
+	
+	
+	@PostMapping(value = "/updateUserRole")
+	public String updateUserRole(HttpSession session, @ModelAttribute(value = "cv") CommonVO cv, @RequestParam(value = "role") int role) {
+		log.info("updateUserRole 실행 => cv:{}, role:{}", cv, role);
+		JungMemberVO memberVO = new JungMemberVO();
+		memberVO.setIdx(cv.getIdx());
+		if(role == 0) {
+			memberVO.setRole("ROLE_USER");
+		} else {
+			memberVO.setRole("ROLE_ADMIN");
+		}
+		log.info("memberVO: {}", memberVO);
+		jungMemberService.updateRole(memberVO);
+		return "redirect:/adm/user-roles?p="+cv.getP()+"&search="+cv.getSearch();
+	}
 }
