@@ -54,7 +54,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 			HashMap<String, Object> map = new HashMap<>();
 			map.put("search", commonVO.getSearch());
 			map.put("categoryNum", commonVO.getCategoryNum());
-			
+			map.put("orderCode", commonVO.getOrderCode());
 			int totalCount = jungBoardDAO.selectCount(map); // 서치가 되면 서치가 되게 수정해함!
 			pv = new PagingVO<>(totalCount, commonVO.getCurrentPage(), commonVO.getSizeOfPage(),
 					commonVO.getSizeOfBlock()); // 페이지 계산 완료

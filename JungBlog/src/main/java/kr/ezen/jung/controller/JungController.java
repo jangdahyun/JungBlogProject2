@@ -68,16 +68,6 @@ public class JungController {
 		log.info("cv: {}",cv);
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		
-		List<JungBoardVO> list = pv.getList();
-		list.forEach((board)->{
-			// 유저정보 넣어주기
-			board.setMember(jungMemberService.selectByIdx(board.getRef()));
-			// 좋아요 갯수 넣어주기
-			board.setCountHeart(jungBoardService.countHeart(board.getIdx()));
-			// 카테고리 이름 넣어주기
-			board.setCategoryName(jungBoardService.findCategoryName(board.getCategoryNum()));
-		});
-		pv.setList(list);
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
