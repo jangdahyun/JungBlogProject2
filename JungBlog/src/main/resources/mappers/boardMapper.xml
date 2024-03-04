@@ -12,7 +12,15 @@
 				from
 					(
 						select
-							*
+							jung_board.*
+							, (
+								SELECT
+									COUNT(*)
+								FROM
+									heart_tb 
+								WHERE
+									heart_tb.boardRef = jung_board.idx
+							) AS countHeart
 						from
 							jung_board
 						<where>						
@@ -30,7 +38,17 @@
 							</if>
 						</where>
 						order by
-							idx desc
+							<choose>
+								<when test="orderCode == 'countHeart'">
+									countHeart DESC, jung_board.idx DESC
+								</when>
+								<when test="orderCode == 'readCount'">
+									jung_board.readCount DESC, jung_board.idx DESC
+								</when>
+								<otherwise>
+									jung_board.idx DESC
+								</otherwise>
+							</choose>
 					) Q
 				where
 					<![CDATA[

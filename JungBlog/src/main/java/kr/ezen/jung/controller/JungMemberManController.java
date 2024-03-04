@@ -37,7 +37,7 @@ public class JungMemberManController {
 	@Autowired
 	private JungBoardService jungBoardService;
 	
-	
+	//=========================================================================================================================================
 	@GetMapping(value = {"","/"})
 	public String man(HttpSession session, Model model) {
 		if(session.getAttribute("user") == null) {
@@ -58,9 +58,9 @@ public class JungMemberManController {
     	model.addAttribute("users", memberList);
     	model.addAttribute("boards", boardList);
     	
-		return "admin/index"; // 관리자 메인페이지
+		return "admin/admin"; // 관리자 메인페이지
 	}
-	
+	//=========================================================================================================================================
 	// 회원관리페이지
 	@GetMapping(value = "/userManagement")
 	public String userManagement(@ModelAttribute(value = "cv") CommonVO cv, HttpSession session, Model model) {
@@ -78,7 +78,7 @@ public class JungMemberManController {
 		return "admin/userManagement"; // 관리자 메인페이지
 	}
 	
-	
+	//=========================================================================================================================================
 	// 누구에게 메일을 전송할지 고르는 곳
 	@GetMapping(value = "/mailToUser")
 	public String mailToUser(HttpSession session, Model model) {
@@ -164,7 +164,7 @@ public class JungMemberManController {
 	    return "admin/mailToUserResult";
 	}
 	
-	
+	//=========================================================================================================================================
 	/**
 	 * 회원 권한 변경 페이지
 	 * @param session
@@ -205,4 +205,27 @@ public class JungMemberManController {
 		jungMemberService.updateRole(memberVO);
 		return "redirect:/adm/user-roles?p="+cv.getP()+"&search="+cv.getSearch();
 	}
+	
+	
+	//=========================================================================================================================================
+	@GetMapping(value = "/bestPost")
+	public String bestPost(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
+		log.info("bestPost실행 cv: {}",cv);
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+		// 기본값은 조회순
+		if(cv.getOrderCode() == null) {
+			cv.setOrderCode("readCount");
+		}
+		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
+		model.addAttribute("pv", pv);
+		return "admin/bestPost";
+	}
+	
 }

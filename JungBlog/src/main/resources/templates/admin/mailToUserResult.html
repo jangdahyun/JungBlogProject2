@@ -39,47 +39,12 @@
 <body>
 	<div id="wrap">
 	    <div id="content">
-	    	<header>
-				<div id="logo"><a href="/adm">ADMINISTRATOR</a></div>
-				<div id="info">
-					[[${name}]]님 반갑습니다.
-					<a id="homeBtn" href="/">홈으로</a>
-				</div>
-		    </header>
+	    	<!-- header -->
+    		<th:block th:include="/admin/header.html"></th:block>
+    	
 		    <div style="padding-top: 50px;">
-		        <div id="leaf-area">
-		            <ul>
-		                <li>
-		                    <label>회원 관리</label>
-		                    <ul>
-		                        <li><a href="/adm/userManagement">회원 관리</a></li>
-		                        <li><a href="/adm/mailToUser">회원 메일 발송</a></li>
-		                        <li><a href="/adm/user-roles">회원 권한 수정</a></li>
-		                    </ul>
-		                </li>
-		                <li>
-		                    <label>게시물 관리</label>
-		                    <ul>
-		                        <li><a href="#">인기 게시물</a></li>
-		                        <li><a href="#">게시판 관리</a></li>
-		                        <li><a href="#">파일 관리</a></li>
-		                    </ul>
-		                </li>
-		                <li>
-		                    <label>1:1 문의</label>
-		                    <ul>
-		                        <li><a href="#">1:1 문의 사항</a></li>
-		                    </ul>
-		                </li>
-		                <li>
-		                    <label>공지사항관리</label>
-		                    <ul>
-		                        <li><a href="#">공지사항보기</a></li>
-		                        <li><a href="#">공지사항쓰기</a></li>
-		                    </ul>
-		                </li>
-		            </ul>
-		        </div>
+		        <!-- leftArea -->
+	    		<th:block th:include="/admin/leftArea.html"></th:block>
 		    
 		        <div id="right-area">
 		        	<h3>메일 발송 확인</h3>
