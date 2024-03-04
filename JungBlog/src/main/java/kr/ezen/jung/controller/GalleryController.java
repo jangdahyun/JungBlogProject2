@@ -87,6 +87,7 @@ public class GalleryController {
 	}
 	
 	
+	
 	@GetMapping("/galleryboardUploadOk")
 	public String galleryboardUploadOk(Model model) {
 		return "redirect:/gallery";

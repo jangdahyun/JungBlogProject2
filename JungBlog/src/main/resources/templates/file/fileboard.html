@@ -19,14 +19,14 @@
     <div th:if="${#lists.isEmpty(pv.list)}">
         <p>현재 자료가 없습니다.</p>
     </div>
-    <div th:each="board : ${pv.list}">
-        <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
-            <img th:src="@{'./static/fileicon'}"
-                alt="" />    
-        </div>
-        
-    </div>
-    
+	<div th:each="board : ${pv.list}">
+    	<div th:if="${board.fileboardVO != null}">
+        	<div th:each="file : ${board.fileboardVO}">
+           	 <img th:src="@{'/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" />
+        	</div>
+    	</div>
+	</div>
+
   <div>
 	<form action="/" method="get">
 		<div class="uk-inline">
