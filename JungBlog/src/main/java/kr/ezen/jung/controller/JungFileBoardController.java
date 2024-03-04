@@ -60,7 +60,7 @@ public class JungFileBoardController {
 	@GetMapping("/fileupload")
 	public String fileupload(Model model, @ModelAttribute(value = "cv") CommonVO cv) {
 		model.addAttribute("cv", cv);
-		return "fileupload";
+		return "file/fileupload";
 	}
 	
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
@@ -84,7 +84,7 @@ public class JungFileBoardController {
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		
-		return "fileboard";
+		return "file/fileboard";
 	}
 	@GetMapping("/fileuploadOk")
 	public String fileuploadOk(Model model) {
