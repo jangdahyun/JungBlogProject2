@@ -124,12 +124,15 @@ public class JungBoardServiceImpl implements JungBoardService {
 	 * 
 	 * @param jung_board의 idx
 	 */
-	public void deleteFake(int idx) {
+	public int deleteFake(int idx) {
+		int result = 0;
 		try {
 			jungBoardDAO.deleteFake(idx);
+			result = 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
 	@Override

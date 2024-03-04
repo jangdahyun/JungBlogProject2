@@ -11,10 +11,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
+import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.JungQnaBoardService;
 import kr.ezen.jung.vo.CommonVO;
@@ -57,6 +60,8 @@ public class JungController {
 	@Autowired
 	private JungQnaBoardService JungQnaBoardService;
 	
+	@Autowired
+	private JungFileBoardService jungFileBoardService;
 
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
@@ -105,6 +110,8 @@ public class JungController {
 		
 		boardVO.setCountHeart(jungBoardService.countHeart(idx));
 		
+		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
+		
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
 		if(request.getSession().getAttribute("user")!=null) {
 			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
@@ -144,6 +151,20 @@ public class JungController {
 		return "blog"; // 임시값 blog.html
 	}
 	
+	@DeleteMapping(value = "/blog/{boardIdx}")
+	@ResponseBody
+	public String deleteblog(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
+		log.info("deleteblog({}) 실행", boardIdx);
+		int result = jungBoardService.deleteFake(boardIdx);
+		return result+"";
+	}
+	
+	@PostMapping(value = "/updateBolg/{boardIdx}")
+	public String updateBolg(HttpSession session,@PathVariable(value = "boardIdx") int boardIdx) {
+		
+		
+		return "redirect:/blog/"+ boardIdx;
+	}
 	
 	
 	@PostMapping(value = "/commentupload")
