@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
+import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.JungQnaBoardService;
 import kr.ezen.jung.vo.CommonVO;
@@ -59,6 +60,8 @@ public class JungController {
 	@Autowired
 	private JungQnaBoardService JungQnaBoardService;
 	
+	@Autowired
+	private JungFileBoardService jungFileBoardService;
 
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
@@ -106,6 +109,8 @@ public class JungController {
 		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
 		
 		boardVO.setCountHeart(jungBoardService.countHeart(idx));
+		
+		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
 		
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
 		if(request.getSession().getAttribute("user")!=null) {

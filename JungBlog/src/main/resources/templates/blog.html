@@ -47,8 +47,6 @@
             </div>
         </nav>
 	</header>
-	
-	
 	<main style="width: 940px; padding: 20px; margin: auto;background: #292820;">
       <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
          <article style="width: 740px; margin: 20px auto;">
@@ -56,6 +54,10 @@
             <div id="user">[[${board.member.name}]] ㆍ<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp;ㆍ </div>
             <div id="title"><h1>[[${board.title}]]</h1></div>
             <div class="hr"></div>
+            <div id="image" th:each="fileboard : ${board.fileboardVO}">
+    			<img th:src="@{'/upload/' + ${fileboard.filepath}}" alt="Image" />
+			</div>
+
             <div id="content">
                [(${board.content})]
             </div>

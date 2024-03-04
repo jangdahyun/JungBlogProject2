@@ -114,9 +114,12 @@
     </style>
 <body>
 	<input type="hidden" th:value="${pv.totalPage}" id="totalPage">
-	<div id="writeBtn">
-		<span class="material-symbols-outlined" id="icon">stylus</span><span>글쓰기</span>	
-	</div>
+	
+	<form action="gallery/galleryboardUpload" method="post" id="write">
+  		<div id="writeBtn" onclick="submitForm()">
+     		<span class="material-symbols-outlined" id="icon" th:type="submit">stylus</span><span>글쓰기</span>    
+    	</div>
+	</form>
     <!-- 헤더 -->
     <header>
         <nav>
@@ -325,6 +328,11 @@
     		 alert('더없음');
     	 }
 	}
+     
+     function submitForm() {
+    	    document.getElementById("write").submit();
+    	}
+
 
    </script>
     

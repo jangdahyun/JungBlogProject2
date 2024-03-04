@@ -51,9 +51,14 @@ public class GalleryController {
 	@Autowired
 	private JungCommentService jungCommentService;
 	
+//	@PostMapping("/galleryboardUpload")
+//	public String galleryboard() {
+//		return "gallery/galleryboardupload";
+//	}
+	
 	@GetMapping("/galleryboardUpload")
-	public String galleryboard() {
-		return "galleryboardupload";
+	public String galleryboard2() {
+		return "gallery/galleryboardupload";
 	}
 	
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
@@ -65,8 +70,9 @@ public class GalleryController {
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
-		return "gallery";
+		return "gallery/gallery";
 	}
+	
 	
 	@PostMapping(value = "/paged")
 	@ResponseBody() //응답을 객체로 받는다. 
