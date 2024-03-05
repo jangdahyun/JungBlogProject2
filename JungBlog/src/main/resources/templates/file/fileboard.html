@@ -1,55 +1,131 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
-<!-- UIkit CSS -->
-<link rel="stylesheet"
-	href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
-
-<!-- UIkit JS -->
-<script
-	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
-<script
-	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 <head>
-<meta charset="UTF-8">
-<title>자료실</title>
+    <meta charset="UTF-8">
+    <title>자료실</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/index.css">
 </head>
+<style>
+    /* 기본 그림자 스타일 */
+    .board-container {
+        border-radius: 20px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        width: 180px;
+        height: 150px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* 기본 그림자 설정 */
+        transition: box-shadow 0.3s ease; /* 그림자 변화에 대한 전환 설정 */
+        display: inline-block; /* 인라인 블록 요소로 변경하여 가운데 정렬 */
+        text-align: center; /* 내부 요소를 가운데 정렬 */
+        vertical-align: top; /* 가운데 정렬 요소의 세로 정렬을 위해 top으로 설정 */
+        margin: 10px; /* 요소 간 여백 설정 */
+    }
+
+    /* 마우스 오버 시 그림자 스타일 */
+    .board-container:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 그림자를 더 짙게 설정 */
+    }
+</style>
 <body>
-    <h1>자료실</h1>
+    <!-- 헤더 -->
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="Spotify_Logo_RGB_White.png" alt="logo">
+            </div>
+            <div class="menuBar">
+                <a href="">fileupload</a>
+                <a href="">fileupload</a>
+                <a href="">Support</a>
+                <a href="">Download</a>
+                <span>|</span>
+                <th:block th:if="${session.user != null}">
+                    <th:block th:if="${session.user.role == 'ROLE_ADMIN'}">
+                        <a href="/adm">관리자 페이지</a>
+                    </th:block>
+                    <th:block th:if="${session.user.role == 'ROLE_USER'}">
+                        <a href="/member/mypage">My Page</a>
+                    </th:block>
+                    <a href="/logout">Logout</a>
+                </th:block>
+                <th:block th:if="${session.user == null}">
+                    <a href="/member/join">Sign up</a>
+                    <a href="/member/login">Log in</a>
+                </th:block>
+            </div>
+        </nav>
+    </header>
+    <h1 style="text-align: center; color: rgb(255,0,255);">자료실-Download</h1>
     <div th:if="${#lists.isEmpty(pv.list)}">
         <p>현재 자료가 없습니다.</p>
     </div>
-    <div th:each="board : ${pv.list}">
-        <div th:if="${not #lists.isEmpty(board.fileboardVO)}">
-            <img th:src="@{'./static/fileicon'}"
-                alt="" />    
-        </div>
-        
+    
+    <!-- 검색어 입력란 -->
+    <div style="text-align: right; ">
+        <form action="/" method="get">
+            <div class="uk-inline">
+                <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+                <input name="search" class="uk-input" type="text" autocomplete='off'
+                    aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+            </div>
+        </form>
     </div>
-    
-  <div>
-	<form action="/" method="get">
-		<div class="uk-inline">
-			<span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
-	            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
-        </div>
-	</form>
-  </div>
-
-	<div th:each="board : ${pv.list}">
-	    <button style="display: block; border-radius: 5em; padding: 0.6em 1em; background: #F9F9F9; box-shadow: 1px 2px 10px rgba(0,0,0,0.2); margin: 5px 0;">
-	        <span th:text="${board.title}"></span>
-	        <span th:text="${board.content}"></span>
-	        <span th:if="${not #lists.isEmpty(board.fileboardVO)}">
-	            <!-- 이미지 경로 설정 -->
-	            <img th:src="@{'./static/fileicons/' + #strings.substringAfterLast(board.fileboardVO[2].filepath, '.')} + '.gif'" alt="" />
-	            <span th:text="${board.fileboardVO[0].filepath}"></span> <!-- 파일 이름 -->
-	        </span>
-	        <span th:text="${board.readCount + ' views'}"></span>
-	    </button>
+    <br>
+   	<div style="text-align: right; solid: rgb(255,0,255);">
+		<form action="/ckeditor2" method="post" id="writeBtn" >
+			<input type="hidden" name="p" th:value="${cv.p}">
+			<input type="hidden" name="search" th:value="${cv.search}">
+			<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+			
+			<input type="submit" class="uk-button uk-button-default" style="color: rgb(255,0,255)" value="업 로 드"/>			
+		</form>
 	</div>
-    
-    
-    <!-- [[${pv.list}]] -->
+    <div style="text-align: center;"> <!-- 전체 요소를 가운데 정렬 -->
+        <div>
+            <div th:each="board, iterStat : ${pv.list}" style="display: inline-block; vertical-align: top; margin: 10px;">
+                <div th:if="${board.fileboardVO != null}" class="board-container" th:classappend="${iterStat.index % 5 == 0} ? 'clear'" style="border-radius: 20px; padding: 10px; background-color: #f0f0f0; position: relative;"> 
+                    <div th:each="file : ${board.fileboardVO}">
+                        <img th:src="@{'/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" width="60" height="60" style="float: left;"/>
+                        <span th:text="${#strings.length(board.title) > 5 ? #strings.substring(board.title, 0, 5) + '...' : board.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br><br><br>
+                        <span th:utext="${#strings.length(board.content) &gt; 10 ? #strings.substring(board.content, 0, 10) + '...' : board.content}" style="text-align: left;"></span>
+						<div>
+							<hr>
+	                        <div class="boar-download" style="position: absolute; bottom: 0; left: 0;">
+	                            &nbsp;&nbsp;&nbsp;&nbsp;<img th:onclick='fileDown([[${file.filepath}]] , [[${file.url}]]);' th:src="@{'/fileicon/download.png'}"  alt="" width="20" height="15" style="cursor: pointer;"/>
+	                        </div>
+	                        <div class="board-details" style="position: absolute; bottom: 0; right: 0; color: grey;">자세히 보기&nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;</div>
+	                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <!-- Custom JS -->
+    <script src="/js/index.js"></script>
+    <script type="text/javascript">
+    	
+        function fileDown(ofile, sfile){
+            location.href='/fileboard/download?of=' + encodeURI(ofile) +'&sf=' + encodeURI(sfile);
+        }       
+        function filecontents(){
+        	location.href='/fileboard/'
+        }
+    </script>
 </body>
 </html>
+
+   
