@@ -95,13 +95,24 @@ public class JungBoardServiceImpl implements JungBoardService {
 	 * @return idx에 일치하는 JungBoardVO
 	 */
 	public JungBoardVO selectByIdx(int idx) {
-		JungBoardVO jungBoardVO = null;
+		JungBoardVO board = null;
 		try {
-			jungBoardVO = jungBoardDAO.selectByIdx(idx);
+			board = jungBoardDAO.selectByIdx(idx);
+			// 카테고리 이름
+			board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+			// 유저정보 넣어주기
+			board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+			// 좋아요 갯수 넣어주기
+			board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+			// 파일
+			board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+
+			// 댓글수
+			board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return jungBoardVO;
+		return board;
 	}
 
 	@Override

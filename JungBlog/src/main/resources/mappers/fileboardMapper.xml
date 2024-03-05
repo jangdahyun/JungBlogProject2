@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
 <mapper namespace="kr.ezen.jung.dao.JungFileBoardDAO">
+
+	<!-- 저장 -->
+	<insert id="insert" parameterType="JungFileBoardVO">
+	    insert into jung_file_board values(jung_board_idx_seq.nextval, #{ref}, #{filepath}, #{url})
+	</insert>
+	
+	<!-- 게시글에해당하는 파일 주기 -->
+	<select id="selectfileByRef" parameterType="int" resultType="JungFileBoardVO">
+		select * from jung_file_board where ref = #{ref} order by idx 
+	</select>
+
+	<!-- 게시글에해당하는 파일 지우기 -->
+	<delete id="deleteByRef" parameterType="int">
+		delete from jung_file_board where ref = #{ref}
+	</delete>
+
+
+
+
+	<delete id="deleteByIdx" parameterType="int">
+		delete from jung_file_board where idx = #{idx}
+	</delete>
+	
+	<select id="selectfileByIdx" parameterType="int" resultType="JungFileBoardVO">
+		select * from jung_file_board where idx=#{idx}
+	</select>
+	
 	<!-- 페이징을 위한 List 뿌리기 -->
 	<select id="selectList" parameterType="hashmap" resultType="JungFileBoardVO">
 		select
@@ -29,38 +56,12 @@
 			]]>
 	</select>
 	
-	<select id="selectfileByIdx" parameterType="int" resultType="JungFileBoardVO">
-		select * from jung_file_board where idx=#{idx}
-	</select>
-	
-	<!-- 유저가 쓴 글 보여주기 -->
-	<select id="selectfileByRef" parameterType="int" resultType="JungFileBoardVO">
-		select * from jung_file_board where ref = #{idx} order by idx 
-	</select>
-	
 	<select id="selectCount" parameterType="hashmap" resultType="int">
 		select count(*) from jung_file_board
 	</select>
 	
-	<insert id="insert" parameterType="JungFileBoardVO">
-	    insert into jung_file_board values(jung_board_idx_seq.nextval, #{ref}, #{filepath}, #{url})
-	</insert>
-
-	<update id="update" parameterType="JungFileBoardVO">
-		update jung_file_board set title=#{title}, content = #{content}, regdate = sysdate, filepath = #{filepath}, url = #{url} where idx = #{idx}
-	</update>
 	
-	<update id="updateReadCount" parameterType="int">
-		update jung_file_board set readCount = readCount + 1 where idx = #{idx}
-	</update>
 	
-	<update id="deleteFake" parameterType="int">
-		update jung_file_board set deleted = 1 where idx = #{idx}
-	</update>
-	
-	<delete id="deleteReal" parameterType="int">
-		delete from jung_file_board where idx = #{idx}
-	</delete>
 	
 	
 	

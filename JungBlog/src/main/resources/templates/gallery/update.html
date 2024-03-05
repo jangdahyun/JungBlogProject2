@@ -11,6 +11,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.7.3/js/uikit-icons.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+	<!-- axios.js -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style type="text/css">
         body {
             background: #f5f5f5;
@@ -118,9 +120,11 @@
 </head>
 <body>
 <div id="jjj">
-    <form action="galleryboardUploadOk" method="post" enctype="multipart/form-data" id="insertForm">
-        <input type="text" name="title" id="title" placeholder="글 제목을 입력해 주세요." required="required"/>
-        <input type="hidden" name="categoryNum" value="4">
+[[${board}]]
+    <form action="/gallery/galleryboardUpdateOk" method="post" enctype="multipart/form-data" id="insertForm">
+        <input type="text" name="title" id="title" placeholder="글 제목을 입력해 주세요." required="required" th:value="${board.title}"/>
+        <input type="hidden" th:value="board.content" id="editContent">
+        <input type="hidden" th:value="${board.idx}" name="idx">
         <!-- 파일 선택 버튼 -->
         <div id="file-drop-area">
             <div class="file-icon uk-margin-bottom" uk-icon="icon: cloud-upload"></div>
@@ -131,7 +135,7 @@
         <!-- 파일 정보를 표시할 영역 -->
         <div id="file-display-area"></div>
         <div id="files"></div>
-        <textarea name="content" id="content" placeholder="내용을 입력해 주세요." rows="10" required="required" style="resize: none"></textarea>
+        <textarea name="content" id="content" placeholder="내용을 입력해 주세요." rows="10" required="required" th:text="${board.content}" style="resize: none"></textarea>
         <input type="submit" id="submitBtn" value="글 올리기"/>
         <input type="button" id="homeBtn" onclick="window.location.href='/gallery'" value="Home으로"/>
     </form>

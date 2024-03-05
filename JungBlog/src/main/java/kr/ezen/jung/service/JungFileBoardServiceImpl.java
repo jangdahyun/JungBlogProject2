@@ -7,11 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kr.ezen.jung.dao.HeartDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.vo.CommonVO;
-import kr.ezen.jung.vo.HeartVO;
-import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungFileBoardVO;
 import kr.ezen.jung.vo.PagingVO;
 
@@ -21,21 +18,9 @@ public class JungFileBoardServiceImpl implements JungFileBoardService{
 	@Autowired
 	private JungFileBoardDAO jungFileBoardDAO;
 	
-	@Autowired
-	private HeartDAO heartDAO;	
-	
-	@Override
-	// 글 1개 보기
-	public JungFileBoardVO selectfileByIdx(int idx) {
-		JungFileBoardVO fileBoardVO = null;
-		try {
-			fileBoardVO = jungFileBoardDAO.selectfileByIdx(idx);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return fileBoardVO;
-	}
-
+	/**
+	 * 파일 저장하기
+	 */
 	@Override
 	public void insert(JungFileBoardVO fileboardVO) {
 		try {
@@ -44,35 +29,10 @@ public class JungFileBoardServiceImpl implements JungFileBoardService{
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void deleteFake(int idx) {
-		try {
-			jungFileBoardDAO.deleteFake(idx);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void deleteReal(int idx) {
-		try {
-			jungFileBoardDAO.deleteReal(idx);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void update(JungFileBoardVO fileBoardVO) {
-		try {
-			jungFileBoardDAO.update(fileBoardVO);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	// 유저가 쓴글만 보기
+	
+	/**
+	 * 게시글에 해당하는 파일 읽어오기
+	 */
 	@Override
 	public List<JungFileBoardVO> selectfileByRef(int idx) {
 		List<JungFileBoardVO> list = null;
@@ -83,16 +43,36 @@ public class JungFileBoardServiceImpl implements JungFileBoardService{
 		}
 		return list;
 	}
-
+	
+	/**
+	 * 게시글에 해당하는 파일 지우기
+	 * @param idx
+	 */
 	@Override
-	public void updateReadCount(int idx) {
+	public void deleteByRef(int ref) {
 		try {
-			jungFileBoardDAO.updateRealCount(idx);
+			jungFileBoardDAO.deleteByRef(ref);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	
+	
+	
+	//========================================================================================================================================================
+	/**
+	 * 해당하는 하나 지우기 
+	 */
+	@Override
+	public void deleteByIdx(int idx) {
+		try {
+			jungFileBoardDAO.deleteByIdx(idx);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public PagingVO<JungFileBoardVO> selectList(CommonVO commonVO) {
 		PagingVO<JungFileBoardVO> pv = null;
@@ -111,21 +91,23 @@ public class JungFileBoardServiceImpl implements JungFileBoardService{
 			
 			List<JungFileBoardVO> list = jungFileBoardDAO.selectList(map);
 			
-			for(JungFileBoardVO board : list) {
-				// 카테고리 이름
-				//board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
-				// 유저정보 넣어주기
-				//board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
-				// 좋아요 갯수 넣어주기
-				//board.setCountHeart(heartDAO.countHeart(board.getIdx()));
-				// 파일
-				//board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-			}
 			pv.setList(list);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return pv;
+	}
+	
+	@Override
+	// 글 1개 보기
+	public JungFileBoardVO selectfileByIdx(int idx) {
+		JungFileBoardVO fileBoardVO = null;
+		try {
+			fileBoardVO = jungFileBoardDAO.selectfileByIdx(idx);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return fileBoardVO;
 	}
 
 	

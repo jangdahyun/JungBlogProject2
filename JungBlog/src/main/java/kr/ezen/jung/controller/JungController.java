@@ -149,12 +149,11 @@ public class JungController {
 		return result+"";
 	}
 	
-	@PostMapping(value = "/updateBolg/{boardIdx}")
-	public String updateBolg(HttpSession session,@PathVariable(value = "boardIdx") int boardIdx) {
-		
-		
-		return "redirect:/blog/"+ boardIdx;
-	}
+	
+	
+
+    
+	
 	
 	
 	@PostMapping(value = "/commentupload")

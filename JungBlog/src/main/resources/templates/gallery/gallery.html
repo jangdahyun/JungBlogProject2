@@ -115,7 +115,7 @@
 <body>
 	<input type="hidden" th:value="${pv.totalPage}" id="totalPage">
 	
-	<form action="gallery/galleryboardUpload" method="get" id="write">
+	<form action="/gallery/galleryboardUpload" method="get" id="write">
   		<div id="writeBtn" onclick="submitForm()">
      		<span class="material-symbols-outlined" id="icon" th:type="submit">stylus</span><span>글쓰기</span>    
     	</div>
@@ -129,7 +129,7 @@
 
             
             <div class="menuBar">
-                <a href="">fileupload</a>
+                <a href="/gallery">갤러리 페이지</a>
                 <a href="">fileupload</a>
                 <a href="">Support</a>
                 <a href="">Download</a>
@@ -252,7 +252,7 @@
      }
      
      function view(idx) {
-    		location.href = "/blog/" + idx
+    		location.href = "/gallery/" + idx
     	}
    //back 눌렀을때 리로드하는 함수
      window.onpageshow = function(event) {
