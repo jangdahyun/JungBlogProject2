@@ -8,39 +8,63 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- Core theme CSS (includes Bootstrap)-->
+    <!-- ChartJs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- UIkit CSS -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	<link rel="stylesheet" href="/css/admin/header.css">
     <style type="text/css">
 		.subtitle {
 			font-size: 24px;
 		}
+		.hr{
+			width: 100%; height: 1px; background: #E5E5E5; border-radius: 50%; margin: 12px 0;
+		}
 		.xBox{
 			margin-bottom: 70px;
 		}
 		.btn-right{text-align: right;}
+		#chartArea{
+			display: flex;
+			width: 100%;
+		}
+		#chartArea>div{
+			width: 100%;
+			min-width: 500px;
+		}
     </style>
 </head>
 <body>
 <div id="wrap">
     <div id="content">
     	<!-- header -->
-    	<th:block th:include="/admin/header.html"></th:block>
+    	<th:block th:insert="~{/admin/header.html}"></th:block>
     	
 	    <div style="padding-top: 50px;">
 	    	<!-- leftArea -->
-	    	<th:block th:include="/admin/leftArea.html"></th:block>
+	    	<th:block th:insert="~{/admin/leftArea.html}"></th:block>
 	    
 	        <div id="right-area">
+        		<label class="subtitle" id="chartLabel">접속자 통계</label>
+        		<div class="hr"></div>
+	        	<div class="xBox" id="chartArea">
+	        		<div id="total" style="display: flex;align-items: center; justify-content: center;">
+		        		
+	        		</div>
+	        		<div style="min-width: 500px;">
+	        			<canvas id="lineExample"></canvas>
+	        		</div>
+	        	</div>
+				<label class="subtitle">최근 가입한 회원</label>
+	        	<div class="hr"></div>
 	        	<div class="xBox">
-					<label class="subtitle">최근 가입한 회원</label>
 	        		<table class="uk-table uk-table-striped">
 					    <thead>
 					        <tr>
@@ -72,8 +96,9 @@
 					</div>
 	        	</div>
 	        	
+				<label class="subtitle">최근 게시글물(10개)</label>
+	        	<div class="hr"></div>
 	        	<div class="xBox">
-					<label class="subtitle">최근 게시글물(10개)</label>
 	        		<table class="uk-table uk-table-striped">
 					    <thead>
 					        <tr>
@@ -106,5 +131,49 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+	$(function(){
+		axios.post('/adm/visitorData')
+		.then(res => {
+			const data = res.data;
+			const lineExample = document.querySelector('#lineExample').getContext('2d');
+			const currentDate = new Date();
+			const weekday = ['일', '월', '화', '수', '목', '금', '토']
+			const weekNum = currentDate.getDay();
+			const lineExampleChart = new Chart(lineExample, {
+			    type: 'line',
+			    data: {
+			        labels: [weekday[mod(weekNum-6, 7)], weekday[mod(weekNum-5, 7)], weekday[mod(weekNum-4, 7)], weekday[mod(weekNum-3, 7)], weekday[mod(weekNum-2, 7)], weekday[mod(weekNum-1, 7)], weekday[mod(weekNum, 7)]],
+			        datasets: [{
+			            label: '접속자 수',
+			            data: data.countList,
+			            borderColor: 'rgba(75, 192, 192, 1)',
+			            borderWidth: 1,
+			            fill: false
+			        }]
+			    },
+			    options: {
+			        scales: {
+			            x: {
+			                beginAtZero: true
+			            },
+			            y: {
+			                beginAtZero: true
+			            }
+			        }
+			    }
+			});
+			
+			$("#total").html(`현재 접속자 수 : ${data.activeSession}<br>총 접속자 수 : ${data.totalCount}`);
+		})
+		.catch(error => {
+		  console.log(error);
+		});
+	})
+	function mod(n, m) {
+	    return ((n % m) + m) % m;
+	}
+</script>
 </body>
 </html>

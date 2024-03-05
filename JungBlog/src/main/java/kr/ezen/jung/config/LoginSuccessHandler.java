@@ -19,6 +19,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		log.info("~~~~~~ 로그인 성공 ~~~~~~" + authentication.getName());		
 		log.info("~~~~~~ 로그인 성공 ~~~~~~" + authentication.getPrincipal());		
 		request.getSession().setAttribute("user", (JungMemberVO)authentication.getPrincipal()); // 이제 유저를 세션에 올려준것!
+		request.getSession().setMaxInactiveInterval(60*30); // 세션 유지시간은 30분!
 		response.sendRedirect("/"); // 하고 위치로 보낸다! 만약여기서 원래 보던 곳으로 넘길수 있다면? 좋을듯?
 	}
 }
