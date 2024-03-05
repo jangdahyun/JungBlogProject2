@@ -1,5 +1,9 @@
 package kr.ezen.jung.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +23,7 @@ import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.MailService;
+import kr.ezen.jung.service.VisitService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
@@ -33,11 +38,16 @@ public class JungMemberManController {
 
 	@Autowired
 	private JungMemberService jungMemberService;
-	
 	@Autowired
 	private JungBoardService jungBoardService;
+	@Autowired
+	private MailService mailService;
+	@Autowired
+	private VisitService visitService;
+	
 	
 	//=========================================================================================================================================
+	// 관리자 메인페이지
 	@GetMapping(value = {"","/"})
 	public String man(HttpSession session, Model model) {
 		if(session.getAttribute("user") == null) {
@@ -47,6 +57,7 @@ public class JungMemberManController {
     	if(!memberVO.getRole().equals("ROLE_ADMIN")) {
     		return "redirect:/";
     	}
+    	
     	// 1. 회원수 및 회원목록 한 5개 정도만?
     	PagingVO<JungMemberVO> userpv = jungMemberService.getUsers(new CommonVO());
     	List<JungMemberVO> memberList = userpv.getList().stream().limit(10).toList();
@@ -140,8 +151,7 @@ public class JungMemberManController {
 	    return "admin/mailSendToUser";
 	}
 	
-	@Autowired
-	private MailService mailService;
+	
 	
 	@PostMapping(value = "/sendToUserOk")
 	public String sendToUserOk(HttpSession session, Model model, @RequestParam("userIdx") List<Integer> userList, @RequestParam("title") String title, @RequestParam("subject") String subject) {
@@ -208,6 +218,7 @@ public class JungMemberManController {
 	
 	
 	//=========================================================================================================================================
+	// 인기게시물
 	@GetMapping(value = "/bestPost")
 	public String bestPost(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
 		log.info("bestPost실행 cv: {}",cv);
@@ -228,4 +239,32 @@ public class JungMemberManController {
 		return "admin/bestPost";
 	}
 	
+	
+	//=========================================================================================================================================
+	// 방문객 정보를 넘기는 주소
+	@PostMapping(value = "/visitorData")
+	@ResponseBody
+	public Map<String, Object> visitorData(){
+		Map<String, Object> map = new HashMap<>();
+		// 1. 현재접속자수
+		map.put("activeSession", VisitService.getActiveSessionCount());
+		// 2. 지금까지 총 방문자 수
+		map.put("totalCount", visitService.getTotalVisitorCount());
+		
+		// 현재로 부터 4일전 3일전 2일전 1일전 오늘의 방문자수를 가지는 리스트
+		List<Integer> countList = new ArrayList<>();
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date()); // 오늘날짜 새팅
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		cal.add(Calendar.DATE, -6);
+		for (int i = 0; i < 7; i++) {
+			String strDate = sdf.format(cal.getTime());
+			int visitCount = visitService.getDailyVisitorCount(strDate);
+			countList.add(visitCount);
+			cal.add(Calendar.DATE, +1);
+		}
+		map.put("countList", countList);
+		return map;
+	}
 }

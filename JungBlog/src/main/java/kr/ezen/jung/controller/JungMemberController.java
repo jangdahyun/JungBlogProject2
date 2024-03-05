@@ -66,7 +66,6 @@ public class JungMemberController {
     	// 현재 로그인이 되어있는데 회원가입을 하려고 한다. 막아야 한다.
 		if(session.getAttribute("user")!=null) {
 			session.removeAttribute("user");// 세션에 회원정보만 지운다.
-			session.setMaxInactiveInterval(60*30);
 			session.invalidate();// 세션자체를 끊고 다시 연결한다.
 			return "redirect:/";
 		}
