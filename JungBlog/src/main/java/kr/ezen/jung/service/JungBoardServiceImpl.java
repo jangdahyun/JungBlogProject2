@@ -1,6 +1,7 @@
 package kr.ezen.jung.service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
+import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
 import kr.ezen.jung.vo.JungBoardVO;
@@ -37,8 +39,10 @@ public class JungBoardServiceImpl implements JungBoardService {
 	private JungFileBoardDAO jungFileBoardDAO;
 	
 	@Autowired
-
 	private JungCommentDAO jungCommentDAO;
+	
+	@Autowired
+	private PopularDAO popularDAO;
 
 
 	@Override
@@ -106,7 +110,6 @@ public class JungBoardServiceImpl implements JungBoardService {
 			board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 			// 파일
 			board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-
 			// 댓글수
 			board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 		} catch (SQLException e) {
@@ -301,7 +304,32 @@ public class JungBoardServiceImpl implements JungBoardService {
 		return categoryList;
 	}
 
-	
-
+	@Override
+	public List<JungBoardVO> findPopularBoard() {
+		List<JungBoardVO> list = null;
+		try {
+			List<Integer> popularList = popularDAO.findPopularBoard();
+			list = new ArrayList<>();
+			for(Integer boardRef : popularList) {
+				JungBoardVO board = jungBoardDAO.selectByIdx(boardRef);
+	            if(board != null) {
+	                // 카테고리 이름
+	                board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+	                // 유저정보 넣어주기
+	                board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+	                // 좋아요 갯수 넣어주기
+	                board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+	                // 파일
+	                board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+	                // 댓글수
+	                board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+	                list.add(board);
+	            }
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 }

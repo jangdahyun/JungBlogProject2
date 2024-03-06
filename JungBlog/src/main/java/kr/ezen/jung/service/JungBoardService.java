@@ -49,4 +49,8 @@ public interface JungBoardService {
 	String findCategoryName(int categoryNum);
 	
 	List<String> findCategoryList();
+	
+	// 인기게시물 가져오기 (20개 한정임)
+	List<JungBoardVO> findPopularBoard();
+	
 }
