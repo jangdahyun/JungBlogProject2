@@ -29,7 +29,7 @@
 <body>
 <div id="wrap">
 	<input type="hidden" id="currentPage" th:value="${pv.currentPage}">
-	<input type="hidden" id="search" th:value="${cv.search}">
+	<input type="hidden" id="search" th:value="${cv.userRef}">
     <div id="content">
     	<!-- header -->
     	<th:block th:insert="~{/admin/header.html}"></th:block>
@@ -38,19 +38,13 @@
 	    	<th:block th:insert="~{/admin/leftArea.html}"></th:block>
 	    	
 	        <div id="right-area">
+	        	<h3>회원 동향 분석</h3>
 	        	<div style="display: flex; justify-content: end; align-items: center;">
-        			<label for="" style="margin-right:10px;">정렬기준</label>
-	        		<div class="uk-inline" style="margin-right:40px;">
-	        			<select id="sort" class="uk-select">
-	        				<option value="">최신순</option>
-	        				<option value="">이름순</option>
-	        			</select>
-	        		</div>
 					<label style="margin-right:10px;">검색</label>
 					<form action="" method="get">
 						<div class="uk-inline">
 				            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
-				            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+				            <input name="userRef" class="uk-input" type="number" autocomplete='off' aria-label="Not clickable icon" placeholder="유저번호를 입력해주세요.">
 				        </div>					
 					</form>
 	        	</div>
@@ -74,6 +68,9 @@
 			            </tr>
 				    </thead>
 				    <tbody>
+				    	<tr th:if="${#lists.isEmpty(pv.list)}">
+				    		<td colspan="8">등록된 유저기록이 없습니다.</td>
+				    	</tr>
 				    	<tr th:each="p : ${pv.list}">
 				    		<td>[[${p.idx}]]</td>
 				    		<td>[[${p.member.idx}]]</td>
@@ -81,10 +78,7 @@
 				    		<td>[[${p.board.idx}]]</td>
 				    		<td>[[${p.board.categoryName}]]</td>
 				    		<td class="viewtitle">[[${p.board.title}]]</td>
-				    		<td th:if="${p.interaction==1}">조회</td>
-				    		<td th:if="${p.interaction==2}">댓글</td>
-				    		<td th:if="${p.interaction==3}">좋아요</td>
-				    		<td th:if="${p.interaction==4}">좋아요취소</td>
+				    		<td>[[${p.interaction == 1 ? '조회' : p.interaction == 2 ? '댓글' : p.interaction == 3 ? '좋아요' : '좋아요취소'}]]</td>
 				    		<td>[[${#dates.format(p.interaction_time,'yy-MM-dd hh:mm:ss')}]]</td>
 				    	</tr>
 				    </tbody>
@@ -109,7 +103,7 @@
 				search = document.querySelector("#search").value;
 				console.log(search);
 				console.log(button);
-				location.href = `?p=${p}&search=${search}`
+				location.href = `?p=${p}&userRef=${search}`
 			})
 		})
 	})

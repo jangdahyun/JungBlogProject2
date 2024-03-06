@@ -24,7 +24,8 @@
 </head>
 <body>
 <div id="wrap">
-    
+    <input type="hidden" id="currentPage" th:value="${pv.currentPage}">
+	<input type="hidden" id="search" th:value="${cv.userRef}">
     <div id="content">
     	<!-- header -->
     	<th:block th:insert="~{/admin/header.html}"></th:block>
@@ -44,10 +45,12 @@
 	        			</select>
 	        		</div>
 					<label style="margin-right:10px;">검색</label>
-					<div class="uk-inline">
-			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
-			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
-			        </div>
+					<form action="" method="get">
+						<div class="uk-inline">
+				            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+				            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+				        </div>
+					</form>
 	        	</div>
 	        	
 	        	<table class="uk-table uk-table-striped">
@@ -67,6 +70,9 @@
 				        </tr>
 				    </thead>
 				    <tbody>
+				    	<tr th:if="${#lists.isEmpty(pv.list)}">
+				    		<td colspan="10" style="text-align: center;">등록된 유저기록이 없습니다.</td>
+				    	</tr>
 				    	<tr th:each="user : ${pv.list}">
 				    		<td>[[${user.idx}]]번째로 가입한 회원</td>
 				    		<td>[[${user.username}]]</td>
@@ -88,5 +94,23 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+	$(function(){
+		let search = "";
+		const pageBtn = document.querySelectorAll("#page a")
+		
+		pageBtn.forEach(button => {
+			button.addEventListener('click', function(e){
+				e.preventDefault();
+				const p = button.innerText;
+				console.log(p);
+				search = document.querySelector("#search").value;
+				console.log(search);
+				console.log(button);
+				location.href = `?p=${p}&userRef=${search}`
+			})
+		})
+	})
+</script>
 </body>
 </html>

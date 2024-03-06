@@ -70,6 +70,9 @@
 				        </tr>
 				    </thead>
 				    <tbody>
+				    	<tr th:if="${#lists.isEmpty(pv.list)}">
+				    		<td colspan="11" style="text-align: center;">등록된 유저기록이 없습니다.</td>
+				    	</tr>
 				    	<tr th:each="user : ${pv.list}">
 				    		<td class="idx">[[${user.idx}]]</td>
 				    		<td>[[${user.username}]]</td>

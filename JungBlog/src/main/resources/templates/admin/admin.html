@@ -87,7 +87,7 @@
 					    		<td>[[${user.role}]]</td>
 					    		<td>[[${#dates.format(user.birthDate, 'yyyy-MM-dd HH:mm')}]]</td>
 					    		<td>[[${user.phone}]]</td>
-					    		<td>[[${user.gender}]]</td>
+					    		<td>[[${user.gender==1 ? '남' : '여'}]]</td>
 					    	</tr>
 					    </tbody>
 					</table>
