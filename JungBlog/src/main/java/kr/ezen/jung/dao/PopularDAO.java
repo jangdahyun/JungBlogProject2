@@ -1,6 +1,7 @@
 package kr.ezen.jung.dao;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -19,7 +20,7 @@ public interface PopularDAO {
 	List<Integer> findPopularBoard() throws SQLException;
 	
 	// 관리자용?
-	//List<PopularVO> getUserTrendAnalysis(HashMap<String, Integer> map) throws SQLException;
+	List<PopularVO> getUserTrendAnalysis(HashMap<String, Integer> map) throws SQLException;
 	
-	//int totalCountPopular(HashMap<String, Integer> map) throws SQLException;
+	int totalCountPopular(HashMap<String, Integer> map) throws SQLException;
 }

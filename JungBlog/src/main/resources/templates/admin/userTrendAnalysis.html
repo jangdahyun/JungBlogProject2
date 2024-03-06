@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>관리자-유저동향분석</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <!-- UIkit CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	<link rel="stylesheet" href="/css/admin/header.css">
+    <style type="text/css">
+    	.uk-table td{padding: 8px 10px;}
+		#page a.active {font-weight: 500; font-size: 16px; color: #333;}
+		.uk-table th{border: 1px solid #ccc; padding: 10px; font-weight: 700; text-align: center; vertical-align: middle;}
+		.uk-table td{text-align: center;}
+		.uk-table .viewtitle{text-align: left;}
+    </style>
+</head>
+<body>
+<div id="wrap">
+	<input type="hidden" id="currentPage" th:value="${pv.currentPage}">
+	<input type="hidden" id="search" th:value="${cv.search}">
+    <div id="content">
+    	<!-- header -->
+    	<th:block th:insert="~{/admin/header.html}"></th:block>
+	    <div style="padding-top: 50px;">
+	        <!-- leftArea -->
+	    	<th:block th:insert="~{/admin/leftArea.html}"></th:block>
+	    	
+	        <div id="right-area">
+	        	<div style="display: flex; justify-content: end; align-items: center;">
+        			<label for="" style="margin-right:10px;">정렬기준</label>
+	        		<div class="uk-inline" style="margin-right:40px;">
+	        			<select id="sort" class="uk-select">
+	        				<option value="">최신순</option>
+	        				<option value="">이름순</option>
+	        			</select>
+	        		</div>
+					<label style="margin-right:10px;">검색</label>
+					<form action="" method="get">
+						<div class="uk-inline">
+				            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+				            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+				        </div>					
+					</form>
+	        	</div>
+	        	
+	        	<table class="uk-table uk-table-striped uk-table-divide">
+				    <thead>
+				        <tr>
+				        	<th rowspan="2">NO</th>
+				            <th colspan="2" style="width: 15%">유저</th>
+				            <th colspan="3" style="width: 65%">게시글</th>				            
+				            <th colspan="2" style="width: 20%">행동 및 시간</th>				            
+				        </tr>
+				        <tr>
+				            <th style="width: 5%;">유저번호</th>
+				            <th style="width: 10%;">닉네임</th>				            
+				            <th style="width: 5%;">글번호</th>				            
+				            <th style="width: 5%;">카테고리</th>				            
+				            <th style="width: 50%;">제목</th>
+				            <th style="width: 10%;">조회 / 댓글<br />좋아요 / 좋아요취소</th>
+				            <th style="width: 10%;">시간</th>
+			            </tr>
+				    </thead>
+				    <tbody>
+				    	<tr th:each="p : ${pv.list}">
+				    		<td>[[${p.idx}]]</td>
+				    		<td>[[${p.member.idx}]]</td>
+				    		<td>[[${p.member.nickName}]]</td>
+				    		<td>[[${p.board.idx}]]</td>
+				    		<td>[[${p.board.categoryName}]]</td>
+				    		<td class="viewtitle">[[${p.board.title}]]</td>
+				    		<td th:if="${p.interaction==1}">조회</td>
+				    		<td th:if="${p.interaction==2}">댓글</td>
+				    		<td th:if="${p.interaction==3}">좋아요</td>
+				    		<td th:if="${p.interaction==4}">좋아요취소</td>
+				    		<td>[[${#dates.format(p.interaction_time,'yy-MM-dd hh:mm:ss')}]]</td>
+				    	</tr>
+				    </tbody>
+				</table>
+				<div id="page" style="display:flex; align-items: center; justify-content: center;">
+					[(${pv.pageList})]
+				</div>
+	        </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		let search = "";
+		const pageBtn = document.querySelectorAll("#page a")
+		
+		pageBtn.forEach(button => {
+			button.addEventListener('click', function(e){
+				e.preventDefault();
+				const p = button.innerText;
+				console.log(p);
+				search = document.querySelector("#search").value;
+				console.log(search);
+				console.log(button);
+				location.href = `?p=${p}&search=${search}`
+			})
+		})
+	})
+</script>
+</body>
+</html>

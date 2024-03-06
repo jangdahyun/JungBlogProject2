@@ -23,11 +23,13 @@ import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.MailService;
+import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.service.VisitService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
+import kr.ezen.jung.vo.PopularVO;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -44,6 +46,8 @@ public class JungMemberManController {
 	private MailService mailService;
 	@Autowired
 	private VisitService visitService;
+	@Autowired
+	private PopularService popularService;
 	
 	
 	//=========================================================================================================================================
@@ -216,11 +220,8 @@ public class JungMemberManController {
 		return "redirect:/adm/user-roles?p="+cv.getP()+"&search="+cv.getSearch();
 	}
 	
-	
-	//=========================================================================================================================================
-	// 인기게시물
-	@GetMapping(value = "/bestPost")
-	public String bestPost(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
+	@GetMapping(value = "/userTrendAnalysis")
+	public String userTrendAnalysis(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
 		log.info("bestPost실행 cv: {}",cv);
 		if(session.getAttribute("user") == null) {
 	        return "redirect:/";
@@ -230,12 +231,18 @@ public class JungMemberManController {
 	        return "redirect:/";
 	    }
 	    model.addAttribute("name", memberVO.getName());
-		// 기본값은 조회순
-		if(cv.getOrderCode() == null) {
-			cv.setOrderCode("readCount");
-		}
-		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
+		cv.setS(30);
+		PagingVO<PopularVO> pv = popularService.getUserTrendAnalysis(cv);
 		model.addAttribute("pv", pv);
+		model.addAttribute("cv", cv);
+		return "admin/userTrendAnalysis";
+	}
+	
+	//=========================================================================================================================================
+	// 인기게시물
+	@GetMapping(value = "/bestPost")
+	public String bestPost(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
+		
 		return "admin/bestPost";
 	}
 	
