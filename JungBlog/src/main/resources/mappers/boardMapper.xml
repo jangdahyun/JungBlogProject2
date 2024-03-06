@@ -102,11 +102,15 @@
 		update jung_board set readCount = readCount + 1 where idx = #{idx}
 	</update>
 	
-	<update id="deleteFake" parameterType="int">
+	<update id="hide" parameterType="int">
 		update jung_board set deleted = 1 where idx = #{idx}
 	</update>
 	
-	<delete id="deleteReal" parameterType="int">
+	<update id="show" parameterType="int">
+		update jung_board set deleted = 0 where idx = #{idx}
+	</update>
+	
+	<delete id="delete" parameterType="int">
 		delete from jung_board where idx = #{idx}
 	</delete>
 	

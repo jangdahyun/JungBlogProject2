@@ -135,7 +135,7 @@ public class GalleryController {
 	@ResponseBody
 	public String deleteblog(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
 		log.info("deleteblog({}) 실행", boardIdx);
-		int result = jungBoardService.deleteFake(boardIdx);
+		int result = jungBoardService.hide(boardIdx);
 		return result+"";
 	}
 
