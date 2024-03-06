@@ -18,10 +18,14 @@ public interface JungBoardService {
 	void insert(JungBoardVO jungBoardVO);
 	
 	// 4. 게시글에서 내리기
-	int deleteFake(int idx);
+	int hide(int idx);
 
-	// 5. 게시글에서 삭제
-	void deleteReal(int idx);
+	// 4-1. 게시글 보이기
+	int show(int idx);
+	
+	// 5. 게시글 삭제
+	void delete(int idx);
+	
 	
 	// 6.수정
 	void update(JungBoardVO jungBoardVO);

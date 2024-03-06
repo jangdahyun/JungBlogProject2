@@ -106,6 +106,8 @@ public class JungController {
 		
 		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
 		
+		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+		
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
 		if(request.getSession().getAttribute("user")!=null) {
 			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
@@ -131,6 +133,12 @@ public class JungController {
                 oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
                 oldCookie.setPath("/");
                 oldCookie.setMaxAge(60);
+                PopularVO p = new PopularVO();
+        		p.setBoardRef(idx);
+        		p.setUserRef(memberVO.getIdx());
+        		p.setInteraction(1);
+        		popularService.insertPopular(p);
+        		log.info("무야:{}",p);
                 response.addCookie(oldCookie);
             }
         } else {
@@ -149,7 +157,7 @@ public class JungController {
 	@ResponseBody
 	public String deleteblog(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
 		log.info("deleteblog({}) 실행", boardIdx);
-		int result = jungBoardService.deleteFake(boardIdx);
+		int result = jungBoardService.hide(boardIdx);
 		return result+"";
 	}
 	
