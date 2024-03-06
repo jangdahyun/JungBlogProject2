@@ -190,6 +190,12 @@
 		})
 		.then(function (res) {
 			const data = res.data;
+			console.log(data.length);
+			if(data.length == 0){
+				alert("등록된 유저가 없습니다.");
+				$(".uk-table tbody").html(`<td colspan="11" style="text-align: center;">등록된 유저가 없습니다.</td>`);
+				return;
+			}
 			content=``;
 			data.forEach(x=>{
 				const date = new Date(x.birthDate);

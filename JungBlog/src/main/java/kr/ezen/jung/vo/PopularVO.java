@@ -14,6 +14,10 @@ public class PopularVO {
 	private int userRef;
 	private int interaction;			// 상호작용 => 1:조회, 2:댓글, 3:좋아요 (점수부여 각각 1, 3, 6점)
 	private Date interaction_time;		// 상호작용시간
+	// db세팅
+	
+	private JungMemberVO member;
+	private JungBoardVO board;
 }
 
 /*
