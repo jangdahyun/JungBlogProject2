@@ -34,12 +34,14 @@ import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.JungQnaBoardService;
+import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungCommentVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
+import kr.ezen.jung.vo.PopularVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -62,6 +64,8 @@ public class JungController {
 	
 	@Autowired
 	private JungFileBoardService jungFileBoardService;
+	@Autowired
+	private PopularService popularService;
 
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
@@ -162,7 +166,13 @@ public class JungController {
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		commentVO.setUserRef(memberVO.getIdx());
 		commentVO.setBoardRef(boardidx);
+		PopularVO p = new PopularVO();
+		p.setBoardRef(boardidx);
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(2);
+		popularService.insertPopular(p);
 		jungCommentService.insert(commentVO);
+		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
 		return "redirect:/blog/" + boardidx;
 	}
 	
@@ -191,6 +201,8 @@ public class JungController {
 		return result;
 	}
 	
+	
+	
 	@PostMapping(value = "/heartUpload")
 	@ResponseBody
 	public String heart(HttpSession session, @RequestBody HashMap<String, Integer>map) {
@@ -198,8 +210,13 @@ public class JungController {
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		heartVO.setUserRef(memberVO.getIdx());
 		heartVO.setBoardRef(map.get("boardRef"));
-		log.debug("dsds : {}",heartVO);
+		PopularVO p = new PopularVO();
+		p.setBoardRef(map.get("boardRef"));
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(3);
+		popularService.insertPopular(p);
 		int result = jungBoardService.insertHeart(heartVO);
+		log.debug("{}번 유저가 {}번 글에 좋아요", memberVO.getIdx(), map.get("boardRef"));
 		return result+"";
 	}
 	
@@ -210,8 +227,13 @@ public class JungController {
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		heartVO.setUserRef(memberVO.getIdx());
 		heartVO.setBoardRef(map.get("boardRef"));
-		log.debug("dsds : {}",heartVO);
+		PopularVO p = new PopularVO();
+		p.setBoardRef(map.get("boardRef"));
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(4);
+		popularService.insertPopular(p);
 		int result = jungBoardService.deleteHeart(heartVO);
+		log.debug("{}번 유저가 {}번 글에 좋아요취소", memberVO.getIdx(), map.get("boardRef"));
 		return result+"";
 	}
 	
