@@ -1,0 +1,200 @@
+<!DOCTYPE html >
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<title>Clean Blog - Start Bootstrap Theme</title>
+<!-- font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- Core theme CSS (includes Bootstrap)-->
+<!-- UIkit CSS -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+
+<link rel="stylesheet" href="/css/index.css">
+<script src="/js/index.js"></script>
+
+</head>
+
+<body>
+	<!-- 헤더 -->
+	<header>
+		<nav>
+			<h2><b>JungBlog</b></h2>
+            <div class="logo">
+                <img src="Spotify_Logo_RGB_White.png" alt="logo">
+            </div>
+            <div>
+		        <a href="/member/join" style="color: black; text-align: right;">Sign up</a>
+		        <a href="/member/login" style="color: black; text-align: right;">Log in</a>
+	            <img src="/fileicon/menubar.png" id="menuIcon" alt="menuIcon" style="width:30px; height: 30px; text-align: right;">
+	            <div class="menu" id="menuContent">
+			        <a href="/gallery">갤러리 페이지</a>
+			        <a href="">fileupload</a>
+			        <a href="">Support</a>
+			        <a href="">Download</a>
+			        <span>|</span>
+			        <a href="/adm">관리자 페이지</a>
+			        <a href="/member/mypage">My Page</a>
+			        <a href="/logout">Logout</a>
+			    </div>
+            </div>
+        </nav>
+			<!-- <div style="position: relative;">
+			    <img src="./fileicon/mainpage.jpg" style="width: 1140px; height: 700px;" alt="">
+			    <span style="position: relative; bottom: 10px; left: 10px;">
+			        <b>JungBlog</b>
+			    </span>
+			</div> -->
+	</header>
+	<div style="position: relative;">
+	    <img src="./fileicon/mainpage.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+	    <span style="position: absolute; bottom: 300px; left: 20px; color: black; font-size: 24px; font-weight: bold;">JungBlog</span>
+	    <span style="position: absolute; bottom: 200px; left: 20px; color: black; font-size: 16px; font-weight: bold;">블로그에서 제안드립니다</span>
+	    <span style="position: absolute; bottom: 150px; left: 20px; color: black; font-size: 16px; font-weight: bold;">아무글귀 메인페이지</span>
+	</div>
+	        
+	<div id="inner" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
+		<div id="board-header"
+			style="display: flex; justify-content: space-between; width: 100%">
+			<div>
+				<h3>게시판</h3>
+			</div>
+			<div>
+				<form action="/" method="get">
+					<div class="uk-inline">
+			            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+			            <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+			        </div>
+				</form>
+			</div>
+		</div>
+		<table id="incident_list_table" class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-small">
+			<colgroup>
+				<col width="75px" />
+				<col width="150px" />
+				<col width="400px" />
+				<col width="125px" />
+				<col width="120px" />
+				<col width="50px" />
+				<col width="50px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="" style="line-height: 2">NO</th>
+					<th class="" >
+						<select class="uk-select" id="selectBox" style="height: 25px">
+			                <option selected value="0">카테고리</option>
+			                <option th:each="category : ${categoryList}" th:value="${category}">[[${category}]]</option>
+			            </select>
+					</th>
+					<th class="" style="line-height: 2">제목</th>
+					<th class="" style="line-height: 2">글쓴이</th>
+					<th class="" style="line-height: 2">게시일</th>
+					<th class="" style="line-height: 2">조회수</th>
+					<th class="" style="line-height: 2">좋아요</th>
+				</tr>
+			</thead>
+			<tbody>
+			<th:block th:if="${pv.totalCount > 0}">
+				<tr th:each="vo, vs : ${pv.list}" th:onclick="view([[${vo.idx}]])"
+					style="cursor: pointer;">
+					<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
+						vs.index}]]</td>
+					<td>[[${vo.categoryName}]]</td>
+					<td>[[${vo.title}]]</td>
+					<td>글쓴이</td>
+					<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
+					<td>[[${vo.readCount}]]</td>
+					<td>[[${vo.countHeart}]]</td>
+				</tr>
+			</th:block>
+			</tbody>
+		</table>
+		<div style="text-align: right;">
+			<form action="/ckeditor2" method="post" id="writeBtn">
+				<input type="hidden" name="p" th:value="${cv.p}">
+				<input type="hidden" name="search" th:value="${cv.search}">
+				<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+				
+				<input type="submit" class="uk-button uk-button-default" value="글 쓰 기"/>			
+			</form>
+		</div>
+		<div style="display: flex; align-items: center;justify-content: center;">
+			[(${pv.pageList})]
+		</div>
+	</div>
+	<script>
+	    document.getElementById("menuIcon").addEventListener("mouseover", function() {
+	        var menu = document.getElementById("menuContent");
+	        menu.style.display = "block";
+	    });
+	
+	    document.getElementById("menuIcon").addEventListener("mouseleave", function() {
+	        var menu = document.getElementById("menuContent");
+	        menu.style.display = "none";
+	    });
+	 // 스크롤 이벤트 리스너 추가
+	    window.addEventListener('scroll', function() {
+	        var scrollPosition = window.scrollY; // 현재 스크롤 위치
+
+	        var headerHeight = document.querySelector('header').offsetHeight; // 상단 바의 높이
+	        var mainImageHeight = document.querySelector('.main-image').offsetHeight; // 메인 페이지 그림의 높이
+
+	        var board = document.getElementById('inner'); // 게시판 요소
+
+	        // 스크롤 위치가 메인 페이지 그림과 상단 바의 높이를 초과하는 경우
+	        if (scrollPosition > mainImageHeight + headerHeight) {
+	            board.style.display = 'block'; // 게시판 표시
+	        } else {
+	            board.style.display = 'none'; // 게시판 숨김
+	        }
+	    });
+
+    </script>
+        
+	<style>
+        .menu {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        .menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+        }
+         /* 헤더 */
+	   header {
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    z-index: 1000;
+		    background-color: transparent; /* 배경색을 투명하게 설정 */
+		    box-shadow: none; /* 그림자 효과 제거 */
+		}
+
+	    /* 메인 페이지 그림 */
+	    .main-image {
+	        background-image: url('mainpage.jpg'); /* 배경 이미지 지정 */
+	        background-size: cover; /* 배경 이미지를 컨테이너에 맞게 조정 */
+	        height: 400px; /* 그림의 높이 설정 */
+	    }
+    </style>
+</body>
+</html>
