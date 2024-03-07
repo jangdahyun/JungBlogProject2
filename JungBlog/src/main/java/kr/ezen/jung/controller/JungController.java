@@ -64,6 +64,7 @@ public class JungController {
 	
 	@Autowired
 	private JungFileBoardService jungFileBoardService;
+	
 	@Autowired
 	private PopularService popularService;
 
