@@ -90,11 +90,7 @@ public class JungMemberServiceImpl implements JungMemberService{
 	@Override // 유저 정보 수정
 	public void update(JungMemberVO memberVO) {
 		try {
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			JungMemberVO dbMemberVO = memberDAO.selectByUsername(memberVO.getUsername());
-			if( passwordEncoder.matches(memberVO.getPassword(), dbMemberVO.getPassword()) ) {
-				memberDAO.update(memberVO);				
-			}
+			memberDAO.update(memberVO);				
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
