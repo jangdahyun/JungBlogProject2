@@ -29,6 +29,7 @@ public class JungBoardVO {
 	private JungMemberVO member;			
 	
 	private List<JungCommentVO> commentList;	// 댓글 리스트
+	
 	private List<JungFileBoardVO> fileboardVO;	// 파일 리스트
 	
 	// ------------------------------------------------------------

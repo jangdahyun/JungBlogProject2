@@ -1,15 +1,13 @@
 package kr.ezen.jung.service;
 
-import java.util.List;
-
+import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungCommentVO;
+import kr.ezen.jung.vo.PagingVO;
 
 public interface JungCommentService {
-	List<JungCommentVO> selectByRef(int boardRef);
+	PagingVO<JungCommentVO> selectByRef(int boardRef, CommonVO cv);
 	
 	int selectCountByRef(int boardRef);
-	
-	List<JungCommentVO> selectByUserRef(int userRef);
 	
 	void insert(JungCommentVO jungCommentVO);
 	

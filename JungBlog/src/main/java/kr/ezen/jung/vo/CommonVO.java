@@ -16,9 +16,11 @@ public class CommonVO {
 	private int idx = 0;
 	private Integer categoryNum;
 	private String condition;
-	
+	private Integer userRef;
 	// 검색어를 넣어놧는데 다른 곳으로 갈수 있음
 	private String search;
+	// 정렬기준
+	private String orderCode;
 	
 	private int currentPage=1;
 	private int sizeOfPage=10;
@@ -60,6 +62,10 @@ public class CommonVO {
 	public void setCategoryNum(Integer categoryNum) {
 		this.categoryNum = categoryNum;
 	}
-	
-	
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
+	}
+	public void setUserRef(Integer userRef) {
+		this.userRef = userRef;
+	}
 }

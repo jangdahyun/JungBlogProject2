@@ -16,6 +16,7 @@ nav{
 div.logo img{
     width: 150px;
     color: white;
+   height:23.9915px;
 }
 
 /* 메뉴바 */
@@ -35,8 +36,9 @@ div.menuBar > span{
 div.menuBar > a:hover{
     color: #1ed760;
 }
-#title{
+#title h1{
 	margin: 20px 0;
+	color: inherit;
 }
 textarea {
 	width: 740px; height: 150px; resize: none; overflow: auto;
@@ -90,3 +92,9 @@ textarea {
     fill: red;
 }
 
+#commentList li	{padding: 10px 3px; border: 1px solid #333;}
+.nickName {margin-right: 10px;}
+.reply{margin: 0;}
+
+#page span{cursor: pointer;}
+#page span.active {font-weight: 500; color: #fff;}

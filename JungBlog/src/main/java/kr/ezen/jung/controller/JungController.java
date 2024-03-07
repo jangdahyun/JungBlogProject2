@@ -1,7 +1,6 @@
 package kr.ezen.jung.controller;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +11,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,17 +29,19 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
+import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.JungQnaBoardService;
+import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungCommentVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
+import kr.ezen.jung.vo.PopularVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -59,22 +62,17 @@ public class JungController {
 	@Autowired
 	private JungQnaBoardService JungQnaBoardService;
 	
+	@Autowired
+	private JungFileBoardService jungFileBoardService;
+	
+	@Autowired
+	private PopularService popularService;
 
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
 		log.info("cv: {}",cv);
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		
-		List<JungBoardVO> list = pv.getList();
-		list.forEach((board)->{
-			// 유저정보 넣어주기
-			board.setMember(jungMemberService.selectByIdx(board.getRef()));
-			// 좋아요 갯수 넣어주기
-			board.setCountHeart(jungBoardService.countHeart(board.getIdx()));
-			// 카테고리 이름 넣어주기
-			board.setCategoryName(jungBoardService.findCategoryName(board.getCategoryNum()));
-		});
-		pv.setList(list);
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
@@ -105,13 +103,11 @@ public class JungController {
 		
 		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
 		
-		List<JungCommentVO> commentVOs = jungCommentService.selectByRef(boardVO.getIdx());
-		commentVOs.forEach((cv)->{
-			cv.setMember(jungMemberService.selectByIdx(cv.getUserRef()));
-		});
-		boardVO.setCommentList(commentVOs);
-		
 		boardVO.setCountHeart(jungBoardService.countHeart(idx));
+		
+		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
+		
+		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
 		if(request.getSession().getAttribute("user")!=null) {
@@ -138,6 +134,12 @@ public class JungController {
                 oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
                 oldCookie.setPath("/");
                 oldCookie.setMaxAge(60);
+                PopularVO p = new PopularVO();
+        		p.setBoardRef(idx);
+        		p.setUserRef(memberVO.getIdx());
+        		p.setInteraction(1);
+        		popularService.insertPopular(p);
+        		log.info("무야:{}",p);
                 response.addCookie(oldCookie);
             }
         } else {
@@ -152,6 +154,19 @@ public class JungController {
 		return "blog"; // 임시값 blog.html
 	}
 	
+	@DeleteMapping(value = "/blog/{boardIdx}")
+	@ResponseBody
+	public String deleteblog(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
+		log.info("deleteblog({}) 실행", boardIdx);
+		int result = jungBoardService.hide(boardIdx);
+		return result+"";
+	}
+	
+	
+	
+
+    
+	
 	
 	
 	@PostMapping(value = "/commentupload")
@@ -160,20 +175,42 @@ public class JungController {
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		commentVO.setUserRef(memberVO.getIdx());
 		commentVO.setBoardRef(boardidx);
+		PopularVO p = new PopularVO();
+		p.setBoardRef(boardidx);
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(2);
+		popularService.insertPopular(p);
 		jungCommentService.insert(commentVO);
+		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
 		return "redirect:/blog/" + boardidx;
 	}
 	
-	@PostMapping(value = "/comment/{boardIdx}")
+	/**
+	 * boardIdx와 currentPage를 넘기면 boardIdx의 댓글중 currentPage의 댓글을 보내주는 api
+	 * @param map
+	 * @return List<JungCommentVO>
+	 */
+	@PostMapping(value = "/comments")
 	@ResponseBody
-	public List<JungCommentVO> asd(@PathVariable(value = "boardIdx") int boardIdx){
-		List<JungCommentVO> commentList = null;
-		commentList = jungCommentService.selectByRef(boardIdx);
-		for(JungCommentVO commentVO : commentList) {
-//			commentVO.setMemberVO();
-		}
-		return commentList;
+	public List<JungCommentVO> getComments(@RequestBody HashMap<String, Integer> map){
+		log.info("map : {}", map);
+		PagingVO<JungCommentVO> pv = null;
+		int boardIdx = map.get("boardIdx");
+		CommonVO cv = new CommonVO();
+		cv.setP(map.get("currentPage"));
+		pv = jungCommentService.selectByRef(boardIdx, cv);
+		return pv.getList();
 	}
+	@PostMapping(value = "/commentsTotalCount")
+	@ResponseBody
+	public int getCommentsTotalCount(@RequestBody HashMap<String, Integer> map){
+		int result = 0;
+		int boardIdx = map.get("boardIdx");
+		result = jungCommentService.selectCountByRef(boardIdx);
+		return result;
+	}
+	
+	
 	
 	@PostMapping(value = "/heartUpload")
 	@ResponseBody
@@ -182,8 +219,13 @@ public class JungController {
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		heartVO.setUserRef(memberVO.getIdx());
 		heartVO.setBoardRef(map.get("boardRef"));
-		log.debug("dsds : {}",heartVO);
+		PopularVO p = new PopularVO();
+		p.setBoardRef(map.get("boardRef"));
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(3);
+		popularService.insertPopular(p);
 		int result = jungBoardService.insertHeart(heartVO);
+		log.debug("{}번 유저가 {}번 글에 좋아요", memberVO.getIdx(), map.get("boardRef"));
 		return result+"";
 	}
 	
@@ -194,8 +236,13 @@ public class JungController {
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		heartVO.setUserRef(memberVO.getIdx());
 		heartVO.setBoardRef(map.get("boardRef"));
-		log.debug("dsds : {}",heartVO);
+		PopularVO p = new PopularVO();
+		p.setBoardRef(map.get("boardRef"));
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(4);
+		popularService.insertPopular(p);
 		int result = jungBoardService.deleteHeart(heartVO);
+		log.debug("{}번 유저가 {}번 글에 좋아요취소", memberVO.getIdx(), map.get("boardRef"));
 		return result+"";
 	}
 	

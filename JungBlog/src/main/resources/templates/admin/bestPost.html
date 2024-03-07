@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>관리자-인기게시물</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <!-- UIkit CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	<link rel="stylesheet" href="/css/admin/header.css">
+    <style type="text/css">
+		.subtitle {
+			font-size: 24px;
+		}
+		.xBox{
+			margin-bottom: 70px;
+		}
+		.btn-right{text-align: right;}
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <div id="content">
+    	<!-- header -->
+    	<th:block th:insert="~{/admin/header.html}"></th:block>
+    	
+	    <div style="padding-top: 50px;">
+	    	<!-- leftArea -->
+	    	<th:block th:insert="~{/admin/leftArea.html}"></th:block>
+	    	
+	        <div id="right-area">
+	        	<div id="filter">
+	        		
+	        	</div>
+	        	<table class="uk-table uk-table-striped">
+				    <thead>
+				        <tr>
+				            <th>글번호</th>
+				            <th>사진</th>
+				            <th>제목</th>
+				            <th>내용</th>
+				            <th>글쓴이</th>
+				            <th>게시일</th>
+				            <th>조회수</th>
+				            <th>좋아요수</th>
+				            <th>게시글숨김</th>
+				            <th></th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    </tbody>
+				</table>
+	        	<div class="xBox">
+					
+	        	</div>
+	        	
+	        	<div class="xBox">
+					
+	        	</div>
+	        </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

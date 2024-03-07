@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-<meta charset="UTF-8">
-<title>Insert title here</title>
-
-<link rel="stylesheet" href="/css/blog.css">
-<script src="/js/blog.js"></script>
+	<meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+	<!-- 폰트 -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+	<!-- jQuery.js -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- moment.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<!-- axios.js -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<!-- UIkit CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	<title>게시글 보기</title>
+	<link rel="stylesheet" href="/css/blog.css">
+	<script src="/js/blog.js"></script>
 </head>
-<body style=" ">
+<body>
 	<header>
 		<nav>
             <div class="logo">
@@ -39,16 +47,19 @@
             </div>
         </nav>
 	</header>
-	
-	
 	<main style="width: 940px; padding: 20px; margin: auto;background: #292820;">
       <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
-
          <article style="width: 740px; margin: 20px auto;">
          	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
-            <div id="user">[[${board.member.name}]] ㆍ<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp;ㆍ </div>
+         	<input type="hidden"  th:value="${board.title}" id="editTitle"/>
+         	<input type="hidden"  th:value="${board.content}" id="editContent"/>
+            <div id="user">[[${board.member.name}]] ㆍ<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp; </div>
             <div id="title"><h1>[[${board.title}]]</h1></div>
             <div class="hr"></div>
+            <div id="image" th:each="fileboard : ${board.fileboardVO}">
+    			<img style="margin-bottom: 10px;" th:src="@{'/upload/' + ${fileboard.filepath}}" alt="Image" />
+    			
+			</div>
             <div id="content">
                [(${board.content})]
             </div>
@@ -83,38 +94,51 @@
       </div>
       
        <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
-         <article style="width: 740px; margin: 20px auto;">
-         	<p style="font-family: Playfair Display;">COMMENTS</p>
-	       	 <div class="hr"></div>
-	         <form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload">
-	         	<input type="hidden" th:value="${board.idx}" name="boardidx">
-	           <textarea placeholder="Write a comments..." name="reply"></textarea>
-	           <div id="submitBtn">
-		           <input type="submit" class="styled-button" value="Click me"/>	           
-	           </div>
-	         </form>
-	         <div>
-	         	<th:block th:if="${board.commentList.isEmpty()}">
-	         		등록된 댓글이 없습니다.
-	         	</th:block>
-	         	<th:block th:if="${not board.commentList.isEmpty()}">
-	         		<ul>
-		         		<th:block th:each="comment : ${board.commentList}">
-		         			<li>
-		         			[[${comment.member.name}]]님이 [[${comment.regDate}]]에 남긴글
-		         			<p>[[${comment.reply}]]</p>
-		         			</li>
-		         		</th:block>
-	         		</ul>
-	         	</th:block>
-	         	<section>
-	         		
-	         	</section>
-	         </div>
-         </article>
+	       <article style="width: 740px; margin: 20px auto;">
+				<p style="font-family: Playfair Display;">COMMENTS</p>
+				<div class="hr"></div>
+				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload">
+					<input type="hidden" th:value="${board.idx}" name="boardidx">
+					<textarea placeholder="Write a comments..." name="reply"></textarea>
+					<div id="submitBtn">
+						<input type="submit" class="styled-button" value="Click me"/>	           
+					</div>
+				</form>
+				<div>
+					<ul id="commentList">
+						<li>
+							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
+							<p class="reply">댓글이구요</p>
+						</li>
+						<li>
+							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
+							<p class="reply">댓글이구요</p>
+						</li>
+						<li>
+							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
+							<p class="reply">댓글이구요</p>
+						</li>
+					</ul>
+					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
+					<section>
+						<!-- 게시글 삭제 버튼 -->
+						
+					</section>
+				</div>
+	       </article>
       </div>
+      	<th:block th:if="${session.user.idx == board.ref}">
+      		<input type="hidden" id="deleteCk" value="0">
+				<div style="text-align: right; ">
+    				<!-- 게시글 삭제 버튼 -->
+   					<button id="deleteButton">게시글 삭제</button>    			
+   						
+    				<!-- 게시글 수정 버튼 -->
+   					<button id="updateBtn">게시글 수정</button>    				
+		
+				</div>
+		</th:block>
+		
    </main>
- 
-
 </body>
 </html>

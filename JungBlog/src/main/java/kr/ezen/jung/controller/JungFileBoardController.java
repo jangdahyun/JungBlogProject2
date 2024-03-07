@@ -1,6 +1,7 @@
 package kr.ezen.jung.controller;
 
 import java.io.File;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -15,13 +16,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -29,12 +33,15 @@ import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
+import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.vo.CommonVO;
+import kr.ezen.jung.vo.HeartVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungCommentVO;
 import kr.ezen.jung.vo.JungFileBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
+import kr.ezen.jung.vo.PopularVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
@@ -56,11 +63,14 @@ public class JungFileBoardController {
 	@Autowired
 	private JungMemberService jungMemberService;
 	
+	@Autowired
+	private PopularService popularService;
+	
 	
 	@GetMapping("/fileupload")
 	public String fileupload(Model model, @ModelAttribute(value = "cv") CommonVO cv) {
 		model.addAttribute("cv", cv);
-		return "fileupload";
+		return "file/fileupload";
 	}
 	
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
@@ -84,8 +94,10 @@ public class JungFileBoardController {
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		
-		return "fileboard";
+		return "file/fileboard";
 	}
+	
+	
 	@GetMapping("/fileuploadOk")
 	public String fileuploadOk(Model model) {
 		return "redirect:/fileboard";
@@ -157,6 +169,137 @@ public class JungFileBoardController {
 		mv.addObject("of", oFileName);
 		mv.addObject("sf", sFileName);
 		return mv;
+	}
+	
+	@GetMapping(value = "/blog/{idx}")
+	public String as (@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		boardVO.setMember(jungMemberService.selectByIdx(boardVO.getRef()));
+		
+		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
+	
+		boardVO.setCountHeart(jungBoardService.countHeart(idx));
+		
+		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
+		
+		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+		
+		if(request.getSession().getAttribute("user")!=null) {
+			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx);
+			model.addAttribute("heart", heart);
+		}
+		
+		model.addAttribute("board", boardVO);
+		Cookie oldCookie = null;
+		
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("blog")) {
+					oldCookie = cookie;
+				}
+			}
+		}
+		if (oldCookie != null) {
+			if (!oldCookie.getValue().contains("[" + idx + "]")) {
+				jungBoardService.updateReadCount(idx);
+				oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
+				oldCookie.setPath("/");
+				oldCookie.setMaxAge(60);
+				PopularVO p = new PopularVO();
+				p.setBoardRef(idx);
+				p.setUserRef(memberVO.getIdx());
+				p.setInteraction(1);
+				popularService.insertPopular(p);
+				log.info("무야:{}", p);
+				response.addCookie(oldCookie);
+			}
+		}	else {
+				jungBoardService.updateReadCount(idx);
+				Cookie newCookie = new Cookie("blog", "[" + idx + "]");
+				newCookie.setPath("/");
+				newCookie.setMaxAge(60);
+				response.addCookie(newCookie);
+		}
+		
+		return "file/file"; // 임시값
+	}
+	
+	@PostMapping(value = "/commentupload")
+	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
+		log.debug("값 : {}", commentVO);
+		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
+		commentVO.setUserRef(memberVO.getIdx());
+		commentVO.setBoardRef(boardidx);
+		PopularVO p = new PopularVO();
+		p.setBoardRef(boardidx);
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(2);
+		popularService.insertPopular(p);
+		jungCommentService.insert(commentVO);
+		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
+		return "redirect:/file/" + boardidx;
+	}
+	
+	/**
+	 * boardIdx와 currentPage를 넘기면 boardIdx의 댓글중 currentPage의 댓글을 보내주는 api
+	 * @param map
+	 * @return List<JungCommentVO>
+	 */
+	@PostMapping(value = "/comments")
+	@ResponseBody
+	public List<JungCommentVO> getComments(@RequestBody HashMap<String, Integer> map){
+		log.info("map : {}", map);
+		PagingVO<JungCommentVO> pv = null;
+		int boardIdx = map.get("boardIdx");
+		CommonVO cv = new CommonVO();
+		cv.setP(map.get("currentPage"));
+		pv = jungCommentService.selectByRef(boardIdx, cv);
+		return pv.getList();
+	}
+	@PostMapping(value = "/commentsTotalCount")
+	@ResponseBody
+	public int getCommentsTotalCount(@RequestBody HashMap<String, Integer> map){
+		int result = 0;
+		int boardIdx = map.get("boardIdx");
+		result = jungCommentService.selectCountByRef(boardIdx);
+		return result;
+	}
+	
+	
+	
+	@PostMapping(value = "/heartUpload")
+	@ResponseBody
+	public String heart(HttpSession session, @RequestBody HashMap<String, Integer>map) {
+		HeartVO heartVO =new HeartVO();
+		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
+		heartVO.setUserRef(memberVO.getIdx());
+		heartVO.setBoardRef(map.get("boardRef"));
+		PopularVO p = new PopularVO();
+		p.setBoardRef(map.get("boardRef"));
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(3);
+		popularService.insertPopular(p);
+		int result = jungBoardService.insertHeart(heartVO);
+		log.debug("{}번 유저가 {}번 글에 좋아요", memberVO.getIdx(), map.get("boardRef"));
+		return result+"";
+	}
+	
+	@PostMapping(value = "/heartDelete")
+	@ResponseBody
+	public String heartdelet(HttpSession session,@RequestBody HashMap<String, Integer>map) {
+		HeartVO heartVO =new HeartVO();
+		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
+		heartVO.setUserRef(memberVO.getIdx());
+		heartVO.setBoardRef(map.get("boardRef"));
+		PopularVO p = new PopularVO();
+		p.setBoardRef(map.get("boardRef"));
+		p.setUserRef(memberVO.getIdx());
+		p.setInteraction(4);
+		popularService.insertPopular(p);
+		int result = jungBoardService.deleteHeart(heartVO);
+		log.debug("{}번 유저가 {}번 글에 좋아요취소", memberVO.getIdx(), map.get("boardRef"));
+		return result+"";
 	}
 	
 }

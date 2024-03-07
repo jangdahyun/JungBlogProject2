@@ -16,8 +16,9 @@ public interface JungBoardDAO {
 	void insert(JungBoardVO jungBoardVO) throws SQLException;
 	void update(JungBoardVO jungBoardVO) throws SQLException;
 	void updateReadCount(int idx) throws SQLException;
-	void deleteFake(int idx) throws SQLException;
-	void deleteReal(int idx) throws SQLException;
+	void hide(int idx) throws SQLException;
+	void show(int idx) throws SQLException;
+	void delete(int idx) throws SQLException;
 	
 	
 	// 관리자용 및 마이페이지용

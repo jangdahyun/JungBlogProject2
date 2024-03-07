@@ -1,6 +1,7 @@
 package kr.ezen.jung.service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Service;
 import kr.ezen.jung.dao.CategoryDAO;
 import kr.ezen.jung.dao.HeartDAO;
 import kr.ezen.jung.dao.JungBoardDAO;
+import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
+import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
 import kr.ezen.jung.vo.JungBoardVO;
@@ -34,6 +37,13 @@ public class JungBoardServiceImpl implements JungBoardService {
 	
 	@Autowired
 	private JungFileBoardDAO jungFileBoardDAO;
+	
+	@Autowired
+	private JungCommentDAO jungCommentDAO;
+	
+	@Autowired
+	private PopularDAO popularDAO;
+
 
 	@Override
 	/**
@@ -48,7 +58,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 			HashMap<String, Object> map = new HashMap<>();
 			map.put("search", commonVO.getSearch());
 			map.put("categoryNum", commonVO.getCategoryNum());
-			
+			map.put("orderCode", commonVO.getOrderCode());
 			int totalCount = jungBoardDAO.selectCount(map); // 서치가 되면 서치가 되게 수정해함!
 			pv = new PagingVO<>(totalCount, commonVO.getCurrentPage(), commonVO.getSizeOfPage(),
 					commonVO.getSizeOfBlock()); // 페이지 계산 완료
@@ -68,6 +78,11 @@ public class JungBoardServiceImpl implements JungBoardService {
 				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 				// 파일
 				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+
+				// 댓글수
+				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+
+			
 			}
 			pv.setList(list);
 		} catch (SQLException e) {
@@ -84,13 +99,23 @@ public class JungBoardServiceImpl implements JungBoardService {
 	 * @return idx에 일치하는 JungBoardVO
 	 */
 	public JungBoardVO selectByIdx(int idx) {
-		JungBoardVO jungBoardVO = null;
+		JungBoardVO board = null;
 		try {
-			jungBoardVO = jungBoardDAO.selectByIdx(idx);
+			board = jungBoardDAO.selectByIdx(idx);
+			// 카테고리 이름
+			board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+			// 유저정보 넣어주기
+			board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+			// 좋아요 갯수 넣어주기
+			board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+			// 파일
+			board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+			// 댓글수
+			board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return jungBoardVO;
+		return board;
 	}
 
 	@Override
@@ -113,13 +138,34 @@ public class JungBoardServiceImpl implements JungBoardService {
 	 * 
 	 * @param jung_board의 idx
 	 */
-	public void deleteFake(int idx) {
+	public int hide(int idx) {
+		int result = 0;
 		try {
-			jungBoardDAO.deleteFake(idx);
+			jungBoardDAO.hide(idx);
+			result = 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
+	
+	@Override
+	/**
+	 * 4. 게시물에서 글 보이기!
+	 * 
+	 * @param jung_board의 idx
+	 */
+	public int show(int idx) {
+		int result = 1;
+		try {
+			jungBoardDAO.show(idx);
+			result = 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 
 	@Override
 	/**
@@ -127,10 +173,10 @@ public class JungBoardServiceImpl implements JungBoardService {
 	 * 
 	 * @param jung_board의 idx
 	 */
-	public void deleteReal(int idx) {
+	public void delete(int idx) {
 		try {
 			// 개선점: 비번을 입력하여 확인 후 지울 것인지 아님 그냥 지울 것인가?
-			jungBoardDAO.deleteReal(idx);
+			jungBoardDAO.delete(idx);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -162,6 +208,19 @@ public class JungBoardServiceImpl implements JungBoardService {
 		List<JungBoardVO> list = null;
 		try {
 			list = jungBoardDAO.selectByUserIdx(idx);
+			for(JungBoardVO board : list) {
+				// 카테고리 이름
+				board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+				// 유저정보 넣어주기
+				board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+				// 좋아요 갯수 넣어주기
+				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+				// 파일
+				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				// 댓글수
+				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+				
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -205,7 +264,6 @@ public class JungBoardServiceImpl implements JungBoardService {
 			heartDAO.insertHeart(heartVO);
 			result = 1;
 		} catch (SQLException e) {
-			
 			e.printStackTrace();
 		}
 		return result;
@@ -277,7 +335,32 @@ public class JungBoardServiceImpl implements JungBoardService {
 		return categoryList;
 	}
 
-	
-
+	@Override
+	public List<JungBoardVO> findPopularBoard() {
+		List<JungBoardVO> list = null;
+		try {
+			List<Integer> popularList = popularDAO.findPopularBoard();
+			list = new ArrayList<>();
+			for(Integer boardRef : popularList) {
+				JungBoardVO board = jungBoardDAO.selectByIdx(boardRef);
+	            if(board != null) {
+	                // 카테고리 이름
+	                board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+	                // 유저정보 넣어주기
+	                board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+	                // 좋아요 갯수 넣어주기
+	                board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+	                // 파일
+	                board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+	                // 댓글수
+	                board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+	                list.add(board);
+	            }
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 }

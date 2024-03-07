@@ -3,9 +3,12 @@ package kr.ezen.jung.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.MailService;
+import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,14 +39,45 @@ public class JungMemberController {
     @Autowired
     private MailService mailService;
     
+    @Autowired
+    private JungBoardService jungBoardService;
     
-    // 미완
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    
+    // 마이페이지
     @GetMapping(value = {"/mypage"})
-    public String mypage(HttpSession session) {
-    	if(session.getAttribute("user") == null) {
-    		return "redirect:/";
-    	}
-    	return "mypage";
+    public String mypage(HttpSession session, Model model) {
+       if(session.getAttribute("user") == null) {
+          return "redirect:/";
+       }
+       //자기 정보
+       JungMemberVO sesesionUser = (JungMemberVO) session.getAttribute("user");
+       JungMemberVO memberVO = memberService.selectByIdx(sesesionUser.getIdx());
+       //자기 글 보기
+       List<JungBoardVO> boards = jungBoardService.selectByRef(memberVO.getIdx());
+        
+       model.addAttribute("boards",boards);
+       model.addAttribute("user",memberVO);
+       return "mypage";
+    }
+    
+    @PostMapping(value = "/userPwCheck")
+    @ResponseBody
+    public String updatePassword(@RequestBody JungMemberVO jungVO,HttpSession session) {
+    	log.info("updatePassword 실행 : {}", jungVO);
+    	JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+    	String password = jungVO.getPassword();
+    	
+
+        // 사용자가 제출한 현재 비밀번호와 DB에 저장된 암호화된 비밀번호를 비교합니다.
+        if (passwordEncoder.matches(password, memberVO.getPassword())) {
+        	log.debug("성공", password);
+            return "1";
+        } else {
+            // 비밀번호가 일치하지 않으면 오류 메시지를 반환합니다.
+            return "0";
+        }
     }
     
 	@GetMapping(value = { "/login" })
@@ -66,7 +102,6 @@ public class JungMemberController {
     	// 현재 로그인이 되어있는데 회원가입을 하려고 한다. 막아야 한다.
 		if(session.getAttribute("user")!=null) {
 			session.removeAttribute("user");// 세션에 회원정보만 지운다.
-			session.setMaxInactiveInterval(60*30);
 			session.invalidate();// 세션자체를 끊고 다시 연결한다.
 			return "redirect:/";
 		}
@@ -135,10 +170,14 @@ public class JungMemberController {
     }
     
     // 유저 정보 수정
-    @PostMapping("/update/{username}")
-    public String updateMember(@PathVariable String username, @ModelAttribute JungMemberVO updateMember) {
+    @PostMapping("/update")
+    public String updateMember(@ModelAttribute JungMemberVO updateMember,HttpSession session) {
+    	JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
+    	updateMember.setIdx(memberVO.getIdx());
+    	log.info("update 성공 {}", updateMember);
         memberService.update(updateMember);
-        return "redirect:/"; 
+        session.setAttribute("user", memberService.selectByIdx(memberVO.getIdx()));
+        return "redirect:/member/mypage"; 
     }
 
     // 유저 정보 삭제

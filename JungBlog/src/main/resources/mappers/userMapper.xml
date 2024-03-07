@@ -56,13 +56,21 @@
 	<!-- jung_member 테이블에 계정 정보를 수정. -->
 	<update id="update" parameterType="JungMemberVO">
 		UPDATE jung_member SET
-			password = #{password}
-			, nickName = #{nickName}
-			, stAddress = #{stAddress}
-			, dtAddress = #{dtAddress}
-			, phone = #{phone}
+			<if test="password != null">
+				password = #{password},
+			</if>
+			<if test="nickName != null">
+				nickName = #{nickName}			
+			</if>
+			<if test="stAddress != null">
+				stAddress = #{stAddress},
+				dtAddress = #{dtAddress},
+			</if>
+			<if test="phone != null">
+				phone = #{phone}			
+			</if>
 		WHERE
-			username = #{username}
+			idx = #{idx}
 	</update>
 	<!-- jung_member 테이블에 계정 정보를 삭제. -->
 	<delete id="delete" parameterType="string">
@@ -124,7 +132,7 @@
 		UPDATE jung_member SET
 			role = #{role}
 		WHERE
-			username = #{username}
+			idx = #{idx}
 	</update>
 
 

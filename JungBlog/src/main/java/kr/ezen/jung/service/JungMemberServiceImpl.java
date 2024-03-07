@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
 import kr.ezen.jung.vo.CommonVO;
-import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
 import lombok.extern.slf4j.Slf4j;
@@ -91,11 +90,7 @@ public class JungMemberServiceImpl implements JungMemberService{
 	@Override // 유저 정보 수정
 	public void update(JungMemberVO memberVO) {
 		try {
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			JungMemberVO dbMemberVO = memberDAO.selectByUsername(memberVO.getUsername());
-			if( passwordEncoder.matches(memberVO.getPassword(), dbMemberVO.getPassword()) ) {
-				memberDAO.update(memberVO);				
-			}
+			memberDAO.update(memberVO);				
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
