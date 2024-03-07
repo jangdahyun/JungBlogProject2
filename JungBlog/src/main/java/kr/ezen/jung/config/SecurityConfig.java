@@ -34,7 +34,7 @@ public class SecurityConfig {
 					.requestMatchers("/commentupload").hasAnyRole("USER","ADMIN")
 					//.requestMatchers("/summernote").hasAnyRole("ADMIN","USER")
 					// 지정 주소에 대한 권한 설정 **은 하위폴더 포함 모두
-					.requestMatchers("/css/**", "/js/**", "/images/**", "/upload/**").permitAll()
+					.requestMatchers("/css/**", "/js/**", "/img/**", "/upload/**").permitAll()
 					// 지정 주소에 대한 권한 설정 : hasRole(권한)은 지정 권한이 있는 사용자만 접근이 가능하다.
 					.requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
 					.requestMatchers("/dba", "/dba/**").hasAnyRole("ADMIN", "DBA")

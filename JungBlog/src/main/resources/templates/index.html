@@ -21,34 +21,114 @@
 	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
-
-<link rel="stylesheet" href="/css/index.css">
+<link rel="stylesheet" href="./css/index.css">
 <script src="/js/index.js"></script>
+<style>
+	*{margin: 0; padding: 0; box-sizing: border-box;}
+	 /* 헤더 */
+   header {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 1000;
+		background-color: transparent; /* 배경색을 투명하게 설정 */
+		box-shadow: none; /* 그림자 효과 제거 */
+	}
 
+	/* 메인 페이지 그림 */
+	.main-image {
+		background-image: url('mainpage.jpg'); /* 배경 이미지 지정 */
+		background-size: cover; /* 배경 이미지를 컨테이너에 맞게 조정 */
+		height: 400px; /* 그림의 높이 설정 */
+	}
+	#menuContent {
+		position: fixed;
+		width: 520px;
+		margin-top: 80px;
+		left: -520px;
+		height: calc(100vh - 80px);
+		background-color: rgba(0,0,0,0.9);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		z-index: 1;
+		color: #fff;
+		padding: 50px 40px;
+		transition: 0.3s;
+	}
+	#menuCloseBtn{
+		position: absolute;
+		top: 20px; right: 20px;
+		width: 30px; height: 30px;
+		cursor: pointer;
+	}
+	#menuContent img {
+		max-width: 100%;
+		filter: invert();
+	}
+	#menuContent ul {
+		padding: 0; margin: 0;
+	}
+	#menuContent ul li a {
+		padding: 20px 0;
+		display: block;
+		color: #fff;
+		font-size: 16px;
+		text-decoration: none;
+		position: relative;
+	}
+	#menuContent ul li a::before{
+		content: "";
+		width: 100%;
+		height: 1px;
+		position: absolute;
+		top: 0; left: 0;
+		background: #929292;
+	}
+	#menuContent ul li:last-child a::after {
+		content: "";
+		width: 100%;
+		height: 1px;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		background: #929292;
+	}
+	li{list-style: none;}
+	#info{
+		margin-bottom: 50px;
+		font-size: 24px;
+		font-weight: bold;
+	}
+</style>
 </head>
 
 <body>
+	<div id="menuContent">
+		<span id="menuCloseBtn"><img src="./img/mainpageImg/closeBtn.png" alt=""></span>
+		<p id="info">메뉴</p>
+		<ul>
+			<li><a href="/gallery">갤러리 페이지</a></li>
+			<li><a href="">fileupload</a></li>
+			<li><a href="">Support</a></li>
+			<li><a href="">Download</a></li>
+			<li><a href="/adm">관리자 페이지</a></li>
+			<li><a href="/member/mypage">My Page</a></li>
+			<li><a href="/logout">Logout</a></li>
+		</ul>
+	</div>
 	<!-- 헤더 -->
 	<header>
 		<nav>
-			<h2><b>JungBlog</b></h2>
-            <div class="logo">
-                <img src="Spotify_Logo_RGB_White.png" alt="logo">
+            
+			<img src="/img/mainpageImg/menubar.png" id="menuIcon" alt="menuIcon" style="width:30px; height: 30px; text-align: left;">
+	            
+			<div class="logo" style="text-align: center;">
+                <img src="./img/mainpageImg/JungProjectLogo.png" alt="logo">
             </div>
             <div>
-		        <a href="/member/join" style="color: black; text-align: right;">Sign up</a>
-		        <a href="/member/login" style="color: black; text-align: right;">Log in</a>
-	            <img src="/fileicon/menubar.png" id="menuIcon" alt="menuIcon" style="width:30px; height: 30px; text-align: right;">
-	            <div class="menu" id="menuContent">
-			        <a href="/gallery">갤러리 페이지</a>
-			        <a href="">fileupload</a>
-			        <a href="">Support</a>
-			        <a href="">Download</a>
-			        <span>|</span>
-			        <a href="/adm">관리자 페이지</a>
-			        <a href="/member/mypage">My Page</a>
-			        <a href="/logout">Logout</a>
-			    </div>
+		        <a href="/member/login" style="color: black; text-align: right;"><b>Log in</b></a>
+		        &nbsp;&nbsp;
+		        <a href="/member/join" style="color: black; text-align: right;"><b>Sign up</b></a>
             </div>
         </nav>
 			<!-- <div style="position: relative;">
@@ -59,17 +139,17 @@
 			</div> -->
 	</header>
 	<div style="position: relative;">
-	    <img src="./fileicon/mainpage.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
-	    <span style="position: absolute; bottom: 300px; left: 20px; color: black; font-size: 24px; font-weight: bold;">JungBlog</span>
-	    <span style="position: absolute; bottom: 200px; left: 20px; color: black; font-size: 16px; font-weight: bold;">블로그에서 제안드립니다</span>
-	    <span style="position: absolute; bottom: 150px; left: 20px; color: black; font-size: 16px; font-weight: bold;">아무글귀 메인페이지</span>
+	    <img src="./img/mainpageImg/mainpage.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+	    <span style="position: absolute; bottom: 300px; left: 200px; color: black; font-size: 24px; font-weight: bold;">JungBlog</span>
+	    <span style="position: absolute; bottom: 200px; left: 200px; color: black; font-size: 16px; font-weight: bold;">블로그에서 제안드립니다</span>
+	    <span style="position: absolute; bottom: 150px; left: 200px; color: black; font-size: 16px; font-weight: bold;">아무글귀 메인페이지</span>
 	</div>
 	        
 	<div id="inner" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
 		<div id="board-header"
 			style="display: flex; justify-content: space-between; width: 100%">
 			<div>
-				<h3>게시판</h3>
+				<h3><b>전체 게시판</b></h3>
 			</div>
 			<div>
 				<form action="/" method="get">
@@ -136,6 +216,15 @@
 		</div>
 	</div>
 	<script>
+		$(function(){
+			$("#menuIcon").click(function(){
+				$("#menuContent").css('left','0px');
+			})
+			$("#menuCloseBtn").click(function(){
+				$("#menuContent").css('left','-520px');
+			})
+		})
+		/*
 	    document.getElementById("menuIcon").addEventListener("mouseover", function() {
 	        var menu = document.getElementById("menuContent");
 	        menu.style.display = "block";
@@ -143,58 +232,14 @@
 	
 	    document.getElementById("menuIcon").addEventListener("mouseleave", function() {
 	        var menu = document.getElementById("menuContent");
-	        menu.style.display = "none";
+	        setTimeout(function() {
+	            menu.style.display = "none";
+	        }, 2000); // 2초 동안 메뉴를 유지한 후에 숨김
 	    });
-	 // 스크롤 이벤트 리스너 추가
-	    window.addEventListener('scroll', function() {
-	        var scrollPosition = window.scrollY; // 현재 스크롤 위치
-
-	        var headerHeight = document.querySelector('header').offsetHeight; // 상단 바의 높이
-	        var mainImageHeight = document.querySelector('.main-image').offsetHeight; // 메인 페이지 그림의 높이
-
-	        var board = document.getElementById('inner'); // 게시판 요소
-
-	        // 스크롤 위치가 메인 페이지 그림과 상단 바의 높이를 초과하는 경우
-	        if (scrollPosition > mainImageHeight + headerHeight) {
-	            board.style.display = 'block'; // 게시판 표시
-	        } else {
-	            board.style.display = 'none'; // 게시판 숨김
-	        }
-	    });
+		*/
 
     </script>
         
-	<style>
-        .menu {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-        }
-        .menu a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: black;
-        }
-         /* 헤더 */
-	   header {
-		    position: fixed;
-		    top: 0;
-		    left: 0;
-		    width: 100%;
-		    z-index: 1000;
-		    background-color: transparent; /* 배경색을 투명하게 설정 */
-		    box-shadow: none; /* 그림자 효과 제거 */
-		}
-
-	    /* 메인 페이지 그림 */
-	    .main-image {
-	        background-image: url('mainpage.jpg'); /* 배경 이미지 지정 */
-	        background-size: cover; /* 배경 이미지를 컨테이너에 맞게 조정 */
-	        height: 400px; /* 그림의 높이 설정 */
-	    }
-    </style>
+	
 </body>
 </html>
