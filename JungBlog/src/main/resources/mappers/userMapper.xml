@@ -57,17 +57,17 @@
 	<update id="update" parameterType="JungMemberVO">
 		UPDATE jung_member SET
 			<if test="password != null">
-				password = #{password},
+				password = #{password}
 			</if>
 			<if test="nickName != null">
 				nickName = #{nickName}			
 			</if>
 			<if test="stAddress != null">
 				stAddress = #{stAddress},
-				dtAddress = #{dtAddress},
+				dtAddress = #{dtAddress}
 			</if>
 			<if test="phone != null">
-				phone = #{phone}			
+				, phone = #{phone}			
 			</if>
 		WHERE
 			idx = #{idx}
