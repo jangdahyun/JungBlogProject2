@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>관리자-공지사항</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- ChartJs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<link rel="stylesheet" href="/css/admin/header.css">
+    <style type="text/css">
+    	
+    </style>
+</head>
+<body>
+<div th:if="${error != null}">
+    <div th:if="${error == 'notFound'}">
+        <script>
+            alert("해당글을 찾을 수 없습니다.");
+        </script>
+    </div>
+</div>
+<div id="wrap">
+    <div id="content">
+    	<!-- header -->
+    	<th:block th:insert="~{/admin/header.html}"></th:block>
+    	
+	    <div style="padding-top: 50px;">
+	    	<!-- leftArea -->
+	    	<th:block th:insert="~{/admin/leftArea.html}"></th:block>
+	    
+	        <div id="right-area">
+	        	<h2>공지사항목록보기</h2>
+	        	<th:block th:if="${#lists.isEmpty(pv.list)}">
+	        		<div>등록된 공지사항이 존재하지 않습니다.</div>
+	        	</th:block>
+	        	<th:block th:if="${not #lists.isEmpty(pv.list)}">
+	        		<p>2</p>
+	        	</th:block>
+	        </div>
+        </div>
+    </div>
+</div>
+	<script type="text/javascript">
+		$(function(){
+			
+		})
+	</script>
+</body>
+</html>
