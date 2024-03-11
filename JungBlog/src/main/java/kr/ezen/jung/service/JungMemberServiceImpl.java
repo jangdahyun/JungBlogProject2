@@ -59,6 +59,7 @@ public class JungMemberServiceImpl implements JungMemberService{
 		JungMemberVO memberVO = null;
 		try {
 			memberVO = memberDAO.selectByIdx(idx);
+			memberVO.setBoardCount(boardDAO.selectCountByUserIdx(memberVO.getIdx()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
