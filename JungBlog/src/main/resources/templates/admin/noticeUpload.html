@@ -106,8 +106,9 @@
             width: 100px;
             height: auto;
         }
-        #submitBtn{width: 200px;}
-        #homeBtn{width: 200px;}
+        #buttonsBox input{ width: 200px;}
+        #cancleBtn{background: #2F409F;}
+        #deleteBtn{background: #E33950;}
     </style>
 </head>
 <body>
@@ -115,6 +116,13 @@
 	<div th:if="${error == 'failUpload'}">
 	    <script>
 	        alert("업로드 중 에러가 발생했습니다.");
+	    </script>	
+	</div>
+</div>
+<div th:if="${error != null}">
+	<div th:if="${error == 'failUpdate'}">
+	    <script>
+	        alert("수정 중 에러가 발생했습니다.");
 	    </script>	
 	</div>
 </div>
@@ -128,31 +136,83 @@
 	    	<th:block th:insert="~{/admin/leftArea.html}"></th:block>
 	    
 	        <div id="right-area">
-	        	<h2>공지사항쓰기</h2>
-        		<form action="/adm/noticeUploadOk" method="post" enctype="multipart/form-data" id="insertForm">
-			        <input class="uk-input" type="text" name="title" id="title" placeholder="글 제목을 입력해 주세요." required="required"/>
-			        <input type="hidden" name="categoryNum" value="3">
-			        <!-- 파일 선택 버튼 -->
-			        <div id="file-drop-area">
-			            <div class="file-icon uk-margin-bottom" uk-icon="icon: cloud-upload"></div>
-			            <div class="file-drag-text">이곳에 파일을 드래그하거나<br>클릭하여 파일을 선택하세요.</div>
-			        </div>
-			        <!-- 파일 드래그 앤 드롭 영역을 위한 파일 입력란 -->
-			        <input type="file" id="fileInput" multiple hidden/>
-			        <!-- 파일 정보를 표시할 영역 -->
-			        <div id="file-display-area"></div>
-			        <div id="files"></div>
-			        <textarea class="uk-textarea" name="content" id="content2" placeholder="내용을 입력해 주세요." rows="10" required="required" style="resize: none"></textarea>
-			        <div style="width: 100%; display: flex; justify-content: end;">
-				        <input type="submit" id="submitBtn" value="글 올리기"/>
-				        <input type="button" id="homeBtn" onclick="window.location.href='/adm'" value="취소"/>			        
-			        </div>
-			    </form>
+	        	<!-- 쓰기 -->
+	        	<th:block th:if="${board == null}">
+		        	<h2>공지사항쓰기</h2>
+	        		<form action="/adm/noticeUploadOk" method="post" enctype="multipart/form-data" id="insertForm">
+				        <input class="uk-input" type="text" name="title" id="title" placeholder="글 제목을 입력해 주세요." required="required"/>
+				        <input type="hidden" name="categoryNum" value="3">
+				        <!-- 파일 선택 버튼 -->
+				        <div id="file-drop-area">
+				            <div class="file-icon uk-margin-bottom" uk-icon="icon: cloud-upload"></div>
+				            <div class="file-drag-text">이곳에 파일을 드래그하거나<br>클릭하여 파일을 선택하세요.</div>
+				        </div>
+				        <!-- 파일 드래그 앤 드롭 영역을 위한 파일 입력란 -->
+				        <input type="file" id="fileInput" multiple hidden/>
+				        <!-- 파일 정보를 표시할 영역 -->
+				        <div id="file-display-area"></div>
+				        <div id="files"></div>
+				        <textarea class="uk-textarea" name="content" id="content2" placeholder="내용을 입력해 주세요." rows="10" required="required" style="resize: none"></textarea>
+				        <div id="buttonsBox" style="width: 100%; display: flex; justify-content: end; gap:20px;">
+					        <input type="submit" id="submitBtn" value="글 올리기"/>
+					        <input type="button" id="cancleBtn" onclick="window.location.href='/adm/notices'" value="취소"/>			        
+				        </div>
+				    </form>
+	        	</th:block>
+	        	<!-- 수정 -->
+	        	<th:block th:if="${board != null}">
+		        	<h2>공지사항쓰기(수정)</h2>
+	        		<form action="/adm/noticeUpdateOk" method="post" enctype="multipart/form-data" id="insertForm">
+				        <input type="hidden" name="idx" th:value="${board.idx}"/>
+				        <input class="uk-input" type="text" name="title" id="title" placeholder="글 제목을 입력해 주세요." required="required" th:value="${board.title}"/>
+				        <!-- 파일 선택 버튼 -->
+				        <div id="file-drop-area">
+				            <div class="file-icon uk-margin-bottom" uk-icon="icon: cloud-upload"></div>
+				            <div class="file-drag-text">이곳에 파일을 드래그하거나<br>클릭하여 파일을 선택하세요.</div>
+				        </div>
+				        <!-- 파일 드래그 앤 드롭 영역을 위한 파일 입력란 -->
+				        <input type="file" id="fileInput" multiple hidden/>
+				        <!-- 파일 정보를 표시할 영역 -->
+				        <div id="file-display-area"></div>
+				        <div id="files"></div>
+				        <textarea class="uk-textarea" name="content" id="content2" placeholder="내용을 입력해 주세요." rows="10" required="required" style="resize: none">[[${board.title}]]</textarea>
+				        <div id="buttonsBox" style="width: 100%; display: flex; justify-content: end; gap:20px;">
+					        <input type="submit" id="updateBtn" value="수정"/>
+					        <input type="button" id="deleteBtn" th:onclick="fdeleteBtn([[${board.idx}]])" value="삭제"/>
+					        <input type="button" id="cancleBtn" th:onclick="fcancleBtn([[${board.idx}]])" value="취소"/>			        
+				        </div>
+				    </form>
+	        	</th:block>
 	        </div>
         </div>
     </div>
 </div>
 	<script type="text/javascript">
+		function fcancleBtn(idx){
+			const result = confirm('게시글을 수정을 취소하시겠습니까?');
+			if(result){
+				location.href = '/adm/notice/'+idx;				
+			}
+		}
+		function fdeleteBtn(idx){
+			const result = confirm('게시글을 삭제하시겠습니까?');
+			if(result){
+				axios.delete(`/delete/${idx}`)
+				.then(res => {
+					let data = res.data;
+					if(data==1){
+						alert('게시글이 성공적으로 삭제되었습니다.');
+						window.location.href="/adm/notices";				
+					} else {
+		            	alert('게시글 삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
+					}
+				})
+				.catch(e => {
+					console.error('게시글 삭제 중 오류가 발생했습니다:', e);
+		            alert('게시글 삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
+				})			
+			}
+		}
 		$(function(){
 			// 파일 선택 버튼 클릭 시 파일 선택 창 열기
 	        $("#file-drop-area").click(function () {

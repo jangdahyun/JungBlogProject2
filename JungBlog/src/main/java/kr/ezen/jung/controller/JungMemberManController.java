@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungFileBoardService;
@@ -310,7 +312,7 @@ public class JungMemberManController {
 	    if(error != null) {
 	    	model.addAttribute("error", error);
 	    }
-	    cv.setS(50);
+	    cv.setS(10);
 	    cv.setB(5);
 	    cv.setCategoryNum(3);
 	    PagingVO<JungBoardVO> noticeList = jungBoardService.selectList(cv);
@@ -416,5 +418,81 @@ public class JungMemberManController {
 	    }
 	    model.addAttribute("board", boardVO);
 		return "admin/notice";
+	}
+	
+	/** 공지사항 수정하기 페이지 */
+	@GetMapping(value = "/noticeUpdate/{idx}")
+	public String noticeUpdate(@PathVariable(value = "idx") int idx, HttpSession session, Model model, @RequestParam(value = "error", required = false) String error) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+	    if(boardVO == null ||boardVO.getRef() != memberVO.getIdx()) {
+	    	return "redirect:/";
+	    }
+	    if(error != null) {
+	    	model.addAttribute("error", error);
+	    }
+	    model.addAttribute("name", memberVO.getNickName());
+	    model.addAttribute("board", boardVO);
+		return "admin/noticeUpload";
+	}
+	
+	/** 공지사항 수정하기 */
+	@PostMapping(value = "/noticeUpdateOk")
+	@Transactional
+	public String noticeUpdateOk(HttpSession session, MultipartHttpServletRequest request, @ModelAttribute(value = "board") JungBoardVO boardVO) {
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		jungFileBoardService.deleteByRef(boardVO.getIdx());			// 파일 지우고
+		jungBoardService.update(boardVO);							// 게시글 업데이트하고
+		String uploadPath = request.getServletContext().getRealPath("./upload/");
+		
+		 File file2 = new File(uploadPath);
+	     if (!file2.exists()) {
+	        file2.mkdirs();
+	     }
+	    log.info("서버 실제 경로 : " + uploadPath); // 확인용
+	    
+        List<MultipartFile> list = request.getFiles("file"); // form에 있는 name과 일치
+        String url = "";
+        String filepath = "";
+        try {
+           if (list != null && list.size() > 0) { // 받은 파일이 존재한다면
+              // 반복해서 받는다.
+              for (MultipartFile file : list) {
+                 // 파일이 없으면 처리하지 않는다.
+                 if (file != null && file.getSize() > 0) {
+                    // 저장파일의 이름 중복을 피하기 위해 저장파일이름을 유일하게 만들어 준다.
+                    String saveFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                    // 파일 객체를 만들어 저장해 준다.
+                    File saveFile = new File(uploadPath, saveFileName);
+                    // 파일 복사
+                    FileCopyUtils.copy(file.getBytes(), saveFile);
+                    
+                    url = file.getOriginalFilename();	// original
+                    filepath = saveFileName;			// savefileName
+                    JungFileBoardVO fileBoardVO = new JungFileBoardVO();
+                    fileBoardVO.setUrl(url);
+                    fileBoardVO.setFilepath(filepath);
+                    fileBoardVO.setRef(boardVO.getIdx());
+                    jungFileBoardService.insert(fileBoardVO);
+                 }
+              }
+           }
+           return "redirect:/adm/notice/" + boardVO.getIdx(); // 글 하나보기로 이동!
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+		return "redirect:/adm/noticeUpdate/"+boardVO.getIdx()+"?error=failUpdate"; // 업로드페이지로 돌아감!
 	}
 }

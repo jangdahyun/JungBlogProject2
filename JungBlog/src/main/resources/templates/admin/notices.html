@@ -22,6 +22,29 @@
 	<link rel="stylesheet" href="/css/admin/header.css">
     <style type="text/css">
     	
+		.highLight{font-weight: 700; color: #333;}
+		#writeBtn{
+			background: #ccc; color: #fff; border-radius: 15px;
+			transition:0.3s;
+		}
+		#writeBtn:hover {
+			background: #2F409F;
+		}
+		#page a {cursor: pointer;}
+    	#page .active { font-weight: 500; color: #333;}
+    	
+    	.tr1{ width: 100%; display: flex;}
+    	.tr2{width: 100%; display: flex;}
+    	
+    	.td1 {width: 50px; text-align: center;display: flex;align-items: center; justify-content: center;}
+    	.td2 {width: calc(100% - 350px); padding: 3px;}
+    	.td3 {width: 200px;display: flex;align-items: center; justify-content: center;}
+    	.td4 {width: 100px;display: flex;align-items: center; justify-content: center;}
+    	.td5 {width: calc(100% - 50px);}
+    	#thead div{border: 1px solid #ccc; background: #3F51B5; color: #fff; font-weight: 500;}
+    	#thead .tr2{border-top: none;}
+    	#thead .tr2 p{margin: 0; padding: 5px;}
+    	#thead .td2 {display: flex;align-items: center; justify-content: center;}
     </style>
 </head>
 <body>
@@ -31,6 +54,9 @@
             alert("해당글을 찾을 수 없습니다.");
         </script>
     </div>
+</div>
+<div style="position: fixed; right: 20px; bottom: 20px;">
+	<a class="uk-button" id="writeBtn" href="/adm/noticeUpload">공지사항쓰기</a>
 </div>
 <div id="wrap">
     <div id="content">
@@ -42,13 +68,44 @@
 	    	<th:block th:insert="~{/admin/leftArea.html}"></th:block>
 	    
 	        <div id="right-area">
-	        	<h2>공지사항목록보기</h2>
-	        	<th:block th:if="${#lists.isEmpty(pv.list)}">
-	        		<div>등록된 공지사항이 존재하지 않습니다.</div>
-	        	</th:block>
-	        	<th:block th:if="${not #lists.isEmpty(pv.list)}">
-	        		<p>2</p>
-	        	</th:block>
+	        	<div style="width: calc(100% - 190px);">
+		        	<h2>공지사항목록보기</h2>
+		        	<th:block th:if="${#lists.isEmpty(pv.list)}">
+		        		<div>등록된 공지사항이 존재하지 않습니다.</div>
+		        	</th:block>
+		        	<th:block th:if="${not #lists.isEmpty(pv.list)}">
+	        			<ul id="thead">
+	        				<li>
+	        					<div class="tr1">
+	        						<div class="td1">No</div>
+	        						<div class="td2">제목</div>
+	        						<div class="td3">게시일</div>
+	        						<div class="td4">조회수</div>
+	        					</div>
+	        					<div class="tr2">
+	        						<p style="word-wrap: break-word;">내용</p>
+	        					</div>
+	        				</li>
+	        			</ul>
+	        			<ul>
+	        				<li th:each="board, vs: ${pv.list}">
+	        					<div class="tr1">
+	        						<div class="td1">[[${vs.count}]]</div>
+	        						<div class="td2" style="text-align: left; padding-left: 5px;"><a th:onclick="view([[${board.idx}]])">[공지] [[${board.title}]]</a></div>
+	        						<div class="td3">[[${#dates.format(board.regDate,'yyyy-MM-dd HH:mm:ss')}]]</div>
+	        						<div class="td4">[[${board.readCount}]]</div>
+	        					</div>
+	        					<div class="tr2">
+	        						<div class="td1">내용</div>
+	        						<div class="td5"><p style="word-wrap: break-word;"><a th:onclick="view([[${board.idx}]])">[[${board.content}]]</a></p></div>
+	        					</div>
+	        				</li>
+	        			</ul>
+		        	</th:block>
+		        	<div id="page" style="display: flex; align-items: center;justify-content: center;">
+						[(${pv.pageList})]
+					</div>
+	        	</div>
 	        </div>
         </div>
     </div>
@@ -57,6 +114,9 @@
 		$(function(){
 			
 		})
+		function view(idx){
+			location.href = '/adm/notice/'+idx;
+		}
 	</script>
 </body>
 </html>
