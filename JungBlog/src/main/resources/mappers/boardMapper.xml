@@ -23,10 +23,13 @@
 							) AS countHeart
 						from
 							jung_board
-						<where>						
-							<if test="1 == 1">
+						<where>	
+							<if test="deleted == null">
 								deleted = 0
 							</if>
+							<if test="userRef != null">
+                				and ref = #{userRef}
+            				</if>				
 							<if test="search != null">
 								and (
 									title like '%' || #{search} || '%'
@@ -72,9 +75,12 @@
 		from
 			jung_board
 		<where>						
-			<if test="1 == 1">
+			<if test="deleted == null">
 				deleted = 0
 			</if>
+			<if test="userRef != null">
+        		and ref = #{userRef}
+    		</if>	
 			<if test="search != null">
 				and (
 					title like '%' || #{search} || '%'
@@ -116,11 +122,11 @@
 	
 	
 	<!-- 관리자용 및 마이페이지용-->
-	<select id="selectCountByUserIdx" parameterType="int" resultType="int">
-		select count(*) from jung_board where ref = #{userIdx}
-	</select>
-	
-	<select id="selectByUserIdx" parameterType="int" resultType="JungBoardVO">
-		select * from jung_board where ref = #{idx} order by idx desc
-	</select>
+   <select id="selectCountByUserIdx" parameterType="int" resultType="int">
+      select count(*) from jung_board where ref = #{userIdx}
+   </select>
+   
+   <select id="selectByUserIdx" parameterType="int" resultType="JungBoardVO">
+      select * from jung_board where ref = #{idx} order by idx desc
+   </select>
 </mapper>

@@ -22,7 +22,6 @@ public interface JungBoardDAO {
 	
 	
 	// 관리자용 및 마이페이지용
-	
 	List<JungBoardVO> selectByUserIdx(int userIdx) throws SQLException;
 	int selectCountByUserIdx(int userIdx) throws SQLException;
 }
