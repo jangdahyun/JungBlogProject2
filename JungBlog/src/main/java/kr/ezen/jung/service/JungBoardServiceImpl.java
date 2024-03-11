@@ -87,7 +87,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 
 			
 			}
-			pv.setList(list);
+			pv.setList(list); 
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
