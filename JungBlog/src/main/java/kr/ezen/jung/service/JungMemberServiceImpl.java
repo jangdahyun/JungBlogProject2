@@ -59,7 +59,6 @@ public class JungMemberServiceImpl implements JungMemberService{
 		JungMemberVO memberVO = null;
 		try {
 			memberVO = memberDAO.selectByIdx(idx);
-			memberVO.setBoardCount(boardDAO.selectCountByUserIdx(memberVO.getIdx()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -91,10 +90,6 @@ public class JungMemberServiceImpl implements JungMemberService{
 	@Override // 유저 정보 수정
 	public void update(JungMemberVO memberVO) {
 		try {
-			if(memberVO.getPassword() != null) {
-				BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-				memberVO.setPassword( passwordEncoder.encode(memberVO.getPassword() ));
-			}
 			memberDAO.update(memberVO);				
 		} catch (SQLException e) {
 			e.printStackTrace();
