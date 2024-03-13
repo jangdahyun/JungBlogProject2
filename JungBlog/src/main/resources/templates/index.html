@@ -99,6 +99,10 @@
       font-size: 24px;
       font-weight: bold;
    }
+   #boardPage{
+	border: 1px dashed rgb(211, 211, 211);
+	border-radius: 3px;
+}
 </style>
 </head>
 
@@ -144,77 +148,132 @@
        <span style="position: absolute; bottom: 200px; left: 200px; color: black; font-size: 16px; font-weight: bold;">블로그에서 제안드립니다</span>
        <span style="position: absolute; bottom: 150px; left: 200px; color: black; font-size: 16px; font-weight: bold;">아무글귀 메인페이지</span>
    </div>
-           
-   <div id="inner" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
-      <div id="board-header"
-         style="display: flex; justify-content: space-between; width: 100%">
-         <div>
-            <h3><b>전체 게시판</b></h3>
-         </div>
-         <div>
-            <form action="/" method="get">
-               <div class="uk-inline">
-                     <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
-                     <input name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
-                 </div>
-            </form>
-         </div>
-      </div>
-      <table id="incident_list_table" class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-small">
-         <colgroup>
-            <col width="75px" />
-            <col width="150px" />
-            <col width="400px" />
-            <col width="125px" />
-            <col width="120px" />
-            <col width="50px" />
-            <col width="50px" />
-         </colgroup>
-         <thead>
-            <tr>
-               <th class="" style="line-height: 2">NO</th>
-               <th class="" >
-                  <select class="uk-select" id="selectBox" style="height: 25px">
-                         <option selected value="0">카테고리</option>
-                         <option th:each="category : ${categoryList}" th:value="${category}">[[${category}]]</option>
-                     </select>
-               </th>
-               <th class="" style="line-height: 2">제목</th>
-               <th class="" style="line-height: 2">글쓴이</th>
-               <th class="" style="line-height: 2">게시일</th>
-               <th class="" style="line-height: 2">조회수</th>
-               <th class="" style="line-height: 2">좋아요</th>
-            </tr>
-         </thead>
-         <tbody>
-         <th:block th:if="${pv.totalCount > 0}">
-            <tr th:each="vo, vs : ${pv.list}" th:onclick="view([[${vo.idx}]])"
-               style="cursor: pointer;">
-               <td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
-                  vs.index}]]</td>
-               <td>[[${vo.categoryName}]]</td>
-               <td>[[${vo.title}]]</td>
-               <td>글쓴이</td>
-               <td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
-               <td>[[${vo.readCount}]]</td>
-               <td>[[${vo.countHeart}]]</td>
-            </tr>
-         </th:block>
-         </tbody>
-      </table>
-      <div style="text-align: right;">
-         <form action="/ckeditor2" method="post" id="writeBtn">
-            <input type="hidden" name="p" th:value="${cv.p}">
-            <input type="hidden" name="search" th:value="${cv.search}">
-            <input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
-            
-            <input type="submit" class="uk-button uk-button-default" value="글 쓰 기"/>         
-         </form>
-      </div>
-      <div style="display: flex; align-items: center;justify-content: center;">
-         [(${pv.pageList})]
-      </div>
-   </div>
+	<br><br>
+      <div style="font-size: 30px; font-weight: bold; left: 10%;">전체 게시판</div>
+	<br>
+<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+        <div style="width: 350px; height: 100%; flex-shrink: 0;">
+            <div style="position: relative;">
+			    <img src="/img/mainpageImg/allboard.jpg" style="width: 100%; height: 400pt;" alt="이미지">
+			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">자신만의 다이어리를 <br>써보세요!</div>
+			</div>
+        </div>
+        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
+            <span style="font-weight: bold; font-size: 18pt;">오늘 하루를 기록해보세요! :)   ></span>
+            <span> </span><br><br>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
+                <div th:each="vo, iterStat : ${pv.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
+                    <div id="smallboard">
+	                    <div><img src="/img/mainpageImg/allboard1.jpg" style="border-radius: 5px"></div>
+	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
+                    	<div id="smallboardtext">
+	                    	<span>작성자</span><br>
+	                    	<span>조회수 [[${vo.readCount}]] |</span>
+	               			<span>좋아요 [[${vo.countHeart}]] |</span>
+	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+                    	</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+      <div style="font-size: 30px; font-weight: bold;">블로그</div>
+	<br>
+<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+        <div style="width: 350px; height: 100%; flex-shrink: 0;">
+            <div style="position: relative;">
+			    <img src="/img/mainpageImg/diary.jpg" style="width: 100%; height: 400pt;" alt="이미지">
+			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">자신만의 다이어리를 <br>써보세요!</div>
+			</div>
+        </div>
+        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
+            <span style="font-weight: bold; font-size: 18pt;">오늘 하루를 기록해보세요! :)   ></span>
+            <span> </span><br><br>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
+                <div th:each="vo, iterStat : ${pv.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
+                    <div id="smallboard">
+	                    <div><img src="/img/mainpageImg/allboard1.jpg" style="border-radius: 5px"></div>
+	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
+                    	<div id="smallboardtext">
+	                    	<span>작성자</span><br>
+	                    	<span>조회수 [[${vo.readCount}]] |</span>
+	               			<span>좋아요 [[${vo.countHeart}]] |</span>
+	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+                    	</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+      <div style="font-size: 30px; font-weight: bold;">갤러리</div>
+	<br>
+<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+        <div style="width: 350px; height: 100%; flex-shrink: 0;">
+            <div style="position: relative;">
+			    <img src="/img/mainpageImg/gallery.jpg" style="width: 100%; height: 400pt;" alt="이미지">
+			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">자신만의 다이어리를 <br>써보세요!</div>
+			</div>
+        </div>
+        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
+            <span style="font-weight: bold; font-size: 18pt;">오늘 하루를 기록해보세요! :)   ></span>
+            <span> </span><br><br>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
+                <div th:each="vo, iterStat : ${pv.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
+                    <div id="smallboard">
+	                    <div><img src="/img/mainpageImg/allboard1.jpg" style="border-radius: 5px"></div>
+	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
+                    	<div id="smallboardtext">
+	                    	<span>작성자</span><br>
+	                    	<span>조회수 [[${vo.readCount}]] |</span>
+	               			<span>좋아요 [[${vo.countHeart}]] |</span>
+	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+                    	</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+      <div style="font-size: 30px; font-weight: bold;">자료실</div>
+	<br>
+<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+        <div style="width: 350px; height: 100%; flex-shrink: 0;">
+            <div style="position: relative;">
+			    <img src="/img/mainpageImg/fileboard.jpg" style="width: 100%; height: 400pt;" alt="이미지">
+			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">자신만의 다이어리를 <br>써보세요!</div>
+			</div>
+        </div>
+        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
+            <span style="font-weight: bold; font-size: 18pt;">오늘 하루를 기록해보세요! :)   ></span>
+            <span> </span><br>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
+                <div th:each="vo, iterStat : ${pv.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
+                    <div id="smallboard">
+	                    <div><img src="/img/mainpageImg/file.jpg" style="border-radius: 5px"></div>
+	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
+                    	<div id="smallboardtext">
+	                    	<span>작성자</span><br>
+	                    	<span>조회수 [[${vo.readCount}]] |</span>
+	               			<span>좋아요 [[${vo.countHeart}]] |</span>
+	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+                    	</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
    <script>
       $(function(){
          $("#menuIcon").click(function(){

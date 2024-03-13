@@ -28,7 +28,6 @@
     </style>
 </head>
 
-
     <div class="image-container" style="text-align: center;">
         <img th:src="@{'/fileicon/fileboardimage.jpg'}" alt="">
     </div>
@@ -63,12 +62,7 @@
 			<thead>
 				<tr>
 					<th class="" style="line-height: 2">NO</th>
-					<th class="" >
-						<select class="uk-select" id="selectBox" style="height: 25px">
-			                <option selected value="0">카테고리</option>
-			                <option th:each="category : ${categoryList}" th:value="${category}">[[${category}]]</option>
-			            </select>
-					</th>
+					<th class="" >카테고리</th>
 					<th class="" style="line-height: 2">제목</th>
 					<th class="" style="line-height: 2">글쓴이</th>
 					<th class="" style="line-height: 2">다운로드</th>
