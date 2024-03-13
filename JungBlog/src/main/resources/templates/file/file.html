@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+	<!-- 폰트 -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+	<!-- jQuery.js -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- moment.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<!-- axios.js -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<!-- UIkit CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	<title>file</title>
+</head>
+<link rel="stylesheet" href="/css/file.css">
+<script src="/js/file.js"></script>
+<style>
+    hr {
+        width: 100%; /* 너비를 50%로 지정 */
+        
+    }
+    main{
+    	margin: auto;
+    }
+</style>
+<body>
+	<div style="font-size: 50pt; text-align: center;"> File Details</div>
+
+	<main style="width: 940px; padding: 20px; margin: auto;">
+      <div style="width: 100%;  margin: 20px; text-align: left;">
+         <article style="width: 740px; margin: 20px auto;">
+		<hr />
+         	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
+         	<input type="hidden"  th:value="${board.title}" id="editTitle"/>
+         	<input type="hidden"  th:value="${board.content}" id="editContent"/>
+            <div id="title"><h1>[[${board.title}]]</h1></div>
+            	
+            <div id="user" style="color: grey; font-size: 8pt;">작성자 : [[${board.member.name}]] 
+            	&nbsp;&nbsp;<span> 조회수 [[${board.readCount}]]   </span> | <span>   댓글 [[${board.commentCount}]]</span>
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp; 
+            </div>
+            <div class="hr"></div>
+          
+            <div id="content">
+               [(${board.content})]
+            </div>
+          	<br><br>
+            <div id="download">
+            	<!-- 다운로드 버튼 -->
+            	download
+            </div>
+            <br><br>
+            <div id="list">
+            	&nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="hr"></div><br>
+            <span id="image" th:each="file : ${board.fileboardVO}">
+            	<span>파일 : </span>
+    			<img style="float: left;" th:src="@{'./img/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" width="30" height="30"/>
+    			<span th:text="${file.url}"></span>
+			</span>
+            <div style="display: flex;justify-content: space-between; float:right;">
+
+               <div style="display: flex; align-items: center;">
+					<th:block th:if="${session.user ==null}">
+	               		<input type="hidden" id="heartCk" value="1">
+						<span id="ch" style="display: inline-block;">[[${board.countHeart}]]</span>
+				        <svg t="1689815540548" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2271"><path d="M742.4 101.12A249.6 249.6 0 0 0 512 256a249.6 249.6 0 0 0-230.72-154.88C143.68 101.12 32 238.4 32 376.32c0 301.44 416 546.56 480 546.56s480-245.12 480-546.56c0-137.92-111.68-275.2-249.6-275.2z" fill="#231F20" p-id="2272" id="heart2"></path></svg>
+					</th:block>
+					<th:block th:if="${heart==1}">
+	               		<input type="hidden" id="heartCk" value="1">
+						<span id="ch" style="display: inline-block;">[[${board.countHeart}]]</span>
+				        <svg t="1689815540548" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2271"><path d="M742.4 101.12A249.6 249.6 0 0 0 512 256a249.6 249.6 0 0 0-230.72-154.88C143.68 101.12 32 238.4 32 376.32c0 301.44 416 546.56 480 546.56s480-245.12 480-546.56c0-137.92-111.68-275.2-249.6-275.2z" fill="#231F20" p-id="2272" id="heart" class="active"></path></svg>
+					</th:block>
+					
+					<th:block th:if="${heart==0}">
+	               		<input type="hidden" id="heartCk" value="0">
+						<span id="ch" style="display: inline-block;">[[${board.countHeart}]]</span>
+				        <svg t="1689815540548" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2271"><path d="M742.4 101.12A249.6 249.6 0 0 0 512 256a249.6 249.6 0 0 0-230.72-154.88C143.68 101.12 32 238.4 32 376.32c0 301.44 416 546.56 480 546.56s480-245.12 480-546.56c0-137.92-111.68-275.2-249.6-275.2z" fill="#231F20" p-id="2272" id="heart"></path></svg>
+					</th:block>
+
+				</div>            
+            </div>
+	       <hr/>
+         </article>
+         
+        
+      </div>
+      
+       <div style="width: 100%;  margin: 20px 0;">
+	       <article style="width: 740px; margin: 20px auto;">
+				<p style="font-family: Playfair Display;">COMMENTS</p>
+				<div class="hr"></div>
+				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload">
+					<input type="hidden" th:value="${board.idx}" name="boardidx">
+					<textarea placeholder="댓글을 작성해주세요" name="reply"></textarea>
+					<div id="submitBtn">
+						<input type="submit" class="styled-button" value="등록"/>	           
+					</div>
+				</form>
+				<div>
+					<ul id="commentList">
+						<li>
+							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
+							<p class="reply">댓글이구요</p>
+						</li>
+						<li>
+							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
+							<p class="reply">댓글이구요</p>
+						</li>
+						<li>
+							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
+							<p class="reply">댓글이구요</p>
+						</li>
+					</ul>
+					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
+					<section>
+						<!-- 게시글 삭제 버튼 -->
+						
+					</section>
+				</div>
+	       </article>
+      </div>
+      	<th:block th:if="${session.user.idx == board.ref}">
+      		<input type="hidden" id="deleteCk" value="0">
+				<div style="text-align: right; ">
+    				<!-- 게시글 삭제 버튼 -->
+   					<button id="deleteButton">삭제</button>    			
+   						
+    				<!-- 게시글 수정 버튼 -->
+   					<button id="updateBtn">수정</button>    				
+		
+				</div>
+		</th:block>
+		
+   </main>
+<script>
+        // 클릭 이벤트 핸들러 설정
+        document.getElementById('list').addEventListener('click', function() {
+            // 클릭 시 이동할 페이지의 URL 설정
+            var destination = 'http://localhost/fileboard';
+            
+            // 페이지 이동
+            window.location.href = destination;
+        });
+        
+        function fileDown(ofile, sfile){
+            location.href='/fileboard/download?of=' + encodeURI(ofile) +'&sf=' + encodeURI(sfile);
+        }       
+        function filecontents(){
+        	location.href='/fileboard/'
+        }
+        
+</script>
+</body>
+</html>

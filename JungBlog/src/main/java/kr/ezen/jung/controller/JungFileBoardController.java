@@ -78,19 +78,6 @@ public class JungFileBoardController {
 		cv.setCategoryNum(2); //갤러리 번호 5번인데 일단 4번으로 함
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		
-		List<JungBoardVO> list = pv.getList();
-		
-		list.forEach((board)->{
-		// 유저정보 넣어주기
-		board.setMember(jungMemberService.selectByIdx(board.getRef()));
-		// 좋아요 갯수 넣어주기
-		board.setCountHeart(jungBoardService.countHeart(board.getIdx()));
-		// 카테고리 이름넣기
-		board.setCategoryName(jungBoardService.findCategoryName(board.getCategoryNum()));
-		// 파일넣기
-		board.setFileboardVO(jungFileBoardService.selectfileByRef(board.getIdx()));
-		});
-		pv.setList(list);
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<head>
+    <meta charset="UTF-8">
+    <title>자료실</title>
+    
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/index.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    
+    <script src="/js/file.js"></script>
+    <style>
+   tr {
+    border-bottom: 1px solid grey; /* 가로줄 스타일 지정 */
+}
+    </style>
+</head>
+
+
+    <div class="image-container" style="text-align: center;">
+        <img th:src="@{'/fileicon/fileboardimage.jpg'}" alt="">
+    </div>
+    <h1 style="text-align: center; color: #ff0080;">자료실-Download</h1>
+    <div th:if="${#lists.isEmpty(pv.list)}">
+        <p>현재 자료가 없습니다.</p>
+    </div>
+    
+    <!-- 검색어 입력란 -->
+    <div style="text-align: right; ">
+        <form action="/" method="get">
+            <div class="uk-inline">
+                <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+                <input name="search" class="uk-input" type="text" autocomplete='off'
+                    aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+            </div>
+        </form>
+    </div>
+    <br>
+    
+    <table >
+			<colgroup>
+				<col width="75px" /> 
+				<col width="150px" />
+				<col width="400px" />
+				<col width="125px" />
+				<col width="120px" />
+				<col width="120px" />
+				<col width="50px" />
+				<col width="50px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="" style="line-height: 2">NO</th>
+					<th class="" >
+						<select class="uk-select" id="selectBox" style="height: 25px">
+			                <option selected value="0">카테고리</option>
+			                <option th:each="category : ${categoryList}" th:value="${category}">[[${category}]]</option>
+			            </select>
+					</th>
+					<th class="" style="line-height: 2">제목</th>
+					<th class="" style="line-height: 2">글쓴이</th>
+					<th class="" style="line-height: 2">다운로드</th>
+					<th class="" style="line-height: 2">게시일</th>
+					<th class="" style="line-height: 2">조회수</th>
+					<th class="" style="line-height: 2">좋아요</th>
+				</tr>
+			</thead>
+			<tbody style="text-align: center; ">
+			<th:block th:if="${pv.totalCount > 0}">
+				<tr th:each="vo, vs : ${pv.list}" >
+					<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
+						vs.index}]]</td>
+					<td>[[${vo.categoryName}]]</td>
+					<td th:onclick="viewfile([[${vo.idx}]])" style="cursor: pointer;">[[${vo.title}]]</td>
+					<td>글쓴이</td>
+					<td th:each="file : ${vo.fileboardVO}"><img th:onclick='fileDown([[${file.url}]] , [[${file.filepath}]]);' th:src="@{'/img/fileicon/download.png'}"  alt="" width="20" height="15" style="cursor: pointer;"/></td>
+					<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
+					<td>[[${vo.readCount}]]</td>
+					<td>[[${vo.countHeart}]]</td>
+				</tr>
+			</th:block>
+			</tbody>
+    </table>
+    <br>
+    <div style="text-align: right;">
+			<form action="/fileboard/fileupload" method="post" id="writeBtn">
+				<input type="hidden" name="p" th:value="${cv.p}">
+				<input type="hidden" name="search" th:value="${cv.search}">
+				<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+				
+				<input type="submit" class="uk-button uk-button-default" value="글 쓰 기"/>			
+			</form>
+		</div>
+		<div style="display: flex; align-items: center;justify-content: center;">
+			[(${pv.pageList})]
+		</div>
+    <script type="text/javascript">
+    	
+        function fileDown(ofile, sfile){
+            location.href='/fileboard/download?of=' + encodeURI(ofile) +'&sf=' + encodeURI(sfile);
+        }       
+        function filecontents(){
+        	location.href='/fileboard/'
+        }
+        
+    </script>
+</body>
+</html>
+
+   
