@@ -14,6 +14,13 @@
 	    	   
 	</delete>
 	
+	<!-- 유저로 하트 삭제 -->
+	<delete id="deleteHeartByUserRef" parameterType="int">
+		delete from	heart_tb
+	    where userRef=#{userRef}
+	    	   
+	</delete>
+	
 	<!-- 좋아요 개수 가져오기 -->
 	<select id="countHeart" parameterType="int" resultType="int">
 		select count(*) from  heart_tb where boardRef=#{boardRef}

@@ -78,6 +78,9 @@
 			</if>
 		</where> 
 	</select>
-	
+	<delete id="deletePopularByUserRef" parameterType="int">
+		delete from	tb_popular
+	    where userRef=#{userRef}  
+	</delete>
 	
 </mapper>

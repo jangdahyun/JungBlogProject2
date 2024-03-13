@@ -12,6 +12,7 @@ import kr.ezen.jung.vo.PopularVO;
 public interface PopularDAO {
 	// 저장
 	void insertPopular(PopularVO p) throws SQLException;
+	void deletePopularByUserRef(int ref) throws SQLException;
 	
 	/**
 	 * 12시간 사이의 조회, 댓글, 좋아요를 기준으로 점수가 높은 board의 Idx를 리턴하는 메서드

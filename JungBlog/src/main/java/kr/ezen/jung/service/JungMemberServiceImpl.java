@@ -10,8 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.ezen.jung.dao.HeartDAO;
 import kr.ezen.jung.dao.JungBoardDAO;
+import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
+import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
@@ -26,6 +29,14 @@ public class JungMemberServiceImpl implements JungMemberService{
 	private JungMemberDAO memberDAO;
 	@Autowired
 	private JungBoardDAO boardDAO;
+	@Autowired
+	private JungFileBoardService fileBoardService;
+	@Autowired
+	private JungCommentService jungCommentService;
+	@Autowired
+	private HeartDAO heartDAO;
+	@Autowired
+	private PopularDAO popularDAO;
 	
 	@Override // 리턴 타입을 UserDetails을 구현한 VO로 바꿔주고 DAO에서 Userid로 VO를 얻어 리턴한다.
 	public JungMemberVO loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -55,10 +66,22 @@ public class JungMemberServiceImpl implements JungMemberService{
 	}
 	
 	@Override // 유저 조회
+	public JungMemberVO selectByEmail(String email) {
+		JungMemberVO memberVO = null;
+		try {
+			memberVO = memberDAO.selectByEmail(email);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return memberVO;
+	}
+	
+	@Override // 유저 조회
 	public JungMemberVO selectByIdx(int idx) {
 		JungMemberVO memberVO = null;
 		try {
 			memberVO = memberDAO.selectByIdx(idx);
+			memberVO.setBoardCount(boardDAO.selectCountByUserIdx(memberVO.getIdx()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -90,6 +113,10 @@ public class JungMemberServiceImpl implements JungMemberService{
 	@Override // 유저 정보 수정
 	public void update(JungMemberVO memberVO) {
 		try {
+			if(memberVO.getPassword() != null) {
+				BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+				memberVO.setPassword( passwordEncoder.encode(memberVO.getPassword() ));
+			}
 			memberDAO.update(memberVO);				
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -97,19 +124,18 @@ public class JungMemberServiceImpl implements JungMemberService{
 	}
 
 	@Override // 유저 정보 삭제
-	public void delete(JungMemberVO memberVO) {
+	@Transactional
+	public void delete(int idx) {
 		try {
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			JungMemberVO dbMemberVO = memberDAO.selectByUsername(memberVO.getUsername());
-			if(passwordEncoder.matches(memberVO.getPassword(), dbMemberVO.getPassword())) {
-				memberDAO.delete(memberVO.getUsername());
-			}
+			popularDAO.deletePopularByUserRef(idx);
+			boardDAO.deleteByUserRef(idx);
+			jungCommentService.deleteByUserRef(idx);
+			heartDAO.deleteHeartByUserRef(idx);
+			memberDAO.delete(idx);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
 	
 	
 	// 관리자 용

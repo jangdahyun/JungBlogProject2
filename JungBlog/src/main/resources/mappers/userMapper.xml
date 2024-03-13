@@ -7,6 +7,10 @@
 		select * from jung_member where username = #{username}
 	</select>
 	
+	<select id="selectByEmail" parameterType="string" resultType="JungMemberVO">
+		select * from jung_member where email = #{email}
+	</select>
+	
 	<select id="selectByIdx" parameterType="int" resultType="JungMemberVO">
 		select * from jung_member where idx = #{idx}
 	</select>
@@ -15,6 +19,12 @@
 	<select id="selectCountByUsername" parameterType="string" resultType="int">
 		select count(*) from jung_member where username = #{username}
 	</select>
+	
+	<!-- id 찾기 
+	<select id="selectIdByNameAndPhone" parameterType="JungMemberVO" resultType="string">
+	
+	</select>
+	-->
 	<!-- 
 	<select id="selectByUsernameAndPassword" parameterType="string" resultType="JungMemberVO">
 		select * from jung_member where username = #{username} and password = #{password}
@@ -28,6 +38,7 @@
 				idx
 				, username
 				, password
+				, email
 				, name
 				, nickName
 				, phone
@@ -42,6 +53,7 @@
 				jung_member_idx_seq.nextval
 				, #{username}
 				, #{password}
+				, #{email}
 				, #{name}
 				, #{nickName}
 				, #{phone}
@@ -57,25 +69,25 @@
 	<update id="update" parameterType="JungMemberVO">
 		UPDATE jung_member SET
 			<if test="password != null">
-				password = #{password},
+				password = #{password}
 			</if>
 			<if test="nickName != null">
 				nickName = #{nickName}			
 			</if>
 			<if test="stAddress != null">
 				stAddress = #{stAddress},
-				dtAddress = #{dtAddress},
+				dtAddress = #{dtAddress}
 			</if>
 			<if test="phone != null">
-				phone = #{phone}			
+				,phone = #{phone}			
 			</if>
 		WHERE
 			idx = #{idx}
 	</update>
 	<!-- jung_member 테이블에 계정 정보를 삭제. -->
-	<delete id="delete" parameterType="string">
+	<delete id="delete" parameterType="int">
 		DELETE FROM jung_member
-		WHERE username = #{username}
+		WHERE idx = #{idx}
 	</delete>
 	
 	

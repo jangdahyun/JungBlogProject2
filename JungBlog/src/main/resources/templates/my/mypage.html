@@ -125,10 +125,11 @@
 			<div id="main" role="main">
 				<div id="headertop" class="headertop">
 					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; ">
-                		<span id="icon" class="material-symbols-outlined" th:onclick="gallery">gallery_thumbnail</span>
-                		<span id="icon" class="material-symbols-outlined" th:onclick="file">folder_open</span>
-                		<span id="icon" class="material-symbols-outlined" th:onclick="support">support_agent</span>
-                		<span id="icon" class="material-symbols-outlined" th:onclick="download">download</span>
+						<span id="icon" class="material-symbols-outlined" onclick="gotohome()">home</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="gallery()">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="file()">folder_open</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="support">support_agent</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="download()">download</span>
 					</div>
 				</div>
 				<div class="container">
@@ -297,6 +298,22 @@
 			$("#sendPw").click(function() {
 	    		let password = $("#currentPw").val();
 	    		
+	    		// 새로운 비밀번호와 확인 비밀번호를 가져옴
+	            let newPassword = $("#password").val();
+	            let newPasswordConfirm = $("#newPw").val();
+	            
+	            // 비밀번호가 8글자 이상인지 확인
+	            if (newPassword.length < 8) {
+	                alert("비밀번호는 8글자 이상이어야 합니다.");
+	                return;
+	            }
+	            
+	            // 확인 비밀번호가 일치하는지 확인
+	            if (newPassword !== newPasswordConfirm) {
+	                alert("새로운 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+	                return;
+	            }
+	    		
 	   			axios.post('/member/userPwCheck', {
 	   				"password": password
 	   			})
@@ -388,31 +405,61 @@
     	
     	
     	// 다음 우편번호 API를 이용한 우편번호 검색 함수
-function daumPostcode() {
-	new daum.Postcode({
-		oncomplete: function(data) {
-			// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-
-			// 각 주소의 노출 규칙에 따라 주소를 조합한다.
-			// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-			var addr = ''; // 주소 변수
-
-			//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-			if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-				addr = data.roadAddress;
-			} else { // 사용자가 지번 주소를 선택했을 경우
-				addr = data.jibunAddress;
-			}
-
-			// 우편번호를 해당 필드에 넣는다.
-			document.getElementById('postcode').value = data.zonecode;
-			// 주소 정보(도로명 주소 or 지번 주소)를 해당 필드에 넣는다.
-			document.getElementById("stAddress").value = addr;
-			// 커서를 상세주소 필드로 이동한다.
-			document.getElementById("dtAddress").focus();
+		function daumPostcode() {
+			new daum.Postcode({
+				oncomplete: function(data) {
+					// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+		
+					// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+					// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+					var addr = ''; // 주소 변수
+		
+					//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+					if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+						addr = data.roadAddress;
+					} else { // 사용자가 지번 주소를 선택했을 경우
+						addr = data.jibunAddress;
+					}
+		
+					// 우편번호를 해당 필드에 넣는다.
+					document.getElementById('postcode').value = data.zonecode;
+					// 주소 정보(도로명 주소 or 지번 주소)를 해당 필드에 넣는다.
+					document.getElementById("stAddress").value = addr;
+					// 커서를 상세주소 필드로 이동한다.
+					document.getElementById("dtAddress").focus();
+				}
+			}).open();
 		}
-	}).open();
-}
+    	
+    	 function gotohome() {
+    	        // 여기에 이동할 주소를 입력합니다.
+    	        var address = "/";
+    	        // 현재 창에서 해당 주소로 이동합니다.
+    	        window.location.href = address;
+    	    }
+    	 
+    	 function gallery() {
+ 	        // 여기에 이동할 주소를 입력합니다.
+ 	        var address = "/gallery";
+ 	        // 현재 창에서 해당 주소로 이동합니다.
+ 	        window.location.href = address;
+ 	    }
+    	 
+    	 function file() {
+  	        // 여기에 이동할 주소를 입력합니다.
+  	        var address = "/gallery";
+  	        // 현재 창에서 해당 주소로 이동합니다.
+  	        window.location.href = address;
+  	    }
+    	
+    	 function download() {
+   	        // 여기에 이동할 주소를 입력합니다.
+   	        var address = "/gallery";
+   	        // 현재 창에서 해당 주소로 이동합니다.
+   	        window.location.href = address;
+   	    }
+
+    	 
     </script>
 </body>
 </html>

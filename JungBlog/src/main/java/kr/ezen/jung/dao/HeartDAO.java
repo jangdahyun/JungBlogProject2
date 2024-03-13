@@ -11,6 +11,7 @@ import kr.ezen.jung.vo.HeartVO;
 public interface HeartDAO {
 	void insertHeart(HeartVO heartVO) throws SQLException;
 	void deleteHeart(HeartVO heartVO) throws SQLException;
+	void deleteHeartByUserRef(int userRef) throws SQLException;
 
 	/**좋아요 가져오기*/
 	int countHeart(int idx) throws SQLException;

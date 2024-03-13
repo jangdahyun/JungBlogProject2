@@ -24,9 +24,12 @@
 						from
 							jung_board
 						<where>						
-							<if test="1 == 1">
+							<if test="deleted == null">
 								deleted = 0
 							</if>
+							<if test="userRef != null">
+                				and ref = #{userRef}
+            				</if>	
 							<if test="search != null">
 								and (
 									title like '%' || #{search} || '%'
@@ -75,6 +78,9 @@
 			<if test="1 == 1">
 				deleted = 0
 			</if>
+			<if test="userRef != null">
+        		and ref = #{userRef}
+    		</if>	
 			<if test="search != null">
 				and (
 					title like '%' || #{search} || '%'
@@ -114,6 +120,10 @@
 		delete from jung_board where idx = #{idx}
 	</delete>
 	
+	<!-- userRef로 삭제 -->
+	<delete id="deleteByUserRef" parameterType="int">
+		delete from jung_board where ref = #{ref}
+	</delete>
 	
 	<!-- 관리자용 및 마이페이지용-->
 	<select id="selectCountByUserIdx" parameterType="int" resultType="int">

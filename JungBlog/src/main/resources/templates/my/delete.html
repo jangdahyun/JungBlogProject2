@@ -92,7 +92,7 @@
 							</strong> <br />
 							동의하십니까??
 						</p>
-						<form id="updateForm4" action="/member/delete" method="GET">
+						<form id="updateForm4" action="/member/deleteOk" method="POST">
 							<input type="hidden" th:value="${user.username}" id="username">
 							<input type="checkbox" id="agreeCheckbox" onchange="toggleButton()"><em>안내 사항을 모두 확인하였으며, 이에 동의합니다.</em>
 						<!-- 체크박스의 상태 변경에 따라 버튼을 활성화하거나 비활성화하는 함수를 호출합니다. -->
