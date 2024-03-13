@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<title>마이페이지</title>
 	<!-- font -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -27,10 +28,69 @@
 		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 		
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	<title>마이페이지</title>
+	
+	<!-- 커스텀 -->
+	<link href="/css/my/header.css" rel="stylesheet">
 </head>
+<style>
+	
+	
+	#popupBackground{
+		position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 5; display: none;
+		}
+	
+	#popup1{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup1 > div{position: relative; width: 100%; height: 100%;}
+	
+	#popup2{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup2 > div{position: relative; width: 100%; height: 100%;}
+	
+	#popup3{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup3 > div{position: relative; width: 100%; height: 100%;}
+	
+	#popup4{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup4 > div{position: relative; width: 100%; height: 100%;}
+	
+	.contact_edit_titl{
+	    margin-bottom: 20px;
+	    padding: 30px 14px;
+	    border-bottom: 1px solid #303038;
+	    font-size: 20px;
+	    font-weight: 300;
+	    line-height: 28px;
+	    letter-spacing: -.8px;
+	    color: #1e1e23;
+	    word-break: break-all;
+		}
+	.accent {
+    	color: #03D580;
+    }
+    .asd{background: #fff; border-radius: 10px; width: 100%; position: absolute; bottom: 20px; left: 0;}
+</style>
+
 <body style="display: flex;">
-	<table id="incident_list_table" class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-small">
+	<!-- header -->
+	<th:block th:insert="~{/my/header.html}"></th:block>
+	
+	<div id="container" class="container" style="margin-left: 30px; background: #F9FBFC; width: 1000px; height: 800px;">
+		<div id="content" class="content">
+			<div id="main" role="main">
+				<div id="headertop" class="headertop">
+					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; ">
+                		<span id="icon" class="material-symbols-outlined" th:onclick="gallery">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" th:onclick="file">folder_open</span>
+                		<span id="icon" class="material-symbols-outlined" th:onclick="support">support_agent</span>
+                		<span id="icon" class="material-symbols-outlined" th:onclick="download">download</span>
+					</div>
+					<table id="incident_list_table" class="uk-table uk-table-hover uk-table-divider uk-table-middle uk-table-small">
 						<colgroup>
 							<col width="45px" />
 							<col width="120px" />
@@ -66,7 +126,7 @@
 										vs.index}]]</td>
 									<td>[[${vo.categoryName}]]</td>
 									<td>[[${vo.title}]]</td>
-									<td>글쓴이</td>
+									<td>[[${vo.member.nickName}]]</td>
 									<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
 									<td>[[${vo.readCount}]]</td>
 									<td>[[${vo.countHeart}]]</td>
@@ -74,5 +134,20 @@
 							</th:block>
 						</tbody>
 					</table>
+					<div style="display: flex; align-items: center;justify-content: center;">
+						[(${pv.pageList})]
+					</div>
+					
+					
+					
+				</div>
+			</div>
+		</div>	
+	</div>
+    <script type="text/javascript">
+    function view(idx) {
+    	location.href = "/blog/" + idx
+    }
+   	</script>
 </body>
 </html>

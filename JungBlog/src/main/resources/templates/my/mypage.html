@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<title>마이페이지</title>
 	<!-- font -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -27,7 +28,9 @@
 		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 		
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	<title>마이페이지</title>
+	<!-- 커스텀 -->
+	<link href="/css/my/header.css" rel="stylesheet">
+	
 </head>
 <style>
 	#icon{
@@ -115,38 +118,8 @@
 </style>
 
 <body style="display: flex;">
-	<header class="header" role="banner" style="margin-left: 250px; width: 300px; text-align: center; box-shadow: 4px 0 8px rgba(0, 0, 0.1, 0.3);">
-		<div class="header_subuindex" >
-			<h2 id="headerlogo"><b> <img src="Spotify_Logo_RGB_White.png" alt="logo"/> JungBlog</b></h2>
-		</div>
-		<div class="profile_area">
-			<p class="usernic" style="font-size: 15px; margin-left: 15%">[[${user.nickName}]] <span class="material-symbols-outlined">badge</span> </p>
-			
-			<img src="/fileicon/menubar.png" id="menuIcon" alt="menuIcon"style="width: 150px; height: 150px; margin-left: 35px;"  />
-			<span></span>
-			<div class="profile">
-				<div style="margin-left: 15%">
-				<p class="userid" style="font-weight: bold;">[[${user.name}]]
-				<p class="useremail" >[[${user.username}]]
-				<span class="material-symbols-outlined">edit</span>
-				</div>
-			</div>
-			<hr />
-			<div class="header_left" id="headerLeft" >
-				<ul class="left_menu" role="menu" style="list-style-type: none; ">
-					<li style="font-size: 30px; margin-bottom: 20px;" th:onclick="" >쓴 글</li>
-					<li style="font-size: 30px; margin-bottom: 20px;" th:onclick="">좋아요 글</li>
-					<li style="font-size: 30px; margin-bottom: 20px;" th:onclick="">숨긴 글</li>
-				</ul>
-				<hr />
-				<div class="menu2" role="menu">
-					<a href="/logout">Logout</a>
-					<hr />
-					<a href="/탈퇴" style="font-size: 20px; margin-bottom: 20px;" th:onclick="">회원탈퇴</a>
-				</div>
-			</div>
-		</div>	
-	</header>
+	<!-- header -->
+	<th:block th:insert="~{/my/header.html}"></th:block>
 	<div id="container" class="container" style="margin-left: 30px; background: #F9FBFC; width: 800px; height: 800px;">
 		<div id="content" class="content">
 			<div id="main" role="main">

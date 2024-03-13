@@ -70,17 +70,38 @@ public class JungMemberController {
     	 JungMemberVO sesesionUser = (JungMemberVO) session.getAttribute("user");
          JungMemberVO memberVO = memberService.selectByIdx(sesesionUser.getIdx());
          cv.setUserRef(sesesionUser.getIdx());
+         cv.setS(10);
          PagingVO<JungBoardVO> pv = jungBoardService.selectByRef(cv);
          
          log.info("myblog실행 cv: {}",cv);
          model.addAttribute("pv",pv);
          model.addAttribute("cv", cv);
          model.addAttribute("user",memberVO);
-    	 return "my/myblog2";
+         model.addAttribute("categoryList",jungBoardService.findCategoryList());
+    	 return "my/myblog";
     }
     
-    
-    
+    //내가 좋아요 한 글 보기
+    @GetMapping(value = {"/myheartblog"} )
+    public String myheartblog(HttpSession session,@ModelAttribute(value = "cv")CommonVO cv, Model model) {
+    	if(session.getAttribute("user") == null) {
+    		return "redirect:/";
+         }
+    	 JungMemberVO sesesionUser = (JungMemberVO) session.getAttribute("user");
+    	 JungMemberVO memberVO = memberService.selectByIdx(sesesionUser.getIdx());
+    	 cv.setUserRef(sesesionUser.getIdx());
+         cv.setS(10);
+         PagingVO<JungBoardVO> pv = jungBoardService.selectHeartByUseridx(cv);
+         
+         log.info("실행 cv: {}",pv);
+         
+         model.addAttribute("pv",pv);
+         model.addAttribute("cv", cv);
+         model.addAttribute("user",memberVO);
+         model.addAttribute("categoryList",jungBoardService.findCategoryList());
+   	 	return "my/myheartblog";
+    }
+        
     @PostMapping(value = "/userPwCheck")
     @ResponseBody
     public String updatePassword(@RequestBody JungMemberVO jungVO,HttpSession session) {
@@ -201,8 +222,14 @@ public class JungMemberController {
 
     // 유저 정보 삭제
     @PostMapping("/delete")
-    public String deleteMember(@ModelAttribute(value = "memberVO") JungMemberVO memberVO,@PathVariable String username) {
-        memberService.delete(memberVO);
+    public String deleteMember(@ModelAttribute(value = "memberVO") JungMemberVO deletememberVO,HttpSession session, Model model) {
+    	JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
+    	deletememberVO.setIdx(memberVO.getIdx());
+    	log.info("delete 성공 {}", deletememberVO);
+    	 //자기 정보
+    	log.info("나는 누구?{}",memberVO);
+        model.addAttribute("user",memberVO);
+//        memberService.delete(memberVO);
         
         return "redirect:/";  
     }
