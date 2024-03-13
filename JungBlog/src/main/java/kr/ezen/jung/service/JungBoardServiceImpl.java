@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
+import kr.ezen.jung.dao.JungQnABoardDAO;
 import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
@@ -409,5 +411,71 @@ public class JungBoardServiceImpl implements JungBoardService {
 		}
 		return list;
 	}
-
+	
+	@Autowired
+	JungQnABoardDAO jungQnABoardDAO;
+	
+	@Override
+	public PagingVO<JungBoardVO> selectQnAList(CommonVO cv){
+		PagingVO<JungBoardVO> pv = null;
+		try {
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("search", cv.getSearch());
+				if(cv.getOrderCode() != null) {
+					if(cv.getOrderCode().equals("0")) {
+						map.put("commentSize", 0);
+					} else {
+						map.put("commentSize", 1);
+					}
+				}
+				int totalCount = jungQnABoardDAO.selectQnACount(map);
+				pv = new PagingVO<>(totalCount, cv.getCurrentPage(), cv.getSizeOfPage(), cv.getSizeOfBlock()); // 페이지 계산 완료
+				
+				map.put("startNo", pv.getStartNo());
+				map.put("endNo", pv.getEndNo());
+				
+				List<JungBoardVO> list = jungQnABoardDAO.selectQnAList(map);
+				
+				for(JungBoardVO board : list) {
+					// 카테고리 이름
+					board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+					// 유저정보 넣어주기
+					board.setMember(jungMemberService.selectByIdx(board.getRef()));
+					// 좋아요 갯수 넣어주기
+					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+					// 파일
+					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+					// 댓글수
+					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+					HashMap<String, Object> commentMap = new HashMap<>();
+					commentMap.put("boardRef", board.getIdx());
+					commentMap.put("startNo", 1);
+					commentMap.put("endNo", 1);
+					board.setCommentList(jungCommentDAO.selectByRef(commentMap));
+					
+				}
+				pv.setList(list);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pv;
+	}
+	
+	@Override
+	public String getQnAInfo(){
+		String result = null;
+		try {
+			HashMap<String, Object> map = new HashMap<>();
+			int totalCount = jungQnABoardDAO.selectQnACount(map);
+			map.put("commentSize", 0);
+			int unCommentCount = jungQnABoardDAO.selectQnACount(map);
+			map.put("commentSize", 1);
+			int commentCount = jungQnABoardDAO.selectQnACount(map);
+			result = "<span class='title-info'>답변하지 않은 문의 수 : "+unCommentCount+"건 / 답변한 문의 수 : "+commentCount+"건 / 총 문의 수: "+totalCount+"건)</span>";
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 }

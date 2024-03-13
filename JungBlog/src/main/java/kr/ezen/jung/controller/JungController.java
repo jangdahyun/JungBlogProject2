@@ -34,7 +34,6 @@ import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
-import kr.ezen.jung.service.JungQnaBoardService;
 import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
@@ -50,7 +49,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JungController {
 
-
 	@Autowired
 	private JungBoardService jungBoardService;
 	
@@ -59,9 +57,6 @@ public class JungController {
 	
 	@Autowired
 	private JungMemberService jungMemberService;
-	
-	@Autowired
-	private JungQnaBoardService JungQnaBoardService;
 	
 	@Autowired
 	private JungFileBoardService jungFileBoardService;

@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
+import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.MailService;
@@ -36,6 +36,7 @@ import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.service.VisitService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungBoardVO;
+import kr.ezen.jung.vo.JungCommentVO;
 import kr.ezen.jung.vo.JungFileBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
@@ -60,6 +61,8 @@ public class JungMemberManController {
 	private PopularService popularService;
 	@Autowired
 	private JungFileBoardService jungFileBoardService;
+	@Autowired
+	private JungCommentService jungCommentService;
 	
 	
 	//=========================================================================================================================================
@@ -307,7 +310,7 @@ public class JungMemberManController {
 	//=====================================================================================================================
 	// QnA 관리
 	//=====================================================================================================================
-	@GetMapping(value = "/QnAs")
+	@GetMapping(value = "/Qnas")
 	public String QnAs(HttpSession session, Model model, @ModelAttribute CommonVO cv) {
 		if(session.getAttribute("user") == null) {
 	        return "redirect:/";
@@ -317,15 +320,75 @@ public class JungMemberManController {
 	        return "redirect:/";
 	    }
 	    model.addAttribute("name", memberVO.getNickName());
-	    cv.setCategoryNum(5);
-	    cv.setS(5);
+	    cv.setS(20);
 	    cv.setB(5);
-	    PagingVO<JungBoardVO> infoPv = jungBoardService.selectList(cv);
-	    model.addAttribute("pv", infoPv);
+	    log.info("orderCode : {}",cv.getOrderCode());
+	    if(cv.getOrderCode() == null || cv.getOrderCode().trim().isEmpty()) {
+	        model.addAttribute("orderCode", null);
+	        cv.setOrderCode(null);
+	    } else if (cv.getOrderCode().equals("0") || cv.getOrderCode().equals("1")) {
+	        model.addAttribute("orderCode", cv.getOrderCode());
+	    }
+	    PagingVO<JungBoardVO> pv = jungBoardService.selectQnAList(cv);
+	    model.addAttribute("pv", pv);
+	    model.addAttribute("QnAInfo", jungBoardService.getQnAInfo());
 	    model.addAttribute("cv", cv);
 		return "admin/QnAList";
 	}
 	
+	@GetMapping(value = "/QnaAnswer/{idx}")
+	public String QnaAnswer(HttpSession session, Model model, @PathVariable(value = "idx") int idx) {
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		model.addAttribute("name", memberVO.getNickName());
+		log.info("도달함!! idx : {}", idx);
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		boardVO.setCommentList(jungCommentService.selectByRef(idx, new CommonVO()).getList());
+		if(boardVO.getCategoryNum() != 5) {
+			return "redirect:/error=2";
+		}
+		model.addAttribute("board", boardVO);
+		return "/admin/QnaAnswer";
+	}
+	
+	
+	@PostMapping(value = "/commentupload")
+	public String commentUpload(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		log.debug("값 : {}", commentVO);
+		commentVO.setUserRef(memberVO.getIdx());
+		commentVO.setBoardRef(boardidx);
+		jungCommentService.insert(commentVO);
+		log.info("QnA답변 달기 실행");
+		return "redirect:/adm/QnaAnswer/" + boardidx;
+	}
+	
+	@PostMapping(value = "/commentupdate")
+	public String commentUpdate(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
+		log.info("{}번 QnA답변 업데이트 실행 {}", boardidx, commentVO);
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		log.debug("값 : {}", commentVO);
+		jungCommentService.update(commentVO);
+		log.info("{}번 QnA답변 업데이트 완료", boardidx);
+		return "redirect:/adm/QnaAnswer/" + boardidx;
+	}
 	//=====================================================================================================================
 	// 공지사항 관리
 	//=====================================================================================================================
