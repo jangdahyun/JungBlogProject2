@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -70,7 +71,7 @@ public class GalleryController {
 	
 	
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
-	public String gallery(@ModelAttribute(value = "cv") CommonVO cv, Model model) {
+	public String gallery(@ModelAttribute(value = "cv") CommonVO cv, Model model, @RequestParam(value = "error", required = false) String error) {
 		cv.setCategoryNum(4); //갤러리 번호 5번인데 일단 4번으로 함
 		// psb search
 		cv.setS(20);
@@ -84,14 +85,15 @@ public class GalleryController {
 	@GetMapping(value = "/{idx}")
 	public String as(@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
-		boardVO.setMember(jungMemberService.selectByIdx(boardVO.getRef()));
-		
-		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
-		
-		boardVO.setCountHeart(jungBoardService.countHeart(idx));
-		
-		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
-		
+		if(boardVO == null) {
+			return "redirect:/gallery?error=notFound";
+		}
+		if(boardVO.getDeleted() == 1) {
+			return "redirect:/gallery?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 4) {
+			return "redirect:/gallery?error=notFound";
+		}
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
 		if(request.getSession().getAttribute("user")!=null) {
 			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			

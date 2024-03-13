@@ -31,7 +31,7 @@ public interface JungBoardService {
 	void update(JungBoardVO jungBoardVO);
 	
 	// 7. 내가 쓴 글만 보기
-	List<JungBoardVO> selectByRef(int idx);
+	PagingVO<JungBoardVO> selectByRef(CommonVO commonVO);
 	// 8. 임시저장
 	
 	//9.조회수 증가
@@ -44,7 +44,7 @@ public interface JungBoardService {
 	//좋아요 삭제
 	int deleteHeart(HeartVO HeartVO);
 	//유저가 좋아요 누른 게시글 번호 가져오기
-	List<Integer> selectHeartByUseridx(int userRef);
+	PagingVO<JungBoardVO> selectHeartByUseridx(CommonVO cv);
 	
 	//<!-- 하트 중복확인 -->
 	int select(int userRef,int boardRef);

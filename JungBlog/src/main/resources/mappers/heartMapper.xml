@@ -20,9 +20,39 @@
 	</select>
 	
 	<!-- 유저가 누른 좋아요 개수 가져오기 -->
-	<select id="selectHeartByUseridx" parameterType="int" resultType="int">
-		select boardRef from  heart_tb where userRef=#{userRef}
+	<select id="selectHeartByUseridx" parameterType="hashmap" resultType="HeartVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						select
+							boardRef
+						from
+							heart_tb
+						where
+							userRef=#{userRef}
+						order by
+							idx desc
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]> 
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
+	</select >
+	
+	<select id="heartCountByUserRef" parameterType="int" resultType="int">
+		select count(*) from heart_tb where userRef=#{userRef}
 	</select>
+	
 	
 	<!-- 하트 중복확인 -->
 	<select id="select" parameterType="hashmap" resultType="int">
