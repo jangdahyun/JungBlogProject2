@@ -1,6 +1,7 @@
 package kr.ezen.jung.service;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
@@ -56,5 +57,9 @@ public interface JungBoardService {
 	
 	// 인기게시물 가져오기 (20개 한정임)
 	List<JungBoardVO> findPopularBoard();
+	
+	PagingVO<JungBoardVO> selectQnAList(CommonVO cv);
+	String getQnAInfo();
+	
 	
 }

@@ -95,7 +95,7 @@
 	        			<ul id="tbody">
 	        				<li th:each="board, vs: ${pv.list}">
 	        					<div class="tr1">
-	        						<div class="td1">[[${vs.count}]]</div>
+	        						<div class="td1">[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage - vs.index}]]</div>
 	        						<div class="td2" style="text-align: left; padding-left: 5px;"><a th:onclick="view([[${board.idx}]])">[공지] [[${board.title}]]</a></div>
 	        						<div class="td3">[[${#dates.format(board.regDate,'yyyy-MM-dd HH:mm:ss')}]]</div>
 	        						<div class="td4">[[${board.readCount}]]</div>
