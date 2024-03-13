@@ -29,7 +29,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 	private JungBoardDAO jungBoardDAO;
 	
 	@Autowired
-	private JungMemberDAO jungMemberDAO;
+	private JungMemberService jungMemberService;
 	
 	@Autowired
 	private HeartDAO heartDAO;
@@ -75,7 +75,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 				// 카테고리 이름
 				board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
 				// 유저정보 넣어주기
-				board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+				board.setMember(jungMemberService.selectByIdx(board.getRef()));
 				// 좋아요 갯수 넣어주기
 				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 				// 파일
@@ -108,7 +108,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 			// 카테고리 이름
 			board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
 			// 유저정보 넣어주기
-			board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+			board.setMember(jungMemberService.selectByIdx(board.getRef()));
 			// 좋아요 갯수 넣어주기
 			board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 			// 파일
@@ -212,17 +212,18 @@ public class JungBoardServiceImpl implements JungBoardService {
 		try {
 			list = jungBoardDAO.selectByUserIdx(idx);
 			for(JungBoardVO board : list) {
-				// 카테고리 이름
-				board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
-				// 유저정보 넣어주기
-				board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
-				// 좋아요 갯수 넣어주기
-				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
-				// 파일
-				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-				// 댓글수
-				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
-				
+				if(board !=null) {					
+					// 카테고리 이름
+					board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+					// 유저정보 넣어주기
+					board.setMember(jungMemberService.selectByIdx(board.getRef()));
+					// 좋아요 갯수 넣어주기
+					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+					// 파일
+					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+					// 댓글수
+					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -376,7 +377,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 	                // 카테고리 이름
 	                board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
 	                // 유저정보 넣어주기
-	                board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+	                board.setMember(jungMemberService.selectByIdx(board.getRef()));
 	                // 좋아요 갯수 넣어주기
 	                board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 	                // 파일
