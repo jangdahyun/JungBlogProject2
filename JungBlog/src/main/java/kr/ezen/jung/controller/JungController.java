@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -78,6 +79,87 @@ public class JungController {
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "index";
 	}
+	
+	/**
+	 * 게시글을 삭제하는 주소
+	 * @return 게시글 삭제후 가야 될 주소 리턴
+	 */
+	@DeleteMapping(value = "/delete/{idx}")
+	@ResponseBody
+	@Transactional
+	public String deleteBoard(@PathVariable(value = "idx") int idx, HttpSession session) {
+		if(session.getAttribute("user") == null) {			// 로그인 했는지 확인
+			return "0";
+		}
+		JungMemberVO sessionUser = (JungMemberVO) session.getAttribute("user");
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {								// 있는 게시글인지 확인
+			return "0";
+		}
+		if(boardVO.getRef() != sessionUser.getIdx()){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+			return "0";
+		}
+		jungFileBoardService.deleteByRef(boardVO.getIdx());	// 게시글에 해당하는 파일 삭제
+		jungBoardService.delete(boardVO.getIdx());			// 게시글 삭제
+		String result = "1";
+		// 머지하고 만질것
+		/*
+		String result = "0";
+		int result1 = jungFileBoardService.deleteByRef(boardVO.getIdx());
+		int result2 = jungBoardService.delete(boardVO.getIdx());
+		if(result1 + result2 == 2) {
+			result = "1";
+		}
+		*/
+		return result;
+	}
+	
+	/**
+	 * 게시글 숨김 취소 페이지
+	 * @return 게시글 숨김 취소 후 가야 될 주소 리턴
+	 */
+	@PutMapping(value = "/show/{idx}")
+	@ResponseBody
+	@Transactional
+	public String show(@PathVariable(value = "idx") int idx, HttpSession session) {
+		if(session.getAttribute("user") == null) {			// 로그인 했는지 확인
+			return "0";
+		}
+		JungMemberVO sessionUser = (JungMemberVO) session.getAttribute("user");
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {								// 있는 게시글인지 확인
+			return "0";
+		}
+		if(boardVO.getRef() != sessionUser.getIdx()){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+			return "0";
+		}
+		int result = jungBoardService.show(boardVO.getIdx());
+		return result + "";
+	}
+	
+	/**
+	 * 게시글 숨김 페이지
+	 * @return 게시글 숨김 취소 후 가야 될 주소 리턴
+	 */
+	@PutMapping(value = "/hide/{idx}")
+	@ResponseBody
+	@Transactional
+	public String hide(@PathVariable(value = "idx") int idx, HttpSession session) {
+		if(session.getAttribute("user") == null) {			// 로그인 했는지 확인
+			return "0";
+		}
+		JungMemberVO sessionUser = (JungMemberVO) session.getAttribute("user");
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {								// 있는 게시글인지 확인
+			return "0";
+		}
+		if(boardVO.getRef() != sessionUser.getIdx()){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+			return "0";
+		}
+		int result = jungBoardService.hide(boardVO.getIdx());
+		return result + "";
+	}
+	
 	//카테고리 블로그 전체 보기
 //	@RequestMapping(value = "/{categoryNum}", method = { RequestMethod.GET, RequestMethod.POST })
 //	public String list2(@PathVariable(value = "categoryNum") int categoryNum,@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {

@@ -115,7 +115,7 @@
 					    	<tr th:each="board : ${boards}">
 					    		<td>[[${board.idx}]]</td>
 					    		<td>[[${board.categoryName}]]</td>
-					    		<td>[[${board.title}]]</td>
+					    		<td style="max-width: 500px;text-align: left;overflow: hidden;text-overflow: ellipsis;">[[${board.title}]]</td>
 					    		<td>[[${board.member.nickName}]]</td>
 					    		<td>[[${board.readCount}]]</td>
 					    		<td>[[${board.commentCount}]]</td>

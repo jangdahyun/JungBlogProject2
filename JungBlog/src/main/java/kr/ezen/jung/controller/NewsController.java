@@ -1,14 +1,15 @@
 package kr.ezen.jung.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.NewsService;
 import kr.ezen.jung.vo.RssVO.Item;
 
@@ -16,8 +17,6 @@ import kr.ezen.jung.vo.RssVO.Item;
 @Controller
 @RequestMapping("/news")
 public class NewsController {
-	@Autowired
-	private JungMemberService jungMemberService;
 	
 	@Autowired
 	private NewsService newsService;
@@ -103,6 +102,14 @@ public class NewsController {
 		model.addAttribute("items", newsList);
 		model.addAttribute("title","정치 뉴스");
 		return "news/views";
+	}
+	
+	@GetMapping(value = "/test")
+	public String selectOne(Model model, @RequestParam(value = "link") String link) {
+		Map<String, String> map = newsService.getNewsByDetailUrl(link);
+		
+		model.addAttribute("all", map.get("all"));
+		return "news/test";
 	}
 	
 }

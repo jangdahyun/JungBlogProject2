@@ -1,7 +1,5 @@
 package kr.ezen.jung.service;
 
-import java.sql.SQLException;
-
 import org.springframework.stereotype.Service;
 
 import kr.ezen.jung.vo.CommonVO;
@@ -42,7 +40,7 @@ public class JungQnaBoardServiceImpl implements JungQnaBoardService{
 	}
 
 	@Override
-	public int selectCount() throws SQLException {
+	public int selectCount() {
 		
 		return 0;
 	}

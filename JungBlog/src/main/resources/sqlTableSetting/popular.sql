@@ -8,3 +8,4 @@ CREATE TABLE tb_popular(
 	FOREIGN KEY (boardRef) REFERENCES jung_board(idx),
 	FOREIGN KEY (userRef) REFERENCES jung_member(idx)
 );
+

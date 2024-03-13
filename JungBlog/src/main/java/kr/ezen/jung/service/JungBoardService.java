@@ -31,7 +31,7 @@ public interface JungBoardService {
 	void update(JungBoardVO jungBoardVO);
 	
 	// 7. 내가 쓴 글만 보기
-	PagingVO<JungBoardVO> selectByRef(CommonVO commonVO);
+	List<JungBoardVO> selectByRef(int idx);
 	// 8. 임시저장
 	
 	//9.조회수 증가

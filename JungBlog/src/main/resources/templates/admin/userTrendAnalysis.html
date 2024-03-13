@@ -19,11 +19,61 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 	<link rel="stylesheet" href="/css/admin/header.css">
     <style type="text/css">
-    	.uk-table td{padding: 8px 10px;}
 		#page a.active {font-weight: 500; font-size: 16px; color: #333;}
-		.uk-table th{border: 1px solid #ccc; padding: 10px; font-weight: 700; text-align: center; vertical-align: middle;}
-		.uk-table td{text-align: center;}
-		.uk-table .viewtitle{text-align: left;}
+		#wrap p {margin: 0;}
+		#thead {
+			margin-top:20px;
+			display: grid;
+			grid-template-rows: 30px 50px;
+			grid-template-columns: 50px 100px 100px 50px 100px auto 200px 100px;
+			
+			grid-template-areas:
+			    "no user user board board board info info"
+			    "no userIdx nickname boardIdx boardCategory boardTitle interection time";
+		}
+		#thead div {
+			border: 1px solid #ccc; background: #3F51B5; color: #fff;
+		}
+		#thead .grid-no  {grid-area: no; display: flex; justify-content: center; align-items: center;}
+		#thead .grid-user    { grid-area: user; display: flex; justify-content: center; align-items: center;}
+		#thead .grid-board { grid-area: board; display: flex; align-items: center; justify-content: center;}
+		#thead .grid-info  { grid-area: info; display: flex; justify-content: center; align-items: center;}
+		#thead .grid-userIdx  { grid-area: userIdx;  display: flex; justify-content: center; align-items: center;}
+		#thead .grid-nickname  { grid-area: nickname;  display: flex; justify-content: center; align-items: center;}
+		#thead .grid-boardIdx  { grid-area: boardIdx; display: flex; justify-content: center; align-items: center;}
+		#thead .grid-category  { grid-area: boardCategory; display: flex; justify-content: center; align-items: center;}
+		#thead .grid-title  { grid-area: boardTitle; display: flex; align-items: center; padding-left: 10px;}
+		#thead .grid-interection  { grid-area: interection; display: flex; justify-content: center; align-items: center;}
+		#thead .grid-time  { grid-area: time; display: flex; justify-content: center; align-items: center; text-align: center;}
+		
+		#tbody li {
+			padding: 10px 0;
+			margin: 0;
+			display: grid;
+			grid-template-columns: 50px 100px 100px 50px 100px auto 200px 100px;
+			border-bottom: 1px solid #ccc; 
+		}
+		#tbody .grid-no  {display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-user    {display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-board {display: flex; align-items: center; justify-content: center;}
+		#tbody .grid-info  {display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-userIdx  { display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-nickname  {display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-boardIdx  {display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-category  {display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-title  {
+			min-width : 250px;
+			max-width : 700px;
+			margin: auto 0;
+			padding: 0 10px;
+			overflow:hidden;
+			white-space:nowrap;
+			text-overflow:ellipsis;
+		}
+		#tbody .grid-interection  {display: flex; justify-content: center; align-items: center;}
+		#tbody .grid-time  {display: flex; justify-content: center; align-items: center; text-align: center;}
+		
+		
     </style>
 </head>
 <body>
@@ -48,41 +98,34 @@
 				        </div>					
 					</form>
 	        	</div>
-	        	
-	        	<table class="uk-table uk-table-striped uk-table-divide">
-				    <thead>
-				        <tr>
-				        	<th rowspan="2">NO</th>
-				            <th colspan="2" style="width: 15%">유저</th>
-				            <th colspan="3" style="width: 65%">게시글</th>				            
-				            <th colspan="2" style="width: 20%">행동 및 시간</th>				            
-				        </tr>
-				        <tr>
-				            <th style="width: 5%;">유저번호</th>
-				            <th style="width: 10%;">닉네임</th>				            
-				            <th style="width: 5%;">글번호</th>				            
-				            <th style="width: 5%;">카테고리</th>				            
-				            <th style="width: 50%;">제목</th>
-				            <th style="width: 10%;">조회 / 댓글<br />좋아요 / 좋아요취소</th>
-				            <th style="width: 10%;">시간</th>
-			            </tr>
-				    </thead>
-				    <tbody>
-				    	<tr th:if="${#lists.isEmpty(pv.list)}">
-				    		<td colspan="8">등록된 유저기록이 없습니다.</td>
-				    	</tr>
-				    	<tr th:each="p : ${pv.list}">
-				    		<td>[[${p.idx}]]</td>
-				    		<td>[[${p.member.idx}]]</td>
-				    		<td>[[${p.member.nickName}]]</td>
-				    		<td>[[${p.board.idx}]]</td>
-				    		<td>[[${p.board.categoryName}]]</td>
-				    		<td class="viewtitle">[[${p.board.title}]]</td>
-				    		<td>[[${p.interaction == 1 ? '조회' : p.interaction == 2 ? '댓글' : p.interaction == 3 ? '좋아요' : '좋아요취소'}]]</td>
-				    		<td>[[${#dates.format(p.interaction_time,'yy-MM-dd hh:mm:ss')}]]</td>
-				    	</tr>
-				    </tbody>
-				</table>
+	        	<div id="thead">
+		        	<div class="grid-no">NO</div>
+		            <div class="grid-user">유저</div>
+		            <div class="grid-board">게시글</div>			            
+		            <div class="grid-info">행동 및 시간</div>
+		            <div class="grid-userIdx">유저번호</div>
+		            <div class="grid-nickname">닉네임</div>				            
+		            <div class="grid-boardIdx">글번호</div>          
+		            <div class="grid-category">카테고리</div>
+		            <div class="grid-title">제목</div>
+		            <div class="grid-interection">조회 / 댓글<br />좋아요 / 좋아요취소</div>
+		            <div class="grid-time">시간</div>
+       			</div>
+       			<ul id="tbody">
+       				<li th:if="${#lists.isEmpty(pv.list)}">
+			    		<div>등록된 유저기록이 없습니다.</div>
+			    	</li>       				
+       				<li th:each="p : ${pv.list}">
+       					<div class="grid-no">[[${p.idx}]]</div>
+			    		<div class="grid-userIdx">[[${p.member.idx}]]</div>
+			    		<div class="grid-nickname">[[${p.member.nickName}]]</div>
+			    		<div class="grid-boardIdx">[[${p.board.idx}]]</div>
+			    		<div class="grid-category">[[${p.board.categoryName}]]</div>
+			    		<div class="grid-title"><a th:onclick="view([[${p.board.idx}]], [[${p.board.categoryNum}]])">[[${p.board.title}]]</a></div>
+			    		<div class="grid-interection">[[${p.interaction == 1 ? '조회' : p.interaction == 2 ? '댓글' : p.interaction == 3 ? '좋아요' : '좋아요취소'}]]</div>
+			    		<div class="grid-time">[[${#dates.format(p.interaction_time,'yy-MM-dd hh:mm:ss')}]]</div>
+       				</li>
+       			</ul>
 				<div id="page" style="display:flex; align-items: center; justify-content: center;">
 					[(${pv.pageList})]
 				</div>
@@ -107,6 +150,27 @@
 			})
 		})
 	})
+	
+	function view(idx, categoryNum) {
+	    let result = "";
+	
+	    switch (categoryNum) {
+	        case 1:
+	            result = "/blog/";
+	            break;
+	        case 2:
+	            result = "/fileboard/";
+	            break;
+	        case 4:
+	        	result = "/gallery/";
+	        	break;
+	    }
+	 	// 새 창으로 열기
+	    if (result !== "") {
+	        window.open(result + idx);
+	    }
+	    return result;
+	}
 </script>
 </body>
 </html>

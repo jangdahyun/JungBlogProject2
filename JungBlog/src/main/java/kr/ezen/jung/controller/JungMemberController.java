@@ -24,10 +24,8 @@ import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.MailService;
-import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
-import kr.ezen.jung.vo.PagingVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -56,52 +54,14 @@ public class JungMemberController {
        //자기 정보
        JungMemberVO sesesionUser = (JungMemberVO) session.getAttribute("user");
        JungMemberVO memberVO = memberService.selectByIdx(sesesionUser.getIdx());
-    
-       model.addAttribute("user",memberVO);
-       return "my/mypage";
-    }
-    
-    //내가 쓴 글
-    @GetMapping(value = {"/myblog"})
-    public String myblog(HttpSession session,@ModelAttribute(value = "cv")CommonVO cv, Model model) {
-    	 if(session.getAttribute("user") == null) {
-             return "redirect:/";
-          }
-    	 JungMemberVO sesesionUser = (JungMemberVO) session.getAttribute("user");
-         JungMemberVO memberVO = memberService.selectByIdx(sesesionUser.getIdx());
-         cv.setUserRef(sesesionUser.getIdx());
-         cv.setS(10);
-         PagingVO<JungBoardVO> pv = jungBoardService.selectByRef(cv);
-         
-         log.info("myblog실행 cv: {}",cv);
-         model.addAttribute("pv",pv);
-         model.addAttribute("cv", cv);
-         model.addAttribute("user",memberVO);
-         model.addAttribute("categoryList",jungBoardService.findCategoryList());
-    	 return "my/myblog";
-    }
-    
-    //내가 좋아요 한 글 보기
-    @GetMapping(value = {"/myheartblog"} )
-    public String myheartblog(HttpSession session,@ModelAttribute(value = "cv")CommonVO cv, Model model) {
-    	if(session.getAttribute("user") == null) {
-    		return "redirect:/";
-         }
-    	 JungMemberVO sesesionUser = (JungMemberVO) session.getAttribute("user");
-    	 JungMemberVO memberVO = memberService.selectByIdx(sesesionUser.getIdx());
-    	 cv.setUserRef(sesesionUser.getIdx());
-         cv.setS(10);
-         PagingVO<JungBoardVO> pv = jungBoardService.selectHeartByUseridx(cv);
-         
-         log.info("실행 cv: {}",pv);
-         
-         model.addAttribute("pv",pv);
-         model.addAttribute("cv", cv);
-         model.addAttribute("user",memberVO);
-         model.addAttribute("categoryList",jungBoardService.findCategoryList());
-   	 	return "my/myheartblog";
-    }
+       //자기 글 보기
+       List<JungBoardVO> boards = jungBoardService.selectByRef(memberVO.getIdx());
         
+       model.addAttribute("boards",boards);
+       model.addAttribute("user",memberVO);
+       return "mypage";
+    }
+    
     @PostMapping(value = "/userPwCheck")
     @ResponseBody
     public String updatePassword(@RequestBody JungMemberVO jungVO,HttpSession session) {

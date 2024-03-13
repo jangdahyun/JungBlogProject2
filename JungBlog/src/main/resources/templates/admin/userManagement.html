@@ -66,24 +66,23 @@
 				            <th>휴대폰번호</th>
 				            <th>성별</th>
 				            <th>게시글수</th>
-				            <th>권한변경하기</th>
 				        </tr>
 				    </thead>
 				    <tbody>
 				    	<tr th:if="${#lists.isEmpty(pv.list)}">
 				    		<td colspan="10" style="text-align: center;">등록된 유저기록이 없습니다.</td>
 				    	</tr>
-				    	<tr th:each="user : ${pv.list}">
-				    		<td>[[${user.idx}]]번째로 가입한 회원</td>
+				    	<tr th:each="user, vs : ${pv.list}">
+				    		<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage - vs.index}]]</td>
 				    		<td>[[${user.username}]]</td>
 				    		<td>[[${user.name}]]</td>
 				    		<td>[[${user.nickName}]]</td>
 				    		<td>[[${user.stAddress}]] , [[${user.dtAddress}]]</td>
 				    		<td>[[${user.role}]]</td>
-				    		<td>[[${#dates.format(user.birthDate, 'yyyy-MM-dd HH:mm')}]]</td>
+				    		<td>[[${#dates.format(user.birthDate, 'yyyy-MM-dd')}]]</td>
 				    		<td>[[${user.phone}]]</td>
-				    		<td>[[${user.gender}]]</td>
-				    		<td>[[${user.boardCount}]]</td>
+				    		<td style="text-align: center;">[[${user.gender==1 ? '남' : '여'}]]</td>
+				    		<td style="text-align: center;">[[${user.boardCount}]]</td>
 				    	</tr>
 				    </tbody>
 				</table>
