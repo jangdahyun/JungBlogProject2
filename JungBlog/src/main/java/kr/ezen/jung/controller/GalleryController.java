@@ -78,6 +78,9 @@ public class GalleryController {
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
+		if (error != null) {
+			model.addAttribute("error",error);
+		}
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "gallery/gallery";
 	}
