@@ -10,6 +10,8 @@ public interface JungMemberService extends UserDetailsService{
 
 	JungMemberVO selectByUsername(String username);
 	
+	JungMemberVO selectByEmail(String email);
+	
 	JungMemberVO selectByIdx(int idx);
 	
 	int selectCountByUsername(String username);
@@ -18,7 +20,7 @@ public interface JungMemberService extends UserDetailsService{
 	
 	void update(JungMemberVO memberVO);
 	
-	void delete(JungMemberVO memberVO);
+	void delete(int idx);
 
 	// 관리자 용
 	PagingVO<JungMemberVO> getUsers(CommonVO cv);

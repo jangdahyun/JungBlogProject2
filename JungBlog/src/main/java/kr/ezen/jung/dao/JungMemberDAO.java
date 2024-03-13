@@ -13,7 +13,12 @@ public interface JungMemberDAO {
 	// 특정 유저 조회
 	JungMemberVO selectByUsername(String username) throws SQLException;
 	
+	JungMemberVO selectByEmail(String email) throws SQLException;
+	
 	JungMemberVO selectByIdx(int idx) throws SQLException;
+	
+	//비밀번호 찾기
+	void findPwByUserName(JungMemberVO memberVO) throws SQLException;
 	
 	// 아이디가 같은게 잇는지 확인
 	int selectCountByUsername(String username) throws SQLException;
@@ -25,8 +30,7 @@ public interface JungMemberDAO {
 	void update(JungMemberVO memberVO) throws SQLException; 
 
 	// 유저 정보 삭제
-	void delete(String username) throws SQLException;
-	
+	void delete(int idx) throws SQLException;
 	
 	
 	// 관리자용

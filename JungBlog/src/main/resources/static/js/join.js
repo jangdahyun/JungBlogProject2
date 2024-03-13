@@ -1,9 +1,9 @@
 $(function() {
 	$("#username").keyup(function() {
-		let username = $("#username").val();
+		let username = $(this).val();
 		if (username.length >= 4) {
 			if (username.indexOf(" ") != -1) {
-				$("#message").html("공백은 포함할수 없어요").css('color', 'red');
+				$("#message2").html("공백은 포함할수 없어요").css('color', 'red');
 			} else {
 				// Ajax를 호출하여 처리 한다.
 				axios.post('/member/userIdCheck', {
@@ -13,9 +13,9 @@ $(function() {
 						// 성공 핸들링
 						// alert(response.data);
 						if (response.data * 1 == 0) {
-							$("#message").html("사용가능한 아이디입니다.").css('color', 'blue');
+							$("#message2").html("사용가능한 아이디입니다.").css('color', 'blue');
 						} else {
-							$("#message").html("사용 불가능한 아이디입니다.").css('color', 'red');
+							$("#message2").html("사용 불가능한 아이디입니다.").css('color', 'red');
 						}
 					})
 					.catch(function(error) {
@@ -27,35 +27,59 @@ $(function() {
 					});
 			}
 		} else {
-			$("#message").html("").css('color', 'black');
+			$("#message2").html("").css('color', 'black');
 		}
+	});
+	
+	$("#email").keyup(function() {
+		let email = $("#email").val();
+			// Ajax를 호출하여 처리 한다.
+			axios.post('/member/userEmailCheck', {
+				"email": email
+			})
+				.then(function(response) {
+					// 성공 핸들링
+					// alert(response.data);
+					if (response.data * 1 == 0) {
+						$("#message").html("가입이 가능합니다").css('color', 'blue');
+					} else {
+						$("#message").html("이미 가입된 이메일입니다.").css('color', 'red');
+					}
+				})
+				.catch(function(error) {
+					// 에러 핸들링
+					console.log(error);
+				})
+				.finally(function() {
+					// 항상 실행되는 영역
+				});
 	});
 
 	let checkVal = "";
 	$("#sendEmail").click(function() {
-		let username = $("#username").val();
-		if (username.trim().length == 0) {
-			alert("아이디를 입력해주세요")
-			$("#username").val("");
-			$("#username").focus();
-			return;
-		}
-		if (username.indexOf(" ") != -1) {
-			alert("공백은 포함할 수 없어요");
-			$("#username").val("");
-			$("#username").focus();
-			return;
-		}
 		let email = $("#email").val();
-		alert(email)
-		if (email == 0) {
+		if (email.trim().length == 0) {
+			alert("이메일을 입력해주세요")
+			$("#email").val("");
+			$("#email").focus();
+			return;
+		}
+		if (email.indexOf(" ") != -1) {
+			alert("공백은 포함할 수 없어요");
+			$("#email").val("");
+			$("#email").focus();
+			return;
+		}
+		let email2 = $("#email2").val();
+		alert(email2)
+		if (email2 == 0) {
 			alert("이메일을 선택해주세요");
 			$("#message").focus();
 			return;
 		}
-		username = username + '@' + email;
+		email = email + '@' + email2;
 		// Ajax를 호출하여 처리 한다.
-		axios.get('/member/send?to=' + username)
+		axios.get('/member/send?to=' + email)
 			.then(function(response) {
 				if (response.data != "") {
 					alert("메일 발송 성공")
@@ -78,6 +102,7 @@ $(function() {
 		if (check == checkVal) {
 			alert("인증 완료");
 			$("#dtAddress").attr("disabled",false);
+			$("#username").attr("disabled",false);
 			$("#password").attr("disabled",false);
 			$("#confirmPassword").attr("disabled",false);
 			$("#name").attr("disabled",false);
@@ -141,14 +166,14 @@ function checkPasswordMatch() {
 
 // 회원가입 로직
 function submitForm() {
-	let username = $("#username").val();
-	if (username.trim().length === 0) {
+	let email = $("#email").val();
+	if (email.trim().length === 0) {
 		alert("아이디를 입력해주세요.");
 		return;
 	}
 
-	let email = $("#email").val();
-	if (email === "0") {
+	let email2 = $("#email2").val();
+	if (email2 === "0") {
 		alert("이메일을 선택해주세요.");
 		return;
 	}
@@ -162,6 +187,12 @@ function submitForm() {
 	let emailVerificationCode = $("#check").val();
 	if (emailVerificationCode.trim().length === 0) {
 		alert("이메일 인증번호를 입력해주세요.");
+		return;
+	}
+	
+	let username = $("#username").val();
+	if (username.trim().length === 0) {
+		alert("아이디를 입력해주세요.");
 		return;
 	}
 
@@ -237,8 +268,8 @@ function submitForm() {
 		alert("사용자 상세 주소를 입력해주세요.");
 		return;
 	}
-	const realUserName = username + "@" + email;
-	$("#realUserName").val(realUserName);
+	const realUserEmail = email + "@" + email2;
+	$("#realUserEmail").val(realUserEmail);
 	if (checkPasswordMatch()) {
 		showRegistrationMessage();
 		// 로그인 페이지로 이동

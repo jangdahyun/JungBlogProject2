@@ -127,6 +127,14 @@ public class JungMemberController {
 			model.addAttribute("logout", "logout");
 		return "login";
 	}
+	
+	@GetMapping(value = {"/findPw"})
+	public String updatePw(@RequestParam(value = "logout", required = false) String logout, Model model) {
+		if (logout != null)
+			model.addAttribute("logout", "logout");
+		return "findPw";
+	}
+	
 //	
 //	@GetMapping(value = { "/logout" })
 //	public String logout(HttpSession session) {
@@ -174,6 +182,18 @@ public class JungMemberController {
   		return memberService.selectByUsername(username)+"";
   	}
   	
+  	/**
+  	 * 
+  	 * @param 이메일로 찾기
+  	 * @return
+  	 */
+  	@PostMapping(value = "/userEmailCheck", produces = "text/plain;charset=UTF-8")
+  	@ResponseBody
+  	public String userEmailCheck(@RequestBody Map<String, String>map ) {
+  		String email = map.get("email");
+  		return memberService.selectByEmail(email)+"";
+  	}
+  	
   	
   	@PostMapping("/joinok")
   	public String joinOkPost(@ModelAttribute(value = "vo") JungMemberVO vo, @RequestParam(value = "bd")String bd ) {
@@ -187,6 +207,7 @@ public class JungMemberController {
   		}
   		vo.setBirthDate(date);
   		vo.setRole("ROLE_USER");
+  		log.debug("vo : {}",vo);
   		memberService.insert(vo); // 저장
   		log.debug("vo : {}",vo);
   		return "redirect:/";
@@ -219,16 +240,22 @@ public class JungMemberController {
     }
 
     // 유저 정보 삭제
-    @PostMapping("/delete")
+    @GetMapping("/delete")
     public String deleteMember(@ModelAttribute(value = "memberVO") JungMemberVO deletememberVO,HttpSession session, Model model) {
     	JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
     	deletememberVO.setIdx(memberVO.getIdx());
-    	log.info("delete 성공 {}", deletememberVO);
     	 //자기 정보
     	log.info("나는 누구?{}",memberVO);
         model.addAttribute("user",memberVO);
-//        memberService.delete(memberVO);
-        
-        return "redirect:/";  
+        return "my/delete";  
+    }
+    
+    @PostMapping("/deleteOk")
+    public String deleteOk(HttpSession session) {
+    	JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
+    	memberService.delete(memberVO.getIdx());
+    	log.info("밤양갱 {}",memberVO);
+    	session.invalidate(); // 세션 무효화
+    	return "redirect:/"; 
     }
 }

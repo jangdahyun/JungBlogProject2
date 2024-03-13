@@ -21,8 +21,9 @@ public class JungMemberVO implements UserDetails{
 
 	private int idx;						// 키필드
 	
-	private String username;				// id (이메일 형태)
+	private String username;				// id
 	private String password;				// password
+	private String email;				// 이메일
 	private String role;					// 권한
 	
 	private String name;					// 실제 이름 

@@ -180,11 +180,21 @@ public class JungBoardServiceImpl implements JungBoardService {
 		try {
 			// 개선점: 비번을 입력하여 확인 후 지울 것인지 아님 그냥 지울 것인가?
 			jungBoardDAO.delete(idx);
+			jungFileBoardDAO.deleteByRef(idx);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	public void deleteByUserRef(int ref) {
+		try {
+			// 개선점: 비번을 입력하여 확인 후 지울 것인지 아님 그냥 지울 것인가?
+			jungBoardDAO.deleteByUserRef(ref);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	/**
 	 * 5. 글 수정하기

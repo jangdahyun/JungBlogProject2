@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -473,7 +475,7 @@ public class JungController {
 
 //	@Autowired	
 //	private JdbcTemplate jdbcTemplate;
-//	
+//
 //		@Autowired
 //		private BCryptPasswordEncoder passwordEncoder;
 //	

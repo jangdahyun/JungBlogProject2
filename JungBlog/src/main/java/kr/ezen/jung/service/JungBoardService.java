@@ -26,6 +26,8 @@ public interface JungBoardService {
 	// 5. 게시글 삭제
 	void delete(int idx);
 	
+	//5-1 userRef를 통한 게시글 삭제
+	void deleteByUserRef(int ref);
 	
 	// 6.수정
 	void update(JungBoardVO jungBoardVO);
