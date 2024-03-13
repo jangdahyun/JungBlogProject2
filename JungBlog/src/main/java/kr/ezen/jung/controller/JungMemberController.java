@@ -182,8 +182,14 @@ public class JungMemberController {
 
     // 유저 정보 삭제
     @PostMapping("/delete")
-    public String deleteMember(@ModelAttribute(value = "memberVO") JungMemberVO memberVO,@PathVariable String username) {
-        memberService.delete(memberVO);
+    public String deleteMember(@ModelAttribute(value = "memberVO") JungMemberVO deletememberVO,HttpSession session, Model model) {
+    	JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
+    	deletememberVO.setIdx(memberVO.getIdx());
+    	log.info("delete 성공 {}", deletememberVO);
+    	 //자기 정보
+    	log.info("나는 누구?{}",memberVO);
+        model.addAttribute("user",memberVO);
+//        memberService.delete(memberVO);
         
         return "redirect:/";  
     }

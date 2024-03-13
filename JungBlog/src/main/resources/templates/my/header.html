@@ -1,0 +1,41 @@
+<header class="header" role="banner" style="margin-left: 250px; width: 300px; text-align: center; box-shadow: 4px 0 8px rgba(0, 0, 0.1, 0.3);">
+	<div class="header_subuindex" >
+		<h2 id="headerlogo"><b><img src="/img/mypage/JungProjectLogo.png" alt="logo"></b></h2>
+	</div>
+	<div class="profile_area">
+		<p class="usernic" style="font-size: 15px; margin-left: 15%">[[${user.nickName}]] <span class="material-symbols-outlined">badge</span> </p>
+		
+		<th:block th:if="${user.role == 'ROLE_USER'}">
+			<th:block th:if="${user.gender == 0}">
+				<img src="/img/mypage/pro2.jpg" id="menuIcon" alt="menuIcon"style="width: 150px; height: 150px; margin-left: 35px;"  />
+			</th:block>
+			<th:block th:if="${user.gender == 1}">			
+				<img src="/img/mypage/pro.png" id="menuIcon" alt="menuIcon"style="width: 150px; height: 150px; margin-left: 35px;"  />	
+			</th:block>
+		</th:block>
+		<th:block th:unless="${user.role == 'ROLE_USER'}">
+			<img src="/img/mypage/admin.png" id="menuIcon" alt="menuIcon"style="width: 150px; height: 150px; margin-left: 35px;"  />	
+		</th:block>
+		
+		<div class="profile">
+			<div style="margin-left: 15%">
+			<p class="userid" style="font-weight: bold;">[[${user.name}]]
+			<p class="useremail" >[[${user.username}]]
+			</div>
+		</div>
+		<hr />
+		<div class="header_left" id="headerLeft" >
+			<ul class="left_menu" role="menu" style="list-style-type: none; ">
+				<li style="text-align: left; font-weight: lighter; font-size: 30px; margin-bottom: 20px;"><a style="color: #03D580" href="/member/mypage">내 정보</a></li>
+				<li style="text-align: left; font-weight: lighter; font-size: 30px; margin-bottom: 20px;"><a style="color: #03D580" href="/member/myblog">내가 쓴 글</a></li>
+				<li style="text-align: left; font-weight: lighter; font-size: 30px; margin-bottom: 20px;"><a style="color: #03D580" href="/member/myheartblog">좋아한 글</a></li>
+			</ul>
+			<hr />
+			<div class="menu2" role="menu">
+				<a href="/logout" style="margin-right: 180px; color:#878B90 ">Logout</a>
+				<hr />
+				<a href="/탈퇴" style="font-size: 20px; margin-bottom: 20px; margin-right: 160px; color: #878B90" th:onclick="">회원탈퇴</a>
+			</div>
+		</div>
+	</div>	
+</header>
