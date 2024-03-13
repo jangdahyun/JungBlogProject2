@@ -236,7 +236,7 @@ public class JungMemberManController {
 	
 	@GetMapping(value = "/userTrendAnalysis")
 	public String userTrendAnalysis(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
-		log.info("bestPost실행 cv: {}",cv);
+		log.info("userTrendAnalysis실행 cv: {}",cv);
 		if(session.getAttribute("user") == null) {
 	        return "redirect:/";
 	    }
@@ -259,6 +259,16 @@ public class JungMemberManController {
 	//=========================================================================================================================================
 	@GetMapping(value = "/bestPost")
 	public String bestPost(HttpSession session, Model model) {
+		log.info("bestPost실행");
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+		
 		List<JungBoardVO> popularBoardList = jungBoardService.findPopularBoard();
 		model.addAttribute("list", popularBoardList);
 		log.info("popularBoardList : {}", popularBoardList);
@@ -294,6 +304,27 @@ public class JungMemberManController {
 		return map;
 	}
 	
+	//=====================================================================================================================
+	// QnA 관리
+	//=====================================================================================================================
+	@GetMapping(value = "/QnAs")
+	public String QnAs(HttpSession session, Model model, @ModelAttribute CommonVO cv) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getNickName());
+	    cv.setCategoryNum(5);
+	    cv.setS(5);
+	    cv.setB(5);
+	    PagingVO<JungBoardVO> infoPv = jungBoardService.selectList(cv);
+	    model.addAttribute("pv", infoPv);
+	    model.addAttribute("cv", cv);
+		return "admin/QnAList";
+	}
 	
 	//=====================================================================================================================
 	// 공지사항 관리

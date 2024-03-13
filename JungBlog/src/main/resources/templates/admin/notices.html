@@ -36,15 +36,20 @@
     	.tr1{ width: 100%; display: flex;}
     	.tr2{width: 100%; display: flex;}
     	
-    	.td1 {width: 50px; text-align: center;display: flex;align-items: center; justify-content: center;}
+    	.td1 {width: 50px; text-align: center;display: flex;align-items: center; justify-content: center; padding: 3px;}
     	.td2 {width: calc(100% - 350px); padding: 3px;}
-    	.td3 {width: 200px;display: flex;align-items: center; justify-content: center;}
-    	.td4 {width: 100px;display: flex;align-items: center; justify-content: center;}
-    	.td5 {width: calc(100% - 50px);}
+    	.td3 {width: 200px;display: flex;align-items: center; justify-content: center; padding: 3px;}
+    	.td4 {width: 100px;display: flex;align-items: center; justify-content: center; padding: 3px;}
+    	.td5 {width: calc(100% - 50px); padding: 3px;}
     	#thead div{border: 1px solid #ccc; background: #3F51B5; color: #fff; font-weight: 500;}
     	#thead .tr2{border-top: none;}
     	#thead .tr2 p{margin: 0; padding: 5px;}
     	#thead .td2 {display: flex;align-items: center; justify-content: center;}
+    	
+    	#thead li { margin:0}
+    	#tbody .tr1 {border-bottom: 1px solid #ccc;}
+    	#tbody li { border-bottom: 1px solid #aaa; margin: 0px;}
+    	#tbody p {margin: 0px;}
     </style>
 </head>
 <body>
@@ -87,7 +92,7 @@
 	        					</div>
 	        				</li>
 	        			</ul>
-	        			<ul>
+	        			<ul id="tbody">
 	        				<li th:each="board, vs: ${pv.list}">
 	        					<div class="tr1">
 	        						<div class="td1">[[${vs.count}]]</div>
@@ -96,7 +101,7 @@
 	        						<div class="td4">[[${board.readCount}]]</div>
 	        					</div>
 	        					<div class="tr2">
-	        						<div class="td1">내용</div>
+	        						<div class="td1" style="display: flex; align-items: flex-start; justify-content: center;">내용</div>
 	        						<div class="td5"><p style="word-wrap: break-word;"><a th:onclick="view([[${board.idx}]])">[[${board.content}]]</a></p></div>
 	        					</div>
 	        				</li>

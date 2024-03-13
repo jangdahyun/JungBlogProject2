@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>뉴스</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- ChartJs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <link rel="stylesheet" href="/css/mainHeader.css"/>
+    <script src="/js/mainHeader.js"></script>
+    
+    <style type="text/css">
+		body {color: #fff;background: #302F2B;font-family: "Noto Sans KR", sans-serif;}
+		#wrap{max-width: 600px; margin: auto; color:#fff; font-size: 18px;}
+		main{padding: 130px 0;}
+		
+		.figure-caption{
+		    max-width: 100%;
+		    margin: 10px auto 0;
+		    color: #888;
+		    text-align: left;
+		    font-size: 0.778em;
+		    line-height: 1.57em;
+		}
+		#wrap strong {
+			font-weight: bold;
+		}
+		#wrap .hk_sub_headline {
+			margin: 30px 0;
+		    padding: 15px 0;
+		    border-top: 2px solid #c3c3c3;
+		    border-bottom: 1px solid #e5e5e5;
+		    color: #436f91;
+		    font-style: normal;
+		    font-weight: bold;
+		    font-size: 1.25em;
+		    line-height: 1.6;
+		    word-wrap: break-word;
+		    display: -webkit-box;
+		    -webkit-box-orient: vertical;
+		    clear: both;
+		}
+    </style>
+</head>
+<body>
+	<th:block th:insert="~{mainHeader.html}"></th:block>
+	<div id="wrap">
+		<main>
+			[(${all})]
+			<hr />
+			[[${all}]]
+		</main>
+	</div>
+</body>
+</html>
