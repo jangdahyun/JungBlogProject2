@@ -209,10 +209,12 @@
   	             document.body.offsetHeight, document.documentElement.offsetHeight,
   	             document.body.clientHeight, document.documentElement.clientHeight
   	         );
-
+			console.log(scrollTop);
+			console.log(windowHeight);
+			console.log(documentHeight);
   	         // 현재 스크롤 위치와 브라우저 창의 높이, 문서의 총 높이를 비교하여 맨 아래에 도달했는지 확인합니다.
-  	         if (scrollTop + windowHeight >= documentHeight) {
-  	            
+  	         if (scrollTop + windowHeight +0.4 >= documentHeight) {
+					
   	             NextPage();
   	         }
   	     });
