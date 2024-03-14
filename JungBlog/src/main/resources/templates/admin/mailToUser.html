@@ -50,6 +50,7 @@
 					        	<th><input type="checkbox" id="AllCheck"/></th>
 					            <th>No</th>
 					            <th>아이디</th>
+					            <th>이메일</th>
 					            <th>이름</th>
 					            <th>닉네임</th>
 					            <th>주소</th>
@@ -214,8 +215,9 @@
 		                    <td><input type="checkbox" name="checking" value="${x.idx}"/></td>`
 				}
 				content +=`
-	                    <td>${x.idx}번째로 가입한 회원</td>
+	                    <td>${x.idx}</td>
 	                    <td>${x.username}</td>
+	                    <td>${x.email}</td>
 	                    <td>${x.name}</td>
 	                    <td>${x.nickName}</td>
 	                    <td>${x.stAddress}, ${x.dtAddress}</td>

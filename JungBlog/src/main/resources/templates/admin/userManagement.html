@@ -58,6 +58,7 @@
 				        <tr>
 				            <th>No</th>
 				            <th>아이디</th>
+				            <th>이메일</th>
 				            <th>이름</th>
 				            <th>닉네임</th>
 				            <th>주소</th>
@@ -75,6 +76,7 @@
 				    	<tr th:each="user, vs : ${pv.list}">
 				    		<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage - vs.index}]]</td>
 				    		<td>[[${user.username}]]</td>
+				    		<td>[[${user.email}]]</td>
 				    		<td>[[${user.name}]]</td>
 				    		<td>[[${user.nickName}]]</td>
 				    		<td>[[${user.stAddress}]] , [[${user.dtAddress}]]</td>

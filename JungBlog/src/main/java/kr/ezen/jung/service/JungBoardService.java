@@ -64,4 +64,7 @@ public interface JungBoardService {
 	String getQnAInfo();
 	
 	
+	
+	
+	List<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, int categoryNum, String search);
 }
