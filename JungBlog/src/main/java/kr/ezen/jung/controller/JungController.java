@@ -69,9 +69,19 @@ public class JungController {
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
 		log.info("cv: {}",cv);
-		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
+		cv.setS(3);
+		PagingVO<JungBoardVO> pvall = jungBoardService.selectList(cv);
+		cv.setCategoryNum(1);
+		PagingVO<JungBoardVO> pvblog = jungBoardService.selectList(cv);
+		cv.setCategoryNum(2);
+		PagingVO<JungBoardVO> pvfileboard = jungBoardService.selectList(cv);
+		cv.setCategoryNum(4);
+		PagingVO<JungBoardVO> pvgallery = jungBoardService.selectList(cv);
 		
-		model.addAttribute("pv", pv);
+		model.addAttribute("pvall", pvall);
+		model.addAttribute("pvblog", pvblog);
+		model.addAttribute("pvfileboard", pvfileboard);
+		model.addAttribute("pvgallery", pvgallery);
 		model.addAttribute("cv", cv);
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "index";

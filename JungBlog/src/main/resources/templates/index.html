@@ -160,9 +160,9 @@
 			</div>
         </div>
         <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding-left: 20px;">
-            <span style="font-weight: bold; font-size: 18pt;">오늘 하루를 기록해보세요! :)   ></span>
-            <span> </span><br><br>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
+            <span style="font-weight: bold; font-size: 18pt;">오늘 하루를 기록해보세요! :)   > [(${pv.pageList})]</span>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 0px;">
                 <div th:each="vo, iterStat : ${pv.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
                     <div id="smallboard">
 	                    <div><img src="/img/mainpageImg/allboard1.jpg" style="border-radius: 5px"></div>
@@ -196,14 +196,16 @@
             <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
                 <div th:each="vo, iterStat : ${pv.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
                     <div id="smallboard">
-	                    <div><img src="/img/mainpageImg/allboard1.jpg" style="border-radius: 5px"></div>
-	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
-	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
-                    	<div id="smallboardtext">
-	                    	<span>작성자</span><br>
-	                    	<span>조회수 [[${vo.readCount}]] |</span>
-	               			<span>좋아요 [[${vo.countHeart}]] |</span>
-	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+                    	<div th:if="${vo.categoryNum==2}">
+		                    <div><img src="/img/mainpageImg/allboard1.jpg" style="border-radius: 5px"></div>
+		                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+		                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
+	                    	<div id="smallboardtext">
+		                    	<span>작성자</span><br>
+		                    	<span>조회수 [[${vo.readCount}]] |</span>
+		               			<span>좋아요 [[${vo.countHeart}]] |</span>
+		                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+	                    	</div>
                     	</div>
                     </div>
                 </div>
@@ -258,14 +260,16 @@
             <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
                 <div th:each="vo, iterStat : ${pv.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
                     <div id="smallboard">
-	                    <div><img src="/img/mainpageImg/file.jpg" style="border-radius: 5px"></div>
-	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
-	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
-                    	<div id="smallboardtext">
-	                    	<span>작성자</span><br>
-	                    	<span>조회수 [[${vo.readCount}]] |</span>
-	               			<span>좋아요 [[${vo.countHeart}]] |</span>
-	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+                    	<div th:each="file : ${vo.fileboardVO}">
+		                    <div><img src="/img/mainpageImg/file.jpg" style="border-radius: 5px"></div>
+		                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+		                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
+	                    	<div id="smallboardtext">
+		                    	<span>작성자</span><br>
+		                    	<span>조회수 [[${vo.readCount}]] |</span>
+		               			<span>좋아요 [[${vo.countHeart}]] |</span>
+		                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+	                    	</div>
                     	</div>
                     </div>
                 </div>
