@@ -166,7 +166,7 @@ public class JungMemberManController {
 	    
 	    Map<String, Object> map = new HashMap<>();
 	    for(int i : mailList) {
-	    	map.put(jungMemberService.selectByIdx(i).getUsername(), i);
+	    	map.put(jungMemberService.selectByIdx(i).getEmail(), i);
 	    }
 	    model.addAttribute("userMap", map);
 	    return "admin/mailSendToUser";
@@ -175,7 +175,7 @@ public class JungMemberManController {
 	
 	
 	@PostMapping(value = "/sendToUserOk")
-	public String sendToUserOk(HttpSession session, Model model, @RequestParam("userIdx") List<Integer> userList, @RequestParam("title") String title, @RequestParam("subject") String subject) {
+	public String sendToUserOk(HttpSession session, Model model, @RequestParam(value = "userIdx") List<Integer> userList, @RequestParam("title") String title, @RequestParam("subject") String subject) {
 		if(session.getAttribute("user") == null) {
 	        return "redirect:/";
 	    }

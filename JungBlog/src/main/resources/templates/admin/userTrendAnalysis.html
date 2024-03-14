@@ -111,21 +111,25 @@
 		            <div class="grid-interection">조회 / 댓글<br />좋아요 / 좋아요취소</div>
 		            <div class="grid-time">시간</div>
        			</div>
-       			<ul id="tbody">
-       				<li th:if="${#lists.isEmpty(pv.list)}">
-			    		<div>등록된 유저기록이 없습니다.</div>
-			    	</li>       				
-       				<li th:each="p : ${pv.list}">
-       					<div class="grid-no">[[${p.idx}]]</div>
-			    		<div class="grid-userIdx">[[${p.member.idx}]]</div>
-			    		<div class="grid-nickname">[[${p.member.nickName}]]</div>
-			    		<div class="grid-boardIdx">[[${p.board.idx}]]</div>
-			    		<div class="grid-category">[[${p.board.categoryName}]]</div>
-			    		<div class="grid-title"><a th:onclick="view([[${p.board.idx}]], [[${p.board.categoryNum}]])">[[${p.board.title}]]</a></div>
-			    		<div class="grid-interection">[[${p.interaction == 1 ? '조회' : p.interaction == 2 ? '댓글' : p.interaction == 3 ? '좋아요' : '좋아요취소'}]]</div>
-			    		<div class="grid-time">[[${#dates.format(p.interaction_time,'yy-MM-dd hh:mm:ss')}]]</div>
-       				</li>
-       			</ul>
+       			<th:block th:if="${#lists.isEmpty(pv.list)}">
+		    		<div style="text-align: center; padding: 10px; border: 1px solid #ccc;">등록된 행동이 없습니다.</div>       			
+       			</th:block>
+       			<th:block th:if="${not #lists.isEmpty(pv.list)}">     			
+	       			<ul id="tbody">
+	       				<li th:if="${#lists.isEmpty(pv.list)}">
+				    	</li>       				
+	       				<li th:each="p : ${pv.list}">
+	       					<div class="grid-no">[[${p.idx}]]</div>
+				    		<div class="grid-userIdx">[[${p.member.idx}]]</div>
+				    		<div class="grid-nickname">[[${p.member.nickName}]]</div>
+				    		<div class="grid-boardIdx">[[${p.board.idx}]]</div>
+				    		<div class="grid-category">[[${p.board.categoryName}]]</div>
+				    		<div class="grid-title"><a th:onclick="view([[${p.board.idx}]], [[${p.board.categoryNum}]])">[[${p.board.title}]]</a></div>
+				    		<div class="grid-interection">[[${p.interaction == 1 ? '조회' : p.interaction == 2 ? '댓글' : p.interaction == 3 ? '좋아요' : '좋아요취소'}]]</div>
+				    		<div class="grid-time">[[${#dates.format(p.interaction_time,'yy-MM-dd hh:mm:ss')}]]</div>
+	       				</li>
+	       			</ul>
+       			</th:block>
 				<div id="page" style="display:flex; align-items: center; justify-content: center;">
 					[(${pv.pageList})]
 				</div>

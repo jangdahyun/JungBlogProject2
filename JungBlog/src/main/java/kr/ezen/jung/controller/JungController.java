@@ -463,24 +463,47 @@ public class JungController {
 		return map;
 	}
 	
+	@GetMapping("/getScrollItem")
+	@ResponseBody
+	public List<JungBoardVO> getScrollItem(@RequestParam(value = "lastItemIdx") int lastItemIdx
+											,@RequestParam(value = "sizeOfPage") int sizeOfPage
+											,@RequestParam(value = "categoryNum") int categoryNum
+											,@RequestParam(value = "search") String search){
+		List<JungBoardVO> result = jungBoardService.selectScrollBoard(lastItemIdx, sizeOfPage, categoryNum, search);
+		return result;
+	}
+	@GetMapping("/getScrollItem1")
+	@ResponseBody
+	public List<JungBoardVO> getScrollItem1(@RequestParam(value = "lastItemIdx") int lastItemIdx, @RequestBody CommonVO cv){
+		List<JungBoardVO> result = jungBoardService.selectScrollBoard(lastItemIdx, cv.getSizeOfPage(), cv.getCategoryNum(), cv.getSearch());
+		return result;
+	}
+	@GetMapping("/getScrollItem2")
+	public String getScrollItem2(Model model,@RequestParam(value = "lastItemIdx") int lastItemIdx, @ModelAttribute CommonVO cv){
+		List<JungBoardVO> result = jungBoardService.selectScrollBoard(lastItemIdx, cv.getSizeOfPage(), cv.getCategoryNum(), cv.getSearch());
+		model.addAttribute("boards", result);
+		return "test2";
+	}
+	
+	
 	
 
 
- //딱! 한번만 실행해야한다!
+	//딱! 한번만 실행해야한다!
 
-//	@Autowired	
-//	private JdbcTemplate jdbcTemplate;
-//
-//		@Autowired
-//		private BCryptPasswordEncoder passwordEncoder;
-//	
-//		@GetMapping("/dbinit") // 기존에 등록된 비번을 암호화 해서 변경한다. 1번만 실행하고 지워줘라~~~
-//		public String dbInit() {
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"admin");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"master");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"webmaster");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"root");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"dba");
-//			return "redirect:/";
-//		}
+	@Autowired	
+	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
+	//@GetMapping("/dbinit") // 기존에 등록된 비번을 암호화 해서 변경한다. 1번만 실행하고 지워줘라~~~
+	public String dbInit() {
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"admin");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"master");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"webmaster");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"root");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"dba");
+		return "redirect:/";
+	}
 }

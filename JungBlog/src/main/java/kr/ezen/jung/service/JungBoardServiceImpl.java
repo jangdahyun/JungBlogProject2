@@ -16,6 +16,7 @@ import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
 import kr.ezen.jung.dao.JungQnABoardDAO;
+import kr.ezen.jung.dao.JungScrollBoardDAO;
 import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
@@ -487,5 +488,24 @@ public class JungBoardServiceImpl implements JungBoardService {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	@Autowired
+	private JungScrollBoardDAO jungScrollBoardDAO;
+	
+	@Override
+	public ArrayList<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, int categoryNum, String search) {
+		ArrayList<JungBoardVO> list = null;
+		try {
+			HashMap<String, Object> map = new HashMap<>();
+			map.put("lastItemIdx", lastItemIdx);
+			map.put("sizeOfPage", sizeOfPage);
+			map.put("categoryNum", categoryNum);
+			map.put("search", search);
+			list = jungScrollBoardDAO.selectScrollList(map);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

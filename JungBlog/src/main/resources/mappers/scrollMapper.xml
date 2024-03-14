@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.JungScrollBoardDAO">
+	<!-- 페이징을 위한 List 뿌리기 -->
+	<select id="selectScrollList" parameterType="hashmap" resultType="JungBoardVO">
+		select
+			rownum rnum, Q.*
+		from
+			(
+				select
+					jung_board.*
+					, (
+						SELECT
+							COUNT(*)
+						FROM
+							heart_tb 
+						WHERE
+							heart_tb.boardRef = jung_board.idx
+					) AS countHeart
+					, (
+						SELECT
+							COUNT(*)
+						FROM
+							jung_comment 
+						WHERE
+							jung_comment.boardRef = jung_board.idx
+					) AS commentCount
+					, (
+						SELECT
+							categoryName
+						FROM
+							jungcategort_tb
+						WHERE
+							jungcategort_tb.idx = jung_board.categoryNum
+					) AS categoryName
+				from
+					jung_board
+				where
+					deleted = 0
+					<if test="search != null">
+						and (
+							jung_board.title like '%' || #{search} || '%'
+							or jung_board.content like '%' || #{search} || '%'
+						)
+					</if>
+					<if test="categoryNum != null ">
+						and jung_board.categoryNum = #{categoryNum}
+					</if>
+					and
+						<![CDATA[
+							jung_board.idx < #{lastItemIdx}
+						]]>
+				order by
+					jung_board.idx DESC
+			) Q
+		where
+			<![CDATA[
+				rownum <= #{sizeOfPage}
+			]]>
+	</select>
+</mapper>

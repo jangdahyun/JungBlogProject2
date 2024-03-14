@@ -90,8 +90,8 @@ public class MailServiceImpl implements MailService{
 	        try {
 	            mailHandler = new MailHandler(javaMailSender);
 	            
-	            email = jungMemberService.selectByIdx(userIdx).getUsername();
-	            mailHandler.setFrom("tjdtlr12349@naver.com", "jungBlogCompany");
+	            email = jungMemberService.selectByIdx(userIdx).getEmail();
+	            mailHandler.setFrom("wldwld991@naver.com", "jungBlogCompany");
 	            
 	            mailHandler.setTo(email);
 	            
