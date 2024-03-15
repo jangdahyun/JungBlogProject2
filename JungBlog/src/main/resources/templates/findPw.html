@@ -3,38 +3,32 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
 <title>Log in with your credentials</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
 <!-- Ajax처리를 위한 포함 -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
-<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <link rel="stylesheet" href="/css/join.css">
-<script src="/js/join.js"></script>
 </head>
 
 <body>
 	<div class="container"
-		style="margin: auto; width: 80%; margin-top: 50px;">
-		<form method="POST" action="joinok" class="form-group">
+		style="margin: auto; width: 80%; margin-top: 50px;">		
+
 			<div class="row g-2 align-items-center" style="margin-bottom: 10px">
 				<span id="message"></span>
 				<div class="col-auto">
-					<input type="hidden" name="username" id="realUserName"/>
-					<input id="username" type="text"
-						class="form-control" placeholder="사용자아이디 입력"
+					<input type="hidden" name="email" id="realUserEmail"/>
+					<input id="email" type="text"
+						class="form-control" placeholder="사용자이메일 입력"
 						autofocus="autofocus" required="required"/>
 				</div>
 				<div class="col-auto">
 					<span>@</span>
 				</div>
 				<div class="col-auto">
-					<select id="email" class="form-select"
+					<select id="email2" class="form-select"
 						aria-label="Default select example" required="required">
 						<option selected value="0">메일을 선택하세요!</option>
 						<option value="naver.com">naver.com</option>
@@ -58,24 +52,134 @@
 						class="btn btn-outline-danger btn-sm" value="인증번호 확인">
 				</div>
 			</div>
-
-			<input name="password" id="password" type="password"
-				class="form-control" placeholder="사용자 비밀번호 입력"
-				style="margin-bottom: 8px;" onkeyup="checkPasswordMatch();"
-				required="required" disabled="disabled"/>
-			<input name="confirmPassword"
-				id="confirmPassword" type="password" class="form-control"
-				placeholder="사용자 비밀번호 재입력" style="margin-bottom: 8px;"
-				onkeyup="checkPasswordMatch();" required="required" disabled="disabled"/>
-				<span id="passwordMatchMessage"></span> <span id="passwordLengthMessage"></span>
-			<span id="passwordCharacterMessage"></span>
+			<form action="/member/비밀번호 바꾸는곳" id="updateForm4" method="POST">
+				<div class="col-auto">
+						<input name="username" id="username" type="text" class="form-control" placeholder="사용자아이디 입력" autofocus="autofocus" required="required" disabled="disabled"/>
+				</div><br />
+			</form>
+			
 				
 			<div style="text-align: center;">
-				<button class="btn btn-outline-danger btn-sm" type="submit" onclick="submitForm()">회 원 가 입</button>
+				<button class="btn btn-outline-danger btn-sm" type="submit" onclick="submitForm()">인 증 하 기</button>
 				<button class="btn btn-outline-danger btn-sm" type="button"
 					onclick="location.href='/'">홈으로</button>
 			</div>
-		</form>
 	</div>
 </body>
+	<script type="text/javascript">
+	$(function() {
+		$("#sendEmail").click(function() {
+			let email = $("#email").val();
+			
+			if (email.trim().length == 0) {
+				alert("이메일을 입력해주세요")
+				$("#email").val("");
+				$("#email").focus();
+				return;
+			}
+			if (email.indexOf(" ") != -1) {
+				alert("공백은 포함할 수 없어요");
+				$("#email").val("");
+				$("#email").focus();
+				return;
+			}
+			let email2 = $("#email2").val();
+			if (email2 == 0) {
+				alert("이메일을 선택해주세요");
+				$("#message").focus();
+				return;
+			}
+			email = email + '@' + email2;
+			
+			axios.get('/member/send?to=' + email)
+			.then(function(response) {
+				if (response.data != "") {
+					alert("메일 발송 성공")
+					$("#emailCheckBox").css('display', 'flex')
+					checkVal = response.data;
+				} else {
+					alert("메일 발송 실패")
+				}
+			})
+			.catch(function(error) {
+				console.log(error);
+			})
+			.finally(function() {
+				// 항상 실행되는 영역
+			});
+		})
+		
+		/** aasfasfasf */
+		$("#checkMail").click(function() {
+			let check = $("#check").val();
+			if (check == checkVal) {
+				alert("인증 완료");
+				$("#username").attr("disabled",false);
+			} else {
+				alert("인증 실패");
+			}
+		})
+	})
+	
+	// 회원가입 로직
+	function submitForm() {
+		let email = $("#email").val();
+		if (email.trim().length === 0) {
+			alert("아이디를 입력해주세요.");
+			return;
+		}
+
+		let email2 = $("#email2").val();
+		if (email2 === "0") {
+			alert("이메일을 선택해주세요.");
+			return;
+		}
+		
+		let emailCheckBox = $("#emailCheckBox");
+		if (emailCheckBox.css('display') === "none") {
+			alert("이메일을 인증해주세요.");
+			return;
+		}
+
+		let emailVerificationCode = $("#check").val();
+		if (emailVerificationCode.trim().length === 0) {
+			alert("이메일 인증번호를 입력해주세요.");
+			return;
+		}
+		
+		let username = $("#username").val();
+		if (username.trim().length === 0) {
+			alert("아이디를 입력해주세요.");
+			return;
+		}
+		email = email + "@" + email2;
+		
+		axios.post('/member/userIdCheckByEmail', {
+			"email": email
+		})
+		.then(function (res) {
+			console.log(email);
+			let dbUsername = res.data // 서버로부터 받은 사용자 이름
+			console.log(dbUsername);
+               let inputUsername = $("#username").val(); // 입력한 사용자 이름
+			
+			if(dbUsername == inputUsername){
+				alert("사용자 일치")
+				const form = document.querySelector("#updateForm4")
+				form.submit();
+			}else{
+				alert("사용자 불일치")
+			}
+		})
+	}
+
+	// 회원가입 완료 메시지 표시 및 로그인 페이지로 이동
+	function redirectToLogin() {
+		var message = "회원가입이 완료되었습니다.";
+		alert(message);
+		// 로그인 페이지로 이동
+		window.location.href = "/login";
+	}
+	
+	</script>
 </html>

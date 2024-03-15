@@ -31,7 +31,7 @@ public class MailServiceImpl implements MailService{
 		     
 			mailHandler.setFrom("wldwld991@naver.com", "jungBlogCompany");   // 누가
 			mailHandler.setTo(to);                                    // 누구에게
-			mailHandler.setSubject("jungBlog 회원가입 인증 번호");           // 제목
+			mailHandler.setSubject("jungBlog 인증 번호");           // 제목
 		 
 			// 1. 인증번호 만들기
 			authCode = createCode(); // 인증 코드 생성

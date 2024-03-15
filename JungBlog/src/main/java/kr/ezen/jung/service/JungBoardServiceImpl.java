@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import kr.ezen.jung.dao.HeartDAO;
 import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
-import kr.ezen.jung.dao.JungMemberDAO;
 import kr.ezen.jung.dao.JungQnABoardDAO;
 import kr.ezen.jung.dao.JungScrollBoardDAO;
 import kr.ezen.jung.dao.PopularDAO;
@@ -494,7 +492,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 	private JungScrollBoardDAO jungScrollBoardDAO;
 	
 	@Override
-	public ArrayList<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, int categoryNum, String search) {
+	public ArrayList<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, Integer categoryNum, String search) {
 		ArrayList<JungBoardVO> list = null;
 		try {
 			HashMap<String, Object> map = new HashMap<>();
@@ -503,9 +501,26 @@ public class JungBoardServiceImpl implements JungBoardService {
 			map.put("categoryNum", categoryNum);
 			map.put("search", search);
 			list = jungScrollBoardDAO.selectScrollList(map);
+			for(JungBoardVO board : list) {
+				// 유저정보 넣어주기
+				board.setMember(jungMemberService.selectByIdx(board.getRef()));
+				// 파일
+				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return list;
+	}
+
+	@Override
+	public int findLastItemIdx() {
+		int result=0;
+		try {
+			result = jungScrollBoardDAO.findLastItemIdx();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

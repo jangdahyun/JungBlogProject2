@@ -9,4 +9,5 @@ public interface MailService {
 	public String mailSend(String to);
 	
 	public Map<String, List<JungMemberVO>> adminMailSend(List<Integer> userIdxList, String title, String subject);
+	
 }

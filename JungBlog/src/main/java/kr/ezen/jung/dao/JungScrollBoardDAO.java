@@ -16,4 +16,7 @@ public interface JungScrollBoardDAO {
 	 * @return
 	 */
 	ArrayList<JungBoardVO> selectScrollList(HashMap<String, Object> map) throws SQLException;
+	
+	/** board의 최대 idx 리턴 */
+	int findLastItemIdx() throws SQLException;
 }

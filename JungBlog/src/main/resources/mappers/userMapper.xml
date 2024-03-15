@@ -15,9 +15,14 @@
 		select * from jung_member where idx = #{idx}
 	</select>
 	
-	<!-- 중복확인 -->
+	<!-- 아이디 중복확인 -->
 	<select id="selectCountByUsername" parameterType="string" resultType="int">
 		select count(*) from jung_member where username = #{username}
+	</select>
+	
+	<!-- 닉네임 중복확인 -->
+	<select id="selectCountByNickName" parameterType="string" resultType="int">
+		select count(*) from jung_member where nickName = #{nickName}
 	</select>
 	
 	<!-- id 찾기 
@@ -146,7 +151,10 @@
 		WHERE
 			idx = #{idx}
 	</update>
-
+	
+	<select id="emailCheck" parameterType="string" resultType="int">
+		select count(*) from jung_member where email = #{email}
+	</select>
 
 </mapper>
 

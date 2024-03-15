@@ -3,8 +3,6 @@ package kr.ezen.jung.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -135,6 +132,8 @@ public class JungMemberController {
 		return "findPw";
 	}
 	
+
+	
 //	
 //	@GetMapping(value = { "/logout" })
 //	public String logout(HttpSession session) {
@@ -168,18 +167,30 @@ public class JungMemberController {
     
     
     
+    
     //회원가입 완료
   	@GetMapping("/joinok")
   	public String joinOkGet() {
   		return "redirect:/";
   	}
   	
+  	@PostMapping(value = "/userIdCheckByEmail", produces = "text/plain;charset=UTF-8")
+  	@ResponseBody
+  	public String userIdCheckByEmail(@RequestBody JungMemberVO memberVO) {
+  		memberVO=memberService.selectByEmail(memberVO.getEmail());
+		return memberVO.getUsername();
+  	}
   	
   	@PostMapping(value = "/userIdCheck", produces = "text/plain;charset=UTF-8")
   	@ResponseBody
-  	public String userIdCheck(@RequestBody Map<String, String>map ) {
-  		String username = map.get("username");
-  		return memberService.selectByUsername(username)+"";
+  	public String userIdCheck(@RequestBody JungMemberVO memberVO ) {
+  		return memberService.selectCountByUsername(memberVO.getUsername())+"";
+  	}
+  	
+  	@PostMapping(value = "/userNickNameCheck", produces = "text/plain;charset=UTF-8")
+  	@ResponseBody
+  	public String userNickNameCheck(@RequestBody JungMemberVO memberVO ) {
+  		return memberService.selectCountByNickName(memberVO.getNickName())+"";
   	}
   	
   	/**
@@ -194,6 +205,14 @@ public class JungMemberController {
   		return memberService.selectByEmail(email)+"";
   	}
   	
+  	//이메일 즁복체크
+  	@PostMapping("/userEmailCheck2")
+  	@ResponseBody
+  	public String userEmailCheck(@RequestBody JungMemberVO memberVO) {
+  		int result = memberService.emailCheck(memberVO.getEmail());
+  		
+  		return result +"";
+  	}
   	
   	@PostMapping("/joinok")
   	public String joinOkPost(@ModelAttribute(value = "vo") JungMemberVO vo, @RequestParam(value = "bd")String bd ) {
@@ -238,6 +257,7 @@ public class JungMemberController {
         session.setAttribute("user", memberService.selectByIdx(memberVO.getIdx()));
         return "redirect:/member/mypage"; 
     }
+    
 
     // 유저 정보 삭제
     @GetMapping("/delete")

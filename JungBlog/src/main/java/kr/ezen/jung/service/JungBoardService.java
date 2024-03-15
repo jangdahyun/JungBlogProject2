@@ -66,5 +66,7 @@ public interface JungBoardService {
 	
 	
 	
-	List<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, int categoryNum, String search);
+	List<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, Integer categoryNum, String search);
+	
+	int findLastItemIdx();
 }

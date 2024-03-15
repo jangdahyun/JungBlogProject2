@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.ezen.jung.dao.HeartDAO;
 import kr.ezen.jung.dao.JungBoardDAO;
-import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungMemberDAO;
 import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
@@ -29,8 +28,6 @@ public class JungMemberServiceImpl implements JungMemberService{
 	private JungMemberDAO memberDAO;
 	@Autowired
 	private JungBoardDAO boardDAO;
-	@Autowired
-	private JungFileBoardService fileBoardService;
 	@Autowired
 	private JungCommentService jungCommentService;
 	@Autowired
@@ -65,6 +62,7 @@ public class JungMemberServiceImpl implements JungMemberService{
 		return memberVO;
 	}
 	
+	
 	@Override // 유저 조회
 	public JungMemberVO selectByEmail(String email) {
 		JungMemberVO memberVO = null;
@@ -96,6 +94,16 @@ public class JungMemberServiceImpl implements JungMemberService{
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
+		return result;
+	}
+	@Override // 중복된 username(id)확인 : 
+	public int selectCountByNickName(String nickName) {
+		int result = 0;
+		try {
+			result = memberDAO.selectCountByNickName(nickName);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 
@@ -180,5 +188,16 @@ public class JungMemberServiceImpl implements JungMemberService{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public int emailCheck(String email) {
+		int result = 1;
+		try {
+			result=memberDAO.emailCheck(email);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }
