@@ -36,7 +36,10 @@
 				from
 					jung_board
 				where
-					deleted = 0
+					<![CDATA[
+						jung_board.idx < #{lastItemIdx}
+					]]>
+					and deleted = 0
 					<if test="search != null">
 						and (
 							jung_board.title like '%' || #{search} || '%'
@@ -46,10 +49,7 @@
 					<if test="categoryNum != null ">
 						and jung_board.categoryNum = #{categoryNum}
 					</if>
-					and
-						<![CDATA[
-							jung_board.idx < #{lastItemIdx}
-						]]>
+					
 				order by
 					jung_board.idx DESC
 			) Q
@@ -57,5 +57,12 @@
 			<![CDATA[
 				rownum <= #{sizeOfPage}
 			]]>
+	</select>
+	
+	<select id="findLastItemIdx" resultType="int">
+		select 
+			MAX(jung_board.idx)
+		from
+			jung_board
 	</select>
 </mapper>

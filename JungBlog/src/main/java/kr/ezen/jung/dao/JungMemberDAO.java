@@ -23,6 +23,9 @@ public interface JungMemberDAO {
 	// 아이디가 같은게 잇는지 확인
 	int selectCountByUsername(String username) throws SQLException;
 	
+	//닉네임 중복 확인
+	int selectCountByNickName(String username) throws SQLException;
+	
 	// 저장
 	void insert(JungMemberVO memberVO) throws SQLException;
 	
@@ -32,6 +35,7 @@ public interface JungMemberDAO {
 	// 유저 정보 삭제
 	void delete(int idx) throws SQLException;
 	
+	int emailCheck(String email) throws SQLException;
 	
 	// 관리자용
 	// 리스트 타입으로 모든 유저 조회

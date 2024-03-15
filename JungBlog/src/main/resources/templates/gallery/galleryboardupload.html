@@ -147,28 +147,34 @@
         // 파일 선택 창에서 파일을 선택했을 때 및 파일 추가 함수
         function handleFileSelect(files) {
             const fileBox = document.querySelector("#files");
-            const currentFileCount = fileBox.querySelectorAll('input[type="file"]').length;
+            let currentFileCount = fileBox.querySelectorAll('input[type="file"]').length;
 
-            if (currentFileCount < 4) {
-                for (let i = 0; i < Math.min(4 - currentFileCount, files.length); i++) {
-                    const fileInfo = document.createElement('input');
-                    fileInfo.setAttribute("type", "file");
-                    fileInfo.setAttribute("name", "file");
-                    
-                    // 파일을 input에 추가
-                    const fileList = new DataTransfer();
-                    fileList.items.add(files[i]);
-                    const newFileList = fileList.files;
-                    fileInfo.files = newFileList;
+			for (let i = 0; i < files.length; i++) {
+            	if (currentFileCount < 4) {
+                	const file = files[i];
+                	if (file.type.startsWith('image/')) {
+                        const fileInfo = document.createElement('input');
+                        fileInfo.setAttribute("type", "file");
+                        fileInfo.setAttribute("name", "file");
 
-                    fileBox.appendChild(fileInfo);
+                        // 파일을 input에 추가
+                        const fileList = new DataTransfer();
+                        fileList.items.add(file);
+                        const newFileList = fileList.files;
+                        fileInfo.files = newFileList;
+                        fileBox.appendChild(fileInfo);
+                        currentFileCount++;
+                    } else {
+                        alert("이미지 파일만 업로드할 수 있습니다.");
+                    }
                 
-                }
+                }else {
+                	alert("더 이상 파일을 추가할 수 없습니다.");
+                	break;
+            	}
                 console.log(files);
                 showFileInfo();
-            } else {
-                alert("더 이상 파일을 추가할 수 없습니다.");
-            }
+            } 
         }
 
         // 파일 선택 창에서 파일을 선택했을 때
@@ -269,6 +275,16 @@
                 $("#title").val("");
                 $("#title").focus();
                 return false;
+            }
+         	// #files 요소를 선택합니다.
+            let filesElement = document.getElementById('files');
+
+            // #files의 자식 요소 개수를 확인합니다.
+            let fileCount = filesElement.children.length;
+			
+            if(fileCount==0){
+            	alert("이미지를 넣어야합니다.")
+            	return false;
             }
             let content = $("#content").val();
             if (content.trim().length === 0) {

@@ -16,11 +16,15 @@ public interface JungMemberService extends UserDetailsService{
 	
 	int selectCountByUsername(String username);
 	
+	int selectCountByNickName(String username);
+	
 	void insert(JungMemberVO memberVO);
 	
 	void update(JungMemberVO memberVO);
 	
 	void delete(int idx);
+	
+	int emailCheck(String email);
 
 	// 관리자 용
 	PagingVO<JungMemberVO> getUsers(CommonVO cv);

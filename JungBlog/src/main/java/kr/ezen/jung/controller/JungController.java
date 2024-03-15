@@ -473,30 +473,13 @@ public class JungController {
 		return map;
 	}
 	
-	@GetMapping("/getScrollItem")
+	@PostMapping("/getScrollItem")
 	@ResponseBody
-	public List<JungBoardVO> getScrollItem(@RequestParam(value = "lastItemIdx") int lastItemIdx
-											,@RequestParam(value = "sizeOfPage") int sizeOfPage
-											,@RequestParam(value = "categoryNum") int categoryNum
-											,@RequestParam(value = "search") String search){
-		List<JungBoardVO> result = jungBoardService.selectScrollBoard(lastItemIdx, sizeOfPage, categoryNum, search);
+	public List<JungBoardVO> getScrollItem(@RequestBody Map<String, String> map){
+		log.info("getScrollItem : {}", map);
+		List<JungBoardVO> result = jungBoardService.selectScrollBoard(Integer.parseInt(map.get("lastItemIdx")), Integer.parseInt(map.get("sizeOfPage")), Integer.parseInt(map.get("categoryNum")), map.get("search"));
 		return result;
 	}
-	@GetMapping("/getScrollItem1")
-	@ResponseBody
-	public List<JungBoardVO> getScrollItem1(@RequestParam(value = "lastItemIdx") int lastItemIdx, @RequestBody CommonVO cv){
-		List<JungBoardVO> result = jungBoardService.selectScrollBoard(lastItemIdx, cv.getSizeOfPage(), cv.getCategoryNum(), cv.getSearch());
-		return result;
-	}
-	@GetMapping("/getScrollItem2")
-	public String getScrollItem2(Model model,@RequestParam(value = "lastItemIdx") int lastItemIdx, @ModelAttribute CommonVO cv){
-		List<JungBoardVO> result = jungBoardService.selectScrollBoard(lastItemIdx, cv.getSizeOfPage(), cv.getCategoryNum(), cv.getSearch());
-		model.addAttribute("boards", result);
-		return "test2";
-	}
-	
-	
-	
 
 
 	//딱! 한번만 실행해야한다!

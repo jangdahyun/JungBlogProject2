@@ -29,9 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
-import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
-import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.JungFileBoardVO;
@@ -48,14 +46,10 @@ public class GalleryController {
 	@Autowired
 	private JungBoardService jungBoardService;
 	
-	@Autowired
-	private JungMemberService jungMemberService;
 	
 	@Autowired
 	private JungFileBoardService jungFileBoardService;
 	
-	@Autowired
-	private JungCommentService jungCommentService;
 	
 //	@PostMapping("/galleryboardUpload")
 //	public String galleryboard() {
@@ -75,8 +69,9 @@ public class GalleryController {
 		cv.setCategoryNum(4); //갤러리 번호 5번인데 일단 4번으로 함
 		// psb search
 		cv.setS(20);
-		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
-		model.addAttribute("pv", pv);
+		
+		List<JungBoardVO> pv = jungBoardService.selectScrollBoard(jungBoardService.findLastItemIdx(),cv.getS(),cv.getCategoryNum(),cv.getSearch());
+		model.addAttribute("sc", pv);
 		model.addAttribute("cv", cv);
 		if (error != null) {
 			model.addAttribute("error",error);
