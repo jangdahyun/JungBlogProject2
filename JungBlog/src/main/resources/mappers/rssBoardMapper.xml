@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.RssDAO">
+	
+	<insert id="insert" parameterType="kr.ezen.jung.vo.RssVO$Item">
+		INSERT INTO tb_rssBoard VALUES (tb_rssBoard_idx_seq.nextval, #{title}, #{link}, #{author}, #{pubDate}, #{category},0) -- content는 link에서 보게하겠다.
+	</insert>
+	
+	<select id="findByLink" parameterType="string" resultType="int">
+		select count(*) from tb_rssBoard where link = #{link}
+	</select>
+	
+	<update id="updateReadCount" parameterType="int">
+		update tb_rssBoard set readCount = readCount + 1 where idx = #{idx}
+	</update>
+	
+	<select id="selectRssList" parameterType="hashmap" resultType="JungBoardVO">
+		select
+			rownum rnum, Q.*
+		from
+			(
+				select
+					*
+				from
+					tb_rssBoard
+				where
+					<![CDATA[
+							idx < #{lastItemIdx}
+					]]>
+					<if test="search != null">
+						and (
+							title like '%' || #{search} || '%'
+						)
+					</if>
+					<if test="category != null ">
+						and category = #{category}
+					</if>
+					<if test="pugDate != null">
+						and pugDate = #{pugDate}
+					</if>
+				order by
+					idx DESC
+			) Q
+		where
+			<![CDATA[
+				rownum <= #{sizeOfPage}
+			]]>
+	</select>
+</mapper>

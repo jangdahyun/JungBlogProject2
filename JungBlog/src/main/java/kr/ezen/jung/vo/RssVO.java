@@ -52,6 +52,7 @@ public class RssVO {
         private String author;
         private String pubDate;
         private String content;
+        private String category;
         
         @Override
         public boolean equals(Object o) {
