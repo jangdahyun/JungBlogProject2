@@ -126,12 +126,20 @@ public class JungMemberController {
 	}
 	
 	@GetMapping(value = {"/findPw"})
-	public String updatePw(@RequestParam(value = "logout", required = false) String logout, Model model) {
+	public String findPw(@RequestParam(value = "logout", required = false) String logout, Model model) {
 		if (logout != null)
 			model.addAttribute("logout", "logout");
 		return "findPw";
 	}
 	
+	@PostMapping(value = {"/updatePw"})
+	public String updatePw(@ModelAttribute JungMemberVO updatememberVO) {
+		log.info("updatePassword 실행 : {}", updatememberVO);
+		JungMemberVO memberVO = memberService.selectByUsername(updatememberVO.getUsername());
+		memberVO.setPassword(updatememberVO.getPassword());
+//		memberService.update(memberVO);
+		return "redirect:/";
+	}
 
 	
 //	
