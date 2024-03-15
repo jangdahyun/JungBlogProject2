@@ -32,7 +32,7 @@ public class RssReader {
 	@Autowired
 	private RssDAO rssDAO;
 	
-	@Scheduled(fixedRate = 10000) // 1분마다 실행
+	@Scheduled(fixedRate = 60000) // 1분마다 실행
     public void checkForUpdates() {
 		log.info("뉴스 읽기 시작");
         try {
@@ -42,7 +42,6 @@ public class RssReader {
                 	if(item.getAuthor() == null || item.getAuthor().length()==0) {
                 		item.setAuthor(" ");
                 	}
-                	log.info("게시일 {}", item.getPubDate());
                 	SimpleDateFormat originalFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
                 	Date date;
                 	try {
@@ -57,6 +56,7 @@ public class RssReader {
                 	// 포맷팅된 문자열을 item 객체에 설정
                 	item.setPubDate(formattedDate);
                 	item.setCategory(getNewsCategory(item.getLink()));
+                	log.info("게시글 {}", item);
                 	int check = rssDAO.findByLink(item.getLink());
                 	if(check != 1) {
                 		rssDAO.insert(item);
@@ -87,9 +87,9 @@ public class RssReader {
         return items;
     }
     
-    private static String getNewsCategory(String urladdress) throws IOException{
+    private static String getNewsCategory(String urlAddress) throws IOException{
     	String result = null;
-    	Document doc = Jsoup.connect(urladdress).get();
+    	Document doc = Jsoup.connect(urlAddress).get();
     	Elements breadcrumb = doc.select(".breadcrumb");
 		if(breadcrumb != null && breadcrumb.size() > 0) {
             Element category = breadcrumb.first().selectFirst("a");

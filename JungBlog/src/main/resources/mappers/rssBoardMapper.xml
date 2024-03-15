@@ -3,7 +3,7 @@
 <mapper namespace="kr.ezen.jung.dao.RssDAO">
 	
 	<insert id="insert" parameterType="kr.ezen.jung.vo.RssVO$Item">
-		INSERT INTO tb_rssBoard VALUES (tb_rssBoard_idx_seq.nextval, #{title}, #{link}, #{author}, #{pubDate}, #{category},0) -- content는 link에서 보게하겠다.
+		INSERT INTO tb_rssBoard VALUES (tb_rssBoard_idx_seq.nextval, #{title}, #{link}, #{image}, #{author}, #{pubDate}, #{category},0) -- content는 link에서 보게하겠다.
 	</insert>
 	
 	<select id="findByLink" parameterType="string" resultType="int">
@@ -14,7 +14,7 @@
 		update tb_rssBoard set readCount = readCount + 1 where idx = #{idx}
 	</update>
 	
-	<select id="selectRssList" parameterType="hashmap" resultType="JungBoardVO">
+	<select id="selectRssList" parameterType="hashmap" resultType="kr.ezen.jung.vo.RssVO$Item">
 		select
 			rownum rnum, Q.*
 		from
@@ -25,12 +25,10 @@
 					tb_rssBoard
 				where
 					<![CDATA[
-							idx < #{lastItemIdx}
+						idx < #{lastItemIdx}
 					]]>
 					<if test="search != null">
-						and (
-							title like '%' || #{search} || '%'
-						)
+						and title like '%' || #{search} || '%'
 					</if>
 					<if test="category != null ">
 						and category = #{category}
@@ -45,5 +43,13 @@
 			<![CDATA[
 				rownum <= #{sizeOfPage}
 			]]>
+	</select>
+	
+	<select id="getLastItemIdx" resultType="int">
+		select MAX(idx) FROM tb_rssBoard
+	</select>
+	
+	<select id="selectByIdx" parameterType="int" resultType="kr.ezen.jung.vo.RssVO$Item">
+		SELECT * FROM tb_rssBoard where idx = #{idx}
 	</select>
 </mapper>
