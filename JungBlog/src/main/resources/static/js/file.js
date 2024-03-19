@@ -143,6 +143,14 @@ $(function() {
       }
       
    })
+   $("#commentSubmit").submit(function(){
+		let value=$("#comment").val();
+			console.log(value);
+		if(value.trim().length==0){
+			alert("댓글을 입력해주세요");
+			return false;
+			}
+	})
    
    
    // form 요소가 제출될 때
@@ -171,7 +179,7 @@ $(function() {
    // 수정 버튼 클릭 이벤트 리스너 등록
 $(document).ready(function() {
     // 게시글 수정 버튼 클릭 시
-    $("#updateBtn").click(function() {
+    $("#updateBtn2").click(function() {
         // 수정할 게시글의 idx 가져오기
         var boardIdx = $("#boardIdx").val();
         // 수정할 게시글의 제목 가져오기
@@ -180,7 +188,7 @@ $(document).ready(function() {
         var editContent = $("#editContent").val();
 
         // 수정할 게시글 정보를 수정 폼으로 전송
-        window.location.href = "/gallery/update/" + boardIdx;
+        window.location.href = "/fileboard/fileupdate/" + boardIdx;
     });
 });
 
