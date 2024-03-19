@@ -20,6 +20,12 @@ public interface RssDAO {
 	/** 3. 조회수 증가! */
 	void updateReadCount(int idx) throws SQLException;
 	
-	/** 4. 뉴스 게시판 가져오기! */
+	/** 4. 뉴스 게시판 가져오기!(lastItemIdx, sizeOfPage, search, category, pugDate) */
 	List<Item> selectRssList(HashMap<String, String> map) throws SQLException;
+	
+	/** 5. lastItemIdx 얻기 */
+	int getLastItemIdx() throws SQLException;
+	
+	/** 6. 한개 얻기 */
+	Item selectByIdx(int idx) throws SQLException;
 }

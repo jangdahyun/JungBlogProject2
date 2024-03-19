@@ -46,13 +46,15 @@ public class RssVO {
     @Data
     @XmlRootElement
     public static class Item {
+    	private int idx;
         private String title;
         private String link;
         private String image;
         private String author;
         private String pubDate;
-        private String content;
         private String category;
+        private int readCount;
+        private String content;
         
         @Override
         public boolean equals(Object o) {
