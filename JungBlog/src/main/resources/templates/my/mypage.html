@@ -100,6 +100,11 @@
 	}
 	#popup4 > div{position: relative; width: 100%; height: 100%;}
 	
+	#popup5{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup5 > div{position: relative; width: 100%; height: 100%;}
+	
 	.contact_edit_titl{
 	    margin-bottom: 20px;
 	    padding: 30px 14px;
@@ -124,24 +129,22 @@
 		<div id="content" class="content">
 			<div id="main" role="main">
 				<div id="headertop" class="headertop">
-					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; ">
-						<span id="icon" class="material-symbols-outlined" onclick="gotohome()">home</span>
-                		<span id="icon" class="material-symbols-outlined" onclick="gallery()">gallery_thumbnail</span>
-                		<span id="icon" class="material-symbols-outlined" onclick="file()">folder_open</span>
-                		<span id="icon" class="material-symbols-outlined" onclick="support">support_agent</span>
-                		<span id="icon" class="material-symbols-outlined" onclick="download()">download</span>
+					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; cursor: pointer; ">
+						<span id="icon" class="material-symbols-outlined" onclick="gotohome()" style="margin-right: 10px;" >home</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="gallery()" style="margin-right: 10px;">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="file()" style="margin-right: 10px;">folder_open</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="news()" style="margin-right: 10px;">news</span>
 					</div>
 				</div>
 				<div class="container">
 					<div id="indexgreen" class="indexgreen">
 						<div id="myprofile" style="padding-top: 15px;">
 							<p style="font-size: 11px;">기본 정보 ⅰ </p>
-							<img src="/fileicon/menubar.png" id="profilepic" alt="menuIcon" style="height: 55px; width: 55px;">
 							<div>
 								<span id="boxusername">[[${user.name}]]</span>
-							</div>
+							</div><br />
 							<div>
-								<span id="boxuserId">[[${user.username}]]</span>
+								<span id="boxuserId">[[${user.username}]]</span><input id="updateId" style="float: right; margin-right: 5px;" type="button" value="수정">
 								<div class="hr"></div>
 							</div>
 							<div>
@@ -288,6 +291,30 @@
 						        <input class="uk-button uk-button-default asd" type="submit" id="sendPw" value="정보 수정" >
 							</div>
 					 	</div>
+					 	<div id="popup5" class="popup">
+						 	<div>
+								<form id="updateForm5" action="/member/update" method="POST">
+									 <!-- 수정할 정보를 입력하는 양식 -->
+									 <span class="material-symbols-outlined" id="popup5-close" style="cursor: pointer;">close</span>
+									 <h4 class="contact_edit_titl" style="width: 329px;">
+   									 	<strong style="font-weight: bold;">[[${user.name}]]님</strong>
+   									 	의 회원정보 중
+   									 	<em class="accent">아이디</em>
+   									 	를 수정하기위한 페이지입니다
+   									 </h4>
+   									<div>
+							        	<label for="newusername">현재 ID:</label><br>
+							        	<label>[[${user.username}]] </label><br><br>
+							        	<label for="newnusername">새로운 ID:</label><br>
+							        	<div class="uk-inline">
+							            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
+							            <input class="uk-input" type="text" aria-label="Clickable icon" id="newPhone" name="username" style="width: 330px;  border-radius: 5px;">
+								        </div>
+								        <input class="uk-button uk-button-default asd" type="submit" value="정보 수정" >  
+   									</div>
+						    	</form>
+						 	</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -352,6 +379,11 @@
     	
     	  $(function() {
         // 팝업 열기 버튼 클릭 시 배경 레이어와 팝업 창 표시
+        $("#updateId").click(function() {
+            $("#popupBackground").fadeIn();
+            $("#popup5").fadeIn();
+        });
+        
         $("#updatePh").click(function() {
             $("#popupBackground").fadeIn();
             $("#popup1").fadeIn();
@@ -400,6 +432,10 @@
     			$("#popupBackground").fadeOut();
     			$("#popup4").fadeOut();
     		})
+    		$("#popup5-close").click(function(){
+    			$("#popupBackground").fadeOut();
+    			$("#popup5").fadeOut();
+    		})
     		
     	})
     	
@@ -447,7 +483,7 @@
     	 
     	 function file() {
   	        // 여기에 이동할 주소를 입력합니다.
-  	        var address = "/gallery";
+  	        var address = "/fileboard";
   	        // 현재 창에서 해당 주소로 이동합니다.
   	        window.location.href = address;
   	    }
@@ -458,6 +494,12 @@
    	        // 현재 창에서 해당 주소로 이동합니다.
    	        window.location.href = address;
    	    }
+    	 function news() {
+    	        // 여기에 이동할 주소를 입력합니다.
+    	        var address = "/news";
+    	        // 현재 창에서 해당 주소로 이동합니다.
+    	        window.location.href = address;
+    	    }
 
     	 
     </script>

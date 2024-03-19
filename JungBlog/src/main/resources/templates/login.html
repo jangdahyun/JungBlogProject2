@@ -95,21 +95,7 @@ button {
   opacity: 0;
   transition: all 0.5s;
 }
-.overlay-left {
-  display: flex;
-  flex-direction: column;
-  padding: 0 50px;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  right: 0;
-  width: 50%;
-  height: 100%;
-  opacity: 0;
-  background-color: #ff4b2b;
-  color: #fff;
-  transition: all 0.5s;
-}
+
 .overlay-right {
   display: flex;
   flex-direction: column;
@@ -124,27 +110,7 @@ button {
   color: #fff;
   transition: all 0.5s;
 }
-.container.right-panel-active .sign-in-container {
-  transform: translateX(100%);
-  opacity: 0;
-}
-.container.right-panel-active .sign-up-container {
-  transform: translateX(100%);
-  opacity: 1;
-  z-index: 2;
-}
-.container.right-panel-active .overlay-right {
-  transform: translateX(-100%);
-  opacity: 0;
-}
-.container.right-panel-active .overlay-left {
-  transform: translateX(-100%);
-  opacity: 1;
-  z-index: 2;
-}
-.social-links {
-  margin: 20px 0;
-}
+
 form h1 {
   font-weight: bold;
   margin: 0;
@@ -163,22 +129,15 @@ span {
   letter-spacing: 0.5px;
   margin-bottom: 10px;
 }
-.social-links div {
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 5px;
-  border-radius: 50%;
-  box-shadow: -5px -5px 10px #fff, 5px 5px 8px #babebc;
-  cursor: pointer;
+p , a{
+    margin: 0;
+    padding: 0;
 }
-.social-links a {
-  color: #000;
-}
-.social-links div:active {
-  box-shadow: inset 1px 1px 2px #babebc, inset -1px -1px 2px #fff;
+
+a{
+    color: #898787;
+    font-size: 0.7em;
+    text-decoration: none;
 }
 </style>
 
@@ -186,28 +145,24 @@ span {
 <body>
 <div class="wrapper">
   <div class="container">
-    <div class="sign-up-container">
-    	<button class="form_btn">Sign Up</button>
-    </div>
     <div class="sign-in-container">
        <form method="POST" action="login" class="form-group">
         <h1>Sign In</h1>
         <span>or use your account</span>
         <input type="text" placeholder="Email" name="username">
         <input type="password" placeholder="Password" name="password">
-        <button class="form_btn" type="submit">Sign In</button>
+        <button class="form_btn" type="submit">Log in</button>
+        <div th:if="${error} or ${logout}" class="form-group row"> 
+			<span th:if="${error}" style="color: red;">없는 아이디 또는 비번이 틀립니다.</span>
+		</div>
+    	<p><a id="lost-password-link" href="/member/findPw" class="animated fadeIn animate5">I forgot my  login or password (!)</a></p>
       </form>
     </div>
     <div class="overlay-container">
-      <div class="overlay-left">
-        <h1>Welcome Back</h1>
-        <p>To keep connected with us please login with your personal info</p>
-        <button id="signIn" class="overlay_btn">Sign In</button>
-      </div>
       <div class="overlay-right">
         <h1>Hello, Friend</h1>
         <p>Enter your personal details and start journey with us</p>
-        <button id="signUp" class="overlay_btn">Sign Up</button>
+        <button id="signUp" class="overlay_btn" onclick="window.location.href='/member/join'">Sign Up</button>
       </div>
     </div>
   </div>

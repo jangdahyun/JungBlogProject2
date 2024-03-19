@@ -186,10 +186,11 @@
 		<div id="writingheader">
 			<b>FILE UPLOAD</b>
 		</div>
-		<form action="fileuploadOk" method="post" enctype="multipart/form-data" id="insertForm">
-			<input type="text" name="title" id="title" placeholder="글 제목을 입력해주세요" required="required">
+		<form action="/fileboard/fileupdateOk" method="post" enctype="multipart/form-data" id="insertForm">
+			<input type="hidden" name="idx" th:value="${board.idx}">			
+			<input type="text" name="title" id="title" placeholder="글 제목을 입력해주세요" required="required" th:value="${board.title}">
 			<input type="hidden" name="categoryNum" value="2">
-			<textarea id="summernote" name="content"></textarea>
+			<textarea id="summernote" name="content" >[[${board.content}]]</textarea>
 			<!-- 파일 선택란 -->
 			<div id="file-drop-area">
 				<div class="file-icon uk-margin-bottom" uk-icon="icon: move"></div>

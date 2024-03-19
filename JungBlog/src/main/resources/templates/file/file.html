@@ -64,7 +64,7 @@
                [(${board.content})]
             </div>
           	<br><br>
-            <div id="download">
+            <div id="download" th:onclick="fileDown([[${board.fileboardVO[0].url}]] , [[${board.fileboardVO[0].filepath}]])">
             	<!-- 다운로드 버튼 -->
             	download
             </div>
@@ -75,7 +75,7 @@
             <div class="hr"></div><br>
             <span id="image" th:each="file : ${board.fileboardVO}">
             	<span>파일 : </span>
-    			<img style="float: left;" th:src="@{'./img/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" width="30" height="30"/>
+    			<img style="float: left;" th:src="@{'/img/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" width="30" height="30"/>
     			<span th:text="${file.url}"></span>
 			</span>
             <div style="display: flex;justify-content: space-between; float:right;">
@@ -110,27 +110,17 @@
 	       <article style="width: 740px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
-				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload">
+				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
+					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
 					<input type="hidden" th:value="${board.idx}" name="boardidx">
-					<textarea placeholder="댓글을 작성해주세요" name="reply"></textarea>
+					<textarea id="comment" placeholder="댓글을 작성해주세요" name="reply"></textarea>
 					<div id="submitBtn">
 						<input type="submit" class="styled-button" value="등록"/>	           
 					</div>
 				</form>
 				<div>
 					<ul id="commentList">
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
+					
 					</ul>
 					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
 					<section>
@@ -147,7 +137,7 @@
    					<button id="deleteButton">삭제</button>    			
    						
     				<!-- 게시글 수정 버튼 -->
-   					<button id="updateBtn">수정</button>    				
+   					<button id="updateBtn2">수정</button>    				
 		
 				</div>
 		</th:block>

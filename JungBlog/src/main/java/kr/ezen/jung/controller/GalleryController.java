@@ -50,13 +50,7 @@ public class GalleryController {
 	@Autowired
 	private JungFileBoardService jungFileBoardService;
 	
-	
-//	@PostMapping("/galleryboardUpload")
-//	public String galleryboard() {
-//		return "gallery/galleryboardupload";
-//	}
-	
-	@GetMapping("/galleryboardUpload")
+	@PostMapping("/galleryboardUpload")
 	public String galleryboard() {
 		return "gallery/galleryboardupload";
 	}
@@ -70,7 +64,7 @@ public class GalleryController {
 		// psb search
 		cv.setS(20);
 		
-		List<JungBoardVO> pv = jungBoardService.selectScrollBoard(jungBoardService.findLastItemIdx(),cv.getS(),cv.getCategoryNum(),cv.getSearch());
+		List<JungBoardVO> pv = jungBoardService.selectScrollBoard(jungBoardService.findLastItemIdx()+1,cv.getS(),cv.getCategoryNum(),cv.getSearch());
 		model.addAttribute("sc", pv);
 		model.addAttribute("cv", cv);
 		if (error != null) {
@@ -238,6 +232,7 @@ public class GalleryController {
 		// 1.board 저장
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		boardVO.setRef(memberVO.getIdx());
+		boardVO.setCategoryNum(4);
 		jungBoardService.insert(boardVO);
 		
 		String uploadPath = request.getServletContext().getRealPath("./upload/");
