@@ -4,11 +4,28 @@
     font-weight: normal;
     font-style: normal;
 }
-
+ 
 body {
     font-family: 'NanumSquareRound', Arial, sans-serif;
 } */
-
+body {color: #333;font-family: "Noto Sans KR", sans-serif;}
+thead tr { 
+	line-height: 3;
+	border-top: 2px solid #DDDDDD;
+}
+tbody tr {
+	line-height: 3;
+}
+tbody tr:hover {
+	background: #ffccff !important;
+}
+table {
+    border-collapse: collapse;
+    width: 80%;
+}
+tr {
+    border-bottom: 2px solid #DDDDDD; /* 마지막 행의 셀에만 아랫줄 검은색 테두리 추가 */
+}
 #list {
     display: inline-block; /* 인라인 블록 요소로 지정하여 텍스트에 맞게 크기 조절 */
     padding: 10px 20px; /* 내부 여백 설정 */
@@ -74,18 +91,7 @@ textarea {
 	border: 1px solid grey;
 	color: white;
 	}
-#updateBtn{
-	text-align: right;
-	background-color: white;
-	color: black;
-	border: 1px solid grey;
-	border-radius: 5px;
-	}
-#updateBtn:hover{
-	background-color: black;
-	border: 1px solid grey;
-	color: white;
-	}
+
 .styled-button {
 	padding: 10px 20px;
 	font-size: 10px;
