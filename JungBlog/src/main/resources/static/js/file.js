@@ -6,7 +6,7 @@ $(function() {
    
    $("#writeBtn").submit(function(){
       return true;
-   })
+   }) 
    
 })
 function viewfile(idx) {
