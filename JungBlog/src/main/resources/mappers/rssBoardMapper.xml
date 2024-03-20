@@ -3,7 +3,7 @@
 <mapper namespace="kr.ezen.jung.dao.RssDAO">
 	
 	<insert id="insert" parameterType="kr.ezen.jung.vo.RssVO$Item">
-		INSERT INTO tb_rssBoard VALUES (tb_rssBoard_idx_seq.nextval, #{title}, #{link}, #{image}, #{author}, #{pubDate}, #{category},0) -- content는 link에서 보게하겠다.
+		INSERT INTO tb_rssBoard VALUES (tb_rssBoard_idx_seq.nextval, #{title}, #{link}, #{image}, #{author}, #{pubDate}, #{category}, 0, 0) -- content는 link에서 보게하겠다.
 	</insert>
 	
 	<select id="findByLink" parameterType="string" resultType="int">

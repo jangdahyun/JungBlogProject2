@@ -54,6 +54,7 @@ public class RssVO {
         private String pubDate;
         private String category;
         private int readCount;
+        private int likeCount;
         private String content;
         
         @Override
