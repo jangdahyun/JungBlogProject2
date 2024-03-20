@@ -237,6 +237,8 @@ public class JungMemberManController {
 		return "redirect:/adm/user-roles?p="+cv.getP()+"&search="+cv.getSearch();
 	}
 	
+	// ==========================
+	// 회원 동향분석
 	@GetMapping(value = "/userTrendAnalysis")
 	public String userTrendAnalysis(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
 		log.info("userTrendAnalysis실행 cv: {}",cv);
@@ -276,6 +278,32 @@ public class JungMemberManController {
 		model.addAttribute("list", popularBoardList);
 		log.info("popularBoardList : {}", popularBoardList);
 		return "admin/bestPost";
+	}
+	
+	//=====
+	// 게시판 관리
+	@GetMapping(value = "/boardManagement")
+	public String boardMangement(HttpSession session, @ModelAttribute(value = "cv") CommonVO cv, Model model) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+		PagingVO<JungBoardVO> pv = jungBoardService.selectByRef(cv);
+        log.info("boardMangement실행 cv: {}",cv);
+        model.addAttribute("pv",pv);
+        model.addAttribute("cv", cv);
+        if(cv.getCategoryNum() != null) {
+        	model.addAttribute("categoryNum", cv.getCategoryNum());
+        }
+        List<String> categoryList = jungBoardService.findCategoryList();
+        categoryList.remove("QnA");
+        categoryList.remove("공지사항");
+        model.addAttribute("categoryList",categoryList);
+        return "admin/boardManagement";
 	}
 	
 	
@@ -319,7 +347,7 @@ public class JungMemberManController {
 	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
 	        return "redirect:/";
 	    }
-	    model.addAttribute("name", memberVO.getNickName());
+	    model.addAttribute("name", memberVO.getName());
 	    cv.setS(20);
 	    cv.setB(5);
 	    log.info("orderCode : {}",cv.getOrderCode());
@@ -345,7 +373,7 @@ public class JungMemberManController {
 		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
 			return "redirect:/";
 		}
-		model.addAttribute("name", memberVO.getNickName());
+		model.addAttribute("name", memberVO.getName());
 		log.info("도달함!! idx : {}", idx);
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
 		boardVO.setCommentList(jungCommentService.selectByRef(idx, new CommonVO()).getList());
@@ -402,7 +430,7 @@ public class JungMemberManController {
 	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
 	        return "redirect:/";
 	    }
-	    model.addAttribute("name", memberVO.getNickName());
+	    model.addAttribute("name", memberVO.getName());
 	    if(error != null) {
 	    	model.addAttribute("error", error);
 	    }
@@ -424,7 +452,7 @@ public class JungMemberManController {
 	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
 	        return "redirect:/";
 	    }
-	    model.addAttribute("name", memberVO.getNickName());
+	    model.addAttribute("name", memberVO.getName());
 	    if(error != null) {
 	    	model.addAttribute("error", error);
 	    }

@@ -57,8 +57,12 @@ public class NewsServiceImpl implements NewsService{
 			if(item != null) {
 				Document doc = Jsoup.connect(item.getLink()).get();
 				Elements articletxt = doc.select("#articletxt");
+				Elements headline = doc.select(".headline");
 				if(articletxt != null) {
 					item.setContent(articletxt.first().html());
+				}
+				if(headline != null) {
+					item.setTitle(headline.first().html());
 				}
 			}
 		} catch (SQLException e) {
@@ -77,5 +81,18 @@ public class NewsServiceImpl implements NewsService{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/** 좋아요 수 증가 */
+	@Override
+	public int updateLikeCount(int idx) {
+		int result = 0;
+		try {
+			rssDAO.updateReadCount(idx);
+			result = 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

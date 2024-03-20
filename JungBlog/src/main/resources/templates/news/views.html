@@ -20,6 +20,10 @@
     <!-- Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
+    <link rel="stylesheet" href="/css/mainHeader.css">
+	<script src="/js/mainHeader.js"></script>
+    
     <style type="text/css">
     	*{margin: 0; padding: 0; box-sizing: border-box;}
 		a{text-decoration: none; color: inherit;}
@@ -116,9 +120,9 @@
 	<div id="goTopBtn">
 		<span class="material-symbols-outlined">expand_less</span>
 	</div>
-	<header>
 	
-	</header>
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	
 	<div id="main-wrap">
 		<main>
 			<h2 id="title">[[${title}]]</h2>
@@ -176,18 +180,20 @@
 				"category" : category,
 				"sizeOfPage" : sizeOfPage,
 				"lastItemIdx" : lastItemIdx,
-			}) .then(res =>{
+			})
+			.then(res =>{
 				const data = res.data;
 				if(data.length == 0) {
 					window.removeEventListener('scroll', scrollEvent);
 					alert('더이상 글이 존재하지 않습니다.');
 				}
 				console.log(data);
-				data.forEach(x => updateTable(x))
-				todayRemove();
+				data.forEach(x => {
+					updateTable(x)
+				})
 				findLastItemIdx();
-				console.log(lastItemIdx, category, search, sizeOfPage);
-			}) .catch(e => {
+			})
+			.catch(e => {
 				console.error("error :", e); 
 			})
 		}

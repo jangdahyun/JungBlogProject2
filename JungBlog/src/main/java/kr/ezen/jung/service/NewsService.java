@@ -17,4 +17,6 @@ public interface NewsService {
 	// 4. 조회수 증가시키기
 	void updateReadCount(int idx);
 	
+	// 5. 좋아요 수 증가
+	int updateLikeCount(int idx);
 }

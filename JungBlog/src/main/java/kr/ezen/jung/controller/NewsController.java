@@ -1,9 +1,14 @@
 package kr.ezen.jung.controller;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +19,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.ezen.jung.service.NewsService;
 import kr.ezen.jung.vo.RssVO.Item;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @Controller
 @RequestMapping("/news")
 public class NewsController {
@@ -161,7 +171,47 @@ public class NewsController {
 	
 	/** 글 하나보기 */
 	@GetMapping(value = "/view/{idx}")
-	public String view(Model model, @PathVariable(value = "idx") int idx) {
+	public String view(Model model, @PathVariable(value = "idx") int idx, HttpServletRequest request, HttpServletResponse response) {
+		Item item = newsService.selectByIdx(idx);
+		log.info("news view 실행 idx => {}, item => {}", idx, item);
+		if(item == null) {
+			return "redirect:/news/all-news";
+		}
+		Cookie oldCookie = null;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("news")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + idx + "]")) {
+                newsService.updateReadCount(idx);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60);
+                response.addCookie(oldCookie);
+            }
+        } else {
+            newsService.updateReadCount(idx);
+            Cookie newCookie = new Cookie("news","[" + idx + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60);
+            response.addCookie(newCookie);
+        }
+		
+		
+		model.addAttribute("item", item);
 		return "news/view";
+	}
+	
+	@PostMapping(value = "/updateLikeCount")
+	@ResponseBody
+	public int updateLikeCount(@RequestBody HashMap<String, String> map) {
+		return newsService.updateLikeCount(Integer.parseInt(map.get("idx")));
 	}
 }
