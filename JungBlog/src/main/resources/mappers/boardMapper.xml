@@ -39,6 +39,11 @@
 							<if test="categoryNum != null ">
 								and categoryNum = #{categoryNum}
 							</if>
+							<if test="categoryNum == null ">
+								and (
+									categoryNum = 1 OR categoryNum = 2 OR categoryNum = 4
+								)
+							</if>
 						</where>
 						order by
 							<choose>

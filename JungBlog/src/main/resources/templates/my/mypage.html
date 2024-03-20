@@ -34,7 +34,7 @@
 </head>
 <style>
 	#icon{
-		font-size: 50px;
+		margin-right: 10px;
 		}
 		
 	#indexgreen{
@@ -130,10 +130,10 @@
 			<div id="main" role="main">
 				<div id="headertop" class="headertop">
 					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; cursor: pointer; ">
-						<span id="icon" class="material-symbols-outlined" onclick="gotohome()" style="margin-right: 10px;" >home</span>
-                		<span id="icon" class="material-symbols-outlined" onclick="gallery()" style="margin-right: 10px;">gallery_thumbnail</span>
-                		<span id="icon" class="material-symbols-outlined" onclick="file()" style="margin-right: 10px;">folder_open</span>
-                		<span id="icon" class="material-symbols-outlined" onclick="news()" style="margin-right: 10px;">news</span>
+						<span id="icon" class="material-symbols-outlined" onclick="gotohome()">home</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="gallery()">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="file()">folder_open</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="news()">news</span>
 					</div>
 				</div>
 				<div class="container">
@@ -198,9 +198,10 @@
 										        	<label for="newnickName">새로운 닉네임:</label><br>
 										        	<div class="uk-inline">
 											            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
-											            <input class="uk-input" type="text" aria-label="Clickable icon" id="newPhone" name="nickName" style="width: 330px;  border-radius: 5px;">
+											            <input class="uk-input" type="text" aria-label="Clickable icon" id="nickName" name="nickName" style="width: 330px;  border-radius: 5px;">
 											        </div>
-											        <input class="uk-button uk-button-default asd" type="submit" value="정보 수정" >  
+											        <span id="message"></span>
+											        <input id="asd" class="uk-button uk-button-default asd" type="submit" value="정보 수정" disabled="disabled" >  
 		       									</div>
 									    	</form>
 									 	</div>
@@ -235,23 +236,19 @@
 							        	<label for="newPhone">새로운 주소:</label><br><br />
 							        	<div class="row g-2 align-items-center" style="margin-bottom: 8px;">
 											<div class="col-auto">
-												<input type="text" name="postcode" id="postcode"
-													class="form-control" aria-describedby="passwordHelpInline"
-													readonly="readonly">
+												<input type="text" name="postcode" id="postcode" class="form-control" aria-describedby="passwordHelpInline" readonly="readonly">
 											</div>
 											<div class="col-auto">
-												<input class="btn btn-outline-danger btn-sm" type="button"
-													value="우편번호 검색" onclick="daumPostcode()" />
+												<input class="btn btn-outline-danger btn-sm" type="button" value="우편번호 검색" onclick="daumPostcode()" />
 											</div>
 										</div>
 										<input name="stAddress" id="stAddress" type="text"
 											class="form-control" placeholder="사용자 주소"
 											style="margin-bottom: 8px; width: 250px;" readonly="readonly"
 											required="required" />
-										<input name="dtAddress" id="dtAddress"
-											type="text" class="form-control" placeholder="사용자 상세 주소"
-											style="margin-bottom: 8px;" required="required"/>
-								        <input class="uk-button uk-button-default asd" type="submit" value="정보 수정" >
+										<input name="dtAddress" id="dtAddress" type="text" class="form-control" placeholder="사용자 상세 주소" style="margin-bottom: 8px;" required="required"/>
+										<span id="message2"></span>
+								        <input id="addbtn" class="uk-button uk-button-default asd" type="submit" value="정보 수정" disabled="disabled" >
    									</div>
 					    		</form>
 						 	</div>
@@ -307,10 +304,11 @@
 							        	<label>[[${user.username}]] </label><br><br>
 							        	<label for="newnusername">새로운 ID:</label><br>
 							        	<div class="uk-inline">
-							            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
-							            <input class="uk-input" type="text" aria-label="Clickable icon" id="newPhone" name="username" style="width: 330px;  border-radius: 5px;">
+								            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
+								            <input class="uk-input" type="text" aria-label="Clickable icon" id="username" name="username" style="width: 330px;  border-radius: 5px;">
 								        </div>
-								        <input class="uk-button uk-button-default asd" type="submit" value="정보 수정" >  
+								        <span id="message3"></span>
+								        <input id="usernamebtn" class="uk-button uk-button-default asd" type="submit" value="정보 수정" disabled="disabled" >  
    									</div>
 						    	</form>
 						 	</div>
@@ -373,9 +371,100 @@
             const popupWindow = window.open(url, "ChatRoomPopup", "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition);
             popupWindow.focus();
             */
+           	
+            //닉네임 폼체크
+			$("#nickName").keyup(function() {
+				let nickName = $("#nickName").val();
+				// 닉네임 입력란이 비어 있는 경우
+		        if (nickName.trim() === "") {
+		            $("#asd").prop("disabled", true); // 정보 수정 버튼 비활성화
+		        } else {
+		            $("#asd").prop("disabled", false); // 정보 수정 버튼 활성화
+		        }
+					// Ajax를 호출하여 처리 한다.
+					axios.post('/member/userNickNameCheck', {
+						"nickName": nickName
+					})
+						.then(function(response) {
+							if (nickName.charAt(0) === " ") {
+								$("#message").html("처음 공백은 포함할수 없어요").css('color', 'red');
+							}else {
+								// 성공 핸들링
+								// alert(response.data);
+								if (response.data * 1 == 0) {
+									$("#message").html("가능한 닉네임입니다").css('color', 'blue');
+								} else {
+									$("#message").html("중복되는 닉네임입니다.").css('color', 'red');
+									$("#asd").prop("disabled", true); // 정보 수정 버튼 비활성화
+								}
+							}
+						})
+						.catch(function(error) {
+							// 에러 핸들링
+							console.log(error);
+						})
+						.finally(function() {
+							// 항상 실행되는 영역
+						});
+			});
     	})
-    
+    	// 주소 폼체크
+		$(function() {
+		    $("#postcode, #stAddress, #dtAddress").on("input", function() {
+		        try {
+		            let postcode = $("#postcode").val().trim();
+		            let stAddress = $("#stAddress").val().trim();
+		            let dtAddress = $("#dtAddress").val().trim();
+		
+		            if (postcode === "" || stAddress === "" || dtAddress === "") {
+		                $("#addbtn").prop("disabled", true);
+		                $("#message2").html("주소를 입력해주세요").css('color', 'red');
+		            } else {
+		                $("#addbtn").prop("disabled", false);
+		                $("#message2").html(""); // 메시지 초기화
+		            }
+		        } catch (error) {
+		            console.error("Error occurred while processing address input:", error);
+		        }
+		    });
+		});
     	
+    	//id폼체크
+			$("#username").keyup(function() {
+				let username = $("#username").val();
+				// 닉네임 입력란이 비어 있는 경우
+		        if (username.trim() === "") {
+		            $("#usernamebtn").prop("disabled", true); // 정보 수정 버튼 비활성화
+		        } else {
+		            $("#usernamebtn").prop("disabled", false); // 정보 수정 버튼 활성화
+		        }
+					// Ajax를 호출하여 처리 한다.
+					axios.post('/member/userIdCheck', {
+						"username": username
+					})
+						.then(function(response) {
+							if (username.indexOf(" ") != -1) {
+								$("#message3").html("공백은 포함할수 없어요").css('color', 'red');
+								$("#usernamebtn").prop("disabled", true); // 정보 수정 버튼 비활성화
+							}else {
+								// 성공 핸들링
+								// alert(response.data);
+								if (response.data * 1 == 0) {
+									$("#message3").html("가능한 아이디입니다").css('color', 'blue');
+								} else {
+									$("#message3").html("중복되는 아이디입니다.").css('color', 'red');
+									$("#usernamebtn").prop("disabled", true); // 정보 수정 버튼 비활성화
+								}
+							}
+						})
+						.catch(function(error) {
+							// 에러 핸들링
+							console.log(error);
+						})
+						.finally(function() {
+							// 항상 실행되는 영역
+						});
+			});
     	
     	  $(function() {
         // 팝업 열기 버튼 클릭 시 배경 레이어와 팝업 창 표시
