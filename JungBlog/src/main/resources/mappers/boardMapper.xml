@@ -80,7 +80,7 @@
 		from
 			jung_board
 		<where>						
-			<if test="1 == 1">
+			<if test="deleted == null">
 				deleted = 0
 			</if>
 			<if test="userRef != null">

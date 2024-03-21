@@ -80,7 +80,7 @@ textarea {
   	border-radius: 5px;
 }
 
-#deleteButton,#updateBtn2{
+#deleteButton, #updateBtn2, #hideButton{
 	text-align: right;
 	background-color: white;
 	color: black;
@@ -94,6 +94,11 @@ textarea {
 	background-color: #fff;
 	}
 #deleteButton:hover{
+	background-color: black;
+	border: 1px solid grey;
+	color: white;
+	}
+#hideButton:hover{
 	background-color: black;
 	border: 1px solid grey;
 	color: white;

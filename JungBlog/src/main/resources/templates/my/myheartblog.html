@@ -39,6 +39,9 @@
 </style>
 
 <body style="display: flex;">
+<th:block th:if="${categoryNum != null}">
+	<input type="hidden" id="categoryNum" th:value="${categoryNum}"/>
+</th:block>
 	<!-- header -->
 	<th:block th:insert="~{/my/header.html}"></th:block>
 	
@@ -67,9 +70,9 @@
 							<tr>
 								<th class="" style="line-height: 2">NO</th>
 								<th class="" >
-									<select class="uk-select" id="selectBox" style="height: 25px">
+									<select class="uk-select" id="selectBox" style="height: 25px" onchange="handleCategoryChange()">
 						                <option selected value="0">카테고리</option>
-						                <option th:each="category : ${categoryList}" th:value="${category}">[[${category}]]</option>
+						                <option th:each="category : ${categoryList}" th:value="${category}" th:selected="${(category == '블로그' ? 1 : category == '자료실' ? 2 : 4) == categoryNum}">[[${category}]]</option>
 						            </select>
 								</th>
 								<th class="" style="line-height: 2">제목</th>
@@ -83,8 +86,8 @@
 							<tr th:if="${#lists.isEmpty(pv.list)}">
 								<td colspan="8">등록된 글이 없습니다.</td>
 				    		</tr>
-								<tr th:each="vo, vs : ${pv.list}" th:onclick="view([[${vo.idx}]])"
-									style="cursor: pointer;">
+								<tr th:each="vo, vs : ${pv.list}" th:onclick="view([[${vo.idx}]])" style="cursor: pointer;">
+									<td style="display: none;" class="idx">[[${vo.idx}]]</td>
 									<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
 										vs.index}]]</td>
 									<td>[[${vo.categoryName}]]</td>
@@ -107,9 +110,70 @@
 			</div>
 		</div>
     <script type="text/javascript">
-    function view(idx) {
-    	location.href = "/blog/" + idx
-    }
+	function view(obj) {
+		// 클래스 이름이 idx인 요소의 텍스트 가져오기
+	    let idxText = obj.querySelector('.idx').innerHTML;
+	    // 클래스 이름이 categoryName인 요소의 텍스트 가져오기
+	    let categoryNameText = obj.querySelector('.categoryName').innerHTML;
+
+		switch (categoryNameText) {
+			case "블로그": // 블로그 카테고리 선택 시
+          	// 블로그 페이지로 이동
+          	location.href = `/blog/view/${idxText}`;
+          	break;
+          
+			case "자료실": // 자료실 카테고리 선택 시
+			    // 자료실 페이지로 이동
+			    location.href = `/fileboard/blog/${idxText}`;
+			    break;
+			    
+			case "Gallery": // 갤러리 카테고리 선택 시
+			    // 갤러리 페이지로 이동
+			    location.href = `/gallery/${idxText}`;
+			    break;
+			default:
+			    // 기본적으로 수행할 동작
+			    break;
+ 			}
+
+   		}
+   
+    function handleCategoryChange() {
+        // 선택한 카테고리의 값을 가져옴
+        var selectedCategory = document.getElementById("selectBox").value;
+
+        // 선택한 카테고리에 따라 동작을 수행
+        switch (selectedCategory) {
+            case "0":   //전체 보기
+                // 전체 페이지로 이동
+                location.href = `?p=1`;
+                break;
+                
+            case "블로그": // 블로그 카테고리 선택 시
+                // 블로그 페이지로 이동
+                location.href = `?p=1&categoryNum=1`;
+                break;
+                
+            case "자료실": // 자료실 카테고리 선택 시
+                // 자료실 페이지로 이동
+                location.href = `?p=1&categoryNum=2`;
+                break;
+                
+            case "QnA": // 갤러리 카테고리 선택 시
+                // 갤러리 페이지로 이동
+                location.href = `?p=1&categoryNum=5`;
+                break;
+                
+            case "Gallery": // 갤러리 카테고리 선택 시
+                // 갤러리 페이지로 이동
+                location.href = `?p=1&categoryNum=4`;
+                break;
+            default:
+                // 기본적으로 수행할 동작
+                break;
+       }
+}
+    
     function gotohome() {
         // 여기에 이동할 주소를 입력합니다.
         var address = "/";

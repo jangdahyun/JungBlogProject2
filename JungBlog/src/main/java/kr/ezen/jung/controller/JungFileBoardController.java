@@ -161,13 +161,15 @@ public class JungFileBoardController {
 	@GetMapping(value = "/blog/{idx}")
 	public String as (@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
-		boardVO.setMember(jungMemberService.selectByIdx(boardVO.getRef()));
-		
-		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
-	
-		boardVO.setCountHeart(jungBoardService.countHeart(idx));
-		
-		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
+		if(boardVO == null) {
+			return "redirect:/fileboard?error=notFound";
+		}
+		if(boardVO.getDeleted() == 1) {
+			return "redirect:/fileboard?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 2) {
+			return "redirect:/fileboard?error=notFound";
+		}
 		
 		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		
@@ -193,12 +195,13 @@ public class JungFileBoardController {
 				oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
 				oldCookie.setPath("/");
 				oldCookie.setMaxAge(60);
-				PopularVO p = new PopularVO();
-				p.setBoardRef(idx);
-				p.setUserRef(memberVO.getIdx());
-				p.setInteraction(1);
-				popularService.insertPopular(p);
-				log.info("무야:{}", p);
+				if(memberVO != null) {
+					PopularVO p = new PopularVO();
+					p.setBoardRef(idx);
+					p.setUserRef(memberVO.getIdx());
+					p.setInteraction(1);
+					popularService.insertPopular(p);					
+				}
 				response.addCookie(oldCookie);
 			}
 		}	else {

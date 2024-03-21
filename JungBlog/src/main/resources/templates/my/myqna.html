@@ -89,7 +89,7 @@
 		        	</div>
 		        	
 		        	<th:block th:if="${#lists.isEmpty(pv.list)}">
-		        		<div>등록된 공지사항이 존재하지 않습니다.</div>
+		        		<div>등록된 QnA가 존재하지 않습니다.</div>
 		        	</th:block>
 		        	<th:block th:if="${not #lists.isEmpty(pv.list)}">
 	        			<ul id="thead">
@@ -113,6 +113,9 @@
 	        				</li>
 	        			</ul>
 		        	</th:block>
+		        	<div style="text-align: right; margin-top: 10px;">
+		        		<a href="/member/myqnaupload" class="uk-button uk-button-default"  style="text-align: right;">글쓰기</a>		
+		        	</div>
 		        	<div id="page" style="display: flex; align-items: center;justify-content: center;">
 						[(${pv.pageList})]
 					</div>

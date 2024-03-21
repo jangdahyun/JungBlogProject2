@@ -10,11 +10,8 @@ $(function() {
 	})
 	
 })
-function view(idx) {
-	location.href = "/blog/" + idx;
-}
 function viewblog(idx) {
-	location.href = "/blog/" + idx;
+	location.href = "/blog/view/" + idx;
 }
 function viewgallery(idx) {
 	location.href = "/gallery/" + idx;
