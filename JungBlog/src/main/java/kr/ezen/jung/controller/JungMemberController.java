@@ -88,9 +88,8 @@ public class JungMemberController {
          categoryList.remove("QnA");
          categoryList.remove("공지사항");
          
-         log.info("categoryList : {}",categoryList);
-         log.info("myblog실행 cv: {}",cv);
          model.addAttribute("pv",pv);
+         log.debug("pv:{}",pv);
          if(cv.getCategoryNum() != null) {
         	 model.addAttribute("categoryNum", cv.getCategoryNum());        	 
          }
@@ -109,18 +108,21 @@ public class JungMemberController {
     	 JungMemberVO memberVO = memberService.selectByIdx(sesesionUser.getIdx());
     	 cv.setUserRef(sesesionUser.getIdx());
          cv.setS(10);
-         PagingVO<JungBoardVO> pv = jungBoardService.selectHeartByUseridx(cv);
          
-         log.info("실행 cv: {}",pv);
+         PagingVO<JungBoardVO> pv = jungBoardService.selectHeartByUseridx(cv);
+         List<String> categoryList= jungBoardService.findCategoryList();
+         categoryList.remove("QnA");
+         categoryList.remove("공지사항");
          
          model.addAttribute("pv",pv);
-         model.addAttribute("cv", cv);
+         if(cv.getCategoryNum() != null) {
+        	 model.addAttribute("categoryNum", cv.getCategoryNum());        	 
+         }
          model.addAttribute("user",memberVO);
-         model.addAttribute("categoryList",jungBoardService.findCategoryList());
+         model.addAttribute("categoryList",categoryList);
    	 	return "my/myheartblog";
     }
-    
-  //내가 쓴 글
+    //내가 쓴 글
     @GetMapping(value = {"/myqna"})
     public String myqna(HttpSession session,@ModelAttribute(value = "cv")CommonVO cv, Model model) {
     	 if(session.getAttribute("user") == null) {
@@ -133,7 +135,6 @@ public class JungMemberController {
          cv.setCategoryNum(5);
          
          PagingVO<JungBoardVO> pv = jungBoardService.selectByRef(cv);
-         log.info("myblog실행 cv: {}",cv);
          model.addAttribute("pv",pv);
          model.addAttribute("user",memberVO);
          model.addAttribute("cv", cv);
@@ -185,7 +186,6 @@ public class JungMemberController {
 	     }
 	    log.info("서버 실제 경로 : " + uploadPath); // 확인용
 	    
-	    int count =1;
 	    // 여러개 파일 받기
         List<MultipartFile> list = request.getFiles("file"); // form에 있는 name과 일치
         String url = "";
@@ -210,8 +210,6 @@ public class JungMemberController {
                     fileBoardVO.setFilepath(filepath);
                     fileBoardVO.setRef(boardVO.getIdx());
                     jungFileBoardService.insert(fileBoardVO);
-                    log.info("COUNT2:{}" , count++);
-                   
                  }
               }
            }
@@ -220,15 +218,13 @@ public class JungMemberController {
         }
         return "redirect:/member/myqna";
 	}
-    
-    
+	
     @PostMapping(value = "/userPwCheck")
     @ResponseBody
     public String updatePassword(@RequestBody JungMemberVO jungVO,HttpSession session) {
     	log.info("updatePassword 실행 : {}", jungVO);
     	JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
     	String password = jungVO.getPassword();
-    	
 
         // 사용자가 제출한 현재 비밀번호와 DB에 저장된 암호화된 비밀번호를 비교합니다.
         if (passwordEncoder.matches(password, memberVO.getPassword())) {
@@ -265,15 +261,14 @@ public class JungMemberController {
 		memberService.update(updatememberVO);
 		return "redirect:/";
 	}
-
 	
-//	
-//	@GetMapping(value = { "/logout" })
-//	public String logout(HttpSession session) {
-//		session.removeAttribute("user") ;
-//		return "redirect:/";
-//	}
-    
+	@GetMapping(value = {"/findUsername"})
+	public String findUsername(@RequestParam(value = "logout", required = false) String logout, Model model) {
+		if (logout != null)
+			model.addAttribute("logout", "logout");
+		return "findUsername";
+	}
+	
     // 회원가입
     @GetMapping("/join")
     public String RegisterForm(HttpSession session) {
@@ -290,16 +285,11 @@ public class JungMemberController {
     @GetMapping(value = "/send", produces = "text/plain" )
     @ResponseBody
     public String send(@RequestParam(value = "to") String to) {
-//    	return mailService.mailSend(mailVO); // boolean 값 리턴!
     	log.info("send : to=>{}",to);
     	String result = mailService.mailSend(to)+""; //
     	log.info("send Success?:{}", result);
     	return result;
     }
-    
-    
-    
-    
     
     //회원가입 완료
   	@GetMapping("/joinok")
@@ -359,20 +349,10 @@ public class JungMemberController {
   		}
   		vo.setBirthDate(date);
   		vo.setRole("ROLE_USER");
-  		log.debug("vo : {}",vo);
   		memberService.insert(vo); // 저장
-  		log.debug("vo : {}",vo);
   		return "redirect:/";
   	}
-
-//    // 특정유저 조회 : 모델에 담아둠
-//    @GetMapping("/update/{username}")
-//    public String showUpdateForm(@PathVariable String username, Model model) {
-//        JungMemberVO memberVO = memberService.selectByUsername(username);
-//        model.addAttribute("memberName", memberVO);
-//        return "showMember"; 
-//    }
-
+  	
     // 신규 유저 추가
     @PostMapping("/insert")
     public String insertMember(@ModelAttribute JungMemberVO newMember) {
@@ -398,7 +378,6 @@ public class JungMemberController {
     	JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
     	deletememberVO.setIdx(memberVO.getIdx());
     	 //자기 정보
-    	log.info("나는 누구?{}",memberVO);
         model.addAttribute("user",memberVO);
         return "my/delete";  
     }
@@ -407,7 +386,6 @@ public class JungMemberController {
     public String deleteOk(HttpSession session) {
     	JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
     	memberService.delete(memberVO.getIdx());
-    	log.info("밤양갱 {}",memberVO);
     	session.invalidate(); // 세션 무효화
     	return "redirect:/"; 
     }

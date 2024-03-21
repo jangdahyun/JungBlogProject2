@@ -22,16 +22,16 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 	<title>게시글 보기</title>
-	<link rel="stylesheet" href="/css/blog.css">
-	<script src="/js/blog.js"></script>
+	<link rel="stylesheet" href="/css/gallery.css">
+	<script src="/js/my/mygallery.js"></script>
 	<link rel="stylesheet" href="/css/mainHeader2.css">
 	<script src="/js/mainHeader.js"></script>
 </head>
 <body>
 	<th:block th:insert="~{/mainHeader.html}"></th:block>
 	
-	<main style="width: 940px; padding: 20px; margin: auto;background: #292820;">
-      <div style="width: 100%; border: 1px solid #525040; margin: 20px 0; margin-top: 80px;">
+	<main style="width: 940px; padding: 80px; margin: auto;background: #292820; max-width:1320px">
+      <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
          <article style="width: 740px; margin: 20px auto;">
          	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
          	<input type="hidden"  th:value="${board.title}" id="editTitle"/>
@@ -80,17 +80,16 @@
 	       <article style="width: 740px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
-				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload">
-					<input type="hidden" th:value="${board.idx}" name="boardidx">
+				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
 					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
-					<textarea placeholder="Write a comments..." name="reply"></textarea>
+					<input type="hidden" th:value="${board.idx}" name="boardidx">
+					<textarea id="comment" placeholder="Write a comments..." name="reply"></textarea>
 					<div id="submitBtn">
 						<input type="submit" class="styled-button" value="Click me"/>	           
 					</div>
 				</form>
 				<div>
 					<ul id="commentList">
-						
 					</ul>
 					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
 					<section>
@@ -100,17 +99,14 @@
 				</div>
 	       </article>
       </div>
-      	<th:block th:if="${session.user != null && session.user.idx == board.ref}">
+      	<th:block th:if="${session.user !=null && session.user.idx == board.ref}">
       		<input type="hidden" id="deleteCk" value="0">
 				<div style="text-align: right; ">
-					<!-- 게시글 숨기기 버튼 -->
-   					<button id="hideButton">게시글 숨기기</button>  
+					<!-- 게시글 삭제 버튼 -->
+   					<button id="deleteButton">게시글 삭제</button> 
    						
     				<!-- 게시글 수정 버튼 -->
-   					<button id="updateBtn">게시글 수정</button>    				
-		
-    				<!-- 게시글 삭제 버튼 -->
-   					<button id="deleteButton">게시글 삭제</button>    			
+   					<button id="updateBtn">게시글 수정</button>    		
 				</div>
 		</th:block>
 		

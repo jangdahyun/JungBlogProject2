@@ -25,6 +25,9 @@
 </head>
 <link rel="stylesheet" href="/css/file.css">
 <script src="/js/file.js"></script>
+
+<link rel="stylesheet" href="/css/mainHeader.css">
+<script src="/js/mainHeader.js"></script>
 <style>
     hr { 
         width: 100%; /* 너비를 50%로 지정 */
@@ -35,10 +38,11 @@
     }
 </style>
 <body>
-	<div style="font-size: 50pt; text-align: center;"> File Details</div>
+	 <!-- 헤더 -->
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
 
 	<main style="width: 940px; padding: 20px; margin: auto;">
-      <div style="width: 100%;  margin: 20px; text-align: left;">
+      <div style="width: 100%;  margin: 20px; text-align: left; margin-top: 50px;">
          <article style="width: 740px; margin: 20px auto;">
 		<hr />
          	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
@@ -130,15 +134,17 @@
 				</div>
 	       </article>
       </div>
-      	<th:block th:if="${session.user.idx == board.ref}">
+      	<th:block th:if="${session.user != null && session.user.idx == board.ref}">
       		<input type="hidden" id="deleteCk" value="0">
 				<div style="text-align: right; ">
     				<!-- 게시글 삭제 버튼 -->
-   					<button id="deleteButton">삭제</button>    			
-   						
+   					<button id="deleteButton">삭제</button> 
+   					
     				<!-- 게시글 수정 버튼 -->
    					<button id="updateBtn2">수정</button>    				
 		
+   					<!-- 게시글 삭제 버튼 -->
+   					<button id="hideButton">숨기기</button>
 				</div>
 		</th:block>
 		

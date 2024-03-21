@@ -23,32 +23,15 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 	<title>게시글 보기</title>
 	<link rel="stylesheet" href="/css/blog.css">
-	<script src="/js/blog.js"></script>
+	<script src="/js/my/myblog.js"></script>
+	<link rel="stylesheet" href="/css/mainHeader2.css">
+	<script src="/js/mainHeader.js"></script>
 </head>
 <body>
-	<header>
-		<nav>
-            <div class="logo">
-                <img src="Spotify_Logo_RGB_White.png" alt="logo">
-            </div>
-            <div class="menuBar">
-                <a href="">fileupload</a>
-                <a href="">fileupload</a>
-                <a href="">Support</a>
-                <a href="">Download</a>
-                <span>|</span>
-                <th:block th:if="${session.user != null}">
-	                <a href="/logout">Logout</a>                
-                </th:block>
-                <th:block th:if="${session.user == null}">
-	                <a href="/member/join">Sign up</a>
-	                <a href="/member/login">Log in</a>                
-                </th:block>
-            </div>
-        </nav>
-	</header>
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	
 	<main style="width: 940px; padding: 20px; margin: auto;background: #292820;">
-      <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
+      <div style="width: 100%; border: 1px solid #525040; margin: 20px 0; margin-top: 80px;">
          <article style="width: 740px; margin: 20px auto;">
          	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
          	<input type="hidden"  th:value="${board.title}" id="editTitle"/>
@@ -99,6 +82,7 @@
 				<div class="hr"></div>
 				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload">
 					<input type="hidden" th:value="${board.idx}" name="boardidx">
+					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
 					<textarea placeholder="Write a comments..." name="reply"></textarea>
 					<div id="submitBtn">
 						<input type="submit" class="styled-button" value="Click me"/>	           
@@ -106,18 +90,7 @@
 				</form>
 				<div>
 					<ul id="commentList">
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
+						
 					</ul>
 					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
 					<section>
@@ -127,15 +100,14 @@
 				</div>
 	       </article>
       </div>
-      	<th:block th:if="${session.user.idx == board.ref}">
+      	<th:block th:if="${session.user != null && session.user.idx == board.ref}">
       		<input type="hidden" id="deleteCk" value="0">
 				<div style="text-align: right; ">
     				<!-- 게시글 삭제 버튼 -->
    					<button id="deleteButton">게시글 삭제</button>    			
    						
     				<!-- 게시글 수정 버튼 -->
-   					<button id="updateBtn">게시글 수정</button>    				
-		
+   					<button id="updateBtn">게시글 수정</button> 
 				</div>
 		</th:block>
 		

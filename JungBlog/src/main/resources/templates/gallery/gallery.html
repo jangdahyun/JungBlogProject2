@@ -114,12 +114,13 @@
 		}
     </style>
 <body>
-	
-	<form action="/gallery/galleryboardUpload" method="post" id="write">
-  		<div id="writeBtn" onclick="submitForm()">
-     		<span class="material-symbols-outlined" id="icon" th:type="submit">stylus</span><span>글쓰기</span>    
-    	</div>
-	</form>
+	<th:block th:if="${session.user != null}">
+		<form action="/gallery/galleryboardUpload" method="post" id="write">
+	  		<div id="writeBtn" onclick="submitForm()">
+	     		<span class="material-symbols-outlined" id="icon" th:type="submit">stylus</span><span>글쓰기</span>    
+	    	</div>
+		</form>
+	</th:block>
     <!-- 헤더 -->
    <th:block th:insert="~{/mainHeader.html}"></th:block>
     

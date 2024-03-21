@@ -65,5 +65,72 @@
 	<select id="select" parameterType="hashmap" resultType="int">
 		select count(*) from  heart_tb where userRef=#{userRef} and boardRef=#{boardRef}
 	</select>
+	
+	<select id="selectHeartByUseridxAndcate" parameterType="hashmap" resultType="JungBoardVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						
+						SELECT
+							jb.*
+						FROM
+							jung_board jb
+						JOIN
+							(
+								select
+									boardRef
+								from
+									heart_tb
+								where
+									userRef=#{userRef}
+								order by
+									idx desc							
+							) ht ON ht.boardRef = jb.idx
+						<where>
+							<if test="categoryNum != null">
+								jb.categoryNum = #{categoryNum}							
+							</if>
+						</where>
+						order by
+							jb.idx desc
+						
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]> 
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
+	</select >
 	  
+	<select id="totalCount" parameterType="hashmap" resultType="int">
+		SELECT
+			count(jb.idx)
+		FROM
+			jung_board jb
+		JOIN
+			(
+				select
+					boardRef
+				from
+					heart_tb
+				where
+					userRef=#{userRef}
+				order by
+					idx desc							
+			) ht ON ht.boardRef = jb.idx
+		<where>
+			<if test="categoryNum != null">
+				jb.categoryNum = #{categoryNum}							
+			</if>
+		</where>
+	</select>
 </mapper>

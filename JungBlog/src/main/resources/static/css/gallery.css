@@ -45,7 +45,7 @@ textarea {
 	margin-left: 3px;
 	width: 20px; height: 20px;
 }
-#deleteButton,#updateBtn{
+#deleteButton,#updateBtn,#hideButton {
 	text-align: right;
 	background-color: white;
 	color: #fff;
@@ -59,6 +59,11 @@ textarea {
 	background-color: #595746;
 	}
 #deleteButton:hover{
+	background-color: black;
+	border: 1px solid grey;
+	color: white;
+	}
+#hideButton:hover{
 	background-color: black;
 	border: 1px solid grey;
 	color: white;
