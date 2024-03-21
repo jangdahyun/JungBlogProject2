@@ -1,19 +1,16 @@
 package kr.ezen.jung.controller;
 
-import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.ezen.jung.service.NewsCommentService;
 import kr.ezen.jung.service.NewsService;
+import kr.ezen.jung.vo.RssCommentVO;
 import kr.ezen.jung.vo.RssVO.Item;
 import lombok.extern.slf4j.Slf4j;
 
@@ -214,4 +213,58 @@ public class NewsController {
 	public int updateLikeCount(@RequestBody HashMap<String, String> map) {
 		return newsService.updateLikeCount(Integer.parseInt(map.get("idx")));
 	}
+	
+	@Autowired
+	private NewsCommentService newsCommentService;
+	
+	@GetMapping(value = "/view/{idx}/comment")
+	public String commentView(Model model ,@PathVariable(value = "idx") int idx) {
+		int lastItemIdx = newsCommentService.findLastItemIdx();
+		model.addAttribute("lastItemIdx", lastItemIdx + 1);
+		model.addAttribute("rssBoardRef", idx);
+		return "news/commentView";
+	}
+	
+	// 글 얻기
+	@GetMapping(value = "/comment")
+	@ResponseBody
+	public List<RssCommentVO> getComments(@RequestParam(value = "rssBoardRef") int rssBoardRef, @RequestParam(value = "sizeOfPage") int sizeOfPage, @RequestParam(value = "lastItemIdx") int lastItemIdx){
+		List<RssCommentVO> list = newsCommentService.getCommentByRssBoardRef(rssBoardRef, sizeOfPage, lastItemIdx);
+		return list;
+	}
+	
+	// 글 쓰기
+	@PostMapping(value = "/comment")
+	@ResponseBody
+	public int writeComment(@RequestBody RssCommentVO rcv) {
+		int result = newsCommentService.insertRssComment(rcv);
+		return result;
+	}
+	
+	// 글 수정
+	@PutMapping(value = "/comment")
+	@ResponseBody
+	public int updateComment(@RequestBody RssCommentVO rcv) {
+		int result = newsCommentService.updateRssComment(rcv.getIdx(), rcv.getReply());
+		return result;
+	}
+	
+	// 글 삭제
+	@DeleteMapping(value = "/comment")
+	@ResponseBody
+	public int deleteComment(@RequestBody RssCommentVO rcv) {
+		int result = newsCommentService.deleteRssCommentByIdx(rcv.getIdx());
+		return result;
+	}
+	
+	// 대댓글 얻기
+	@GetMapping(value = "/comments/reply")
+	@ResponseBody
+	public List<RssCommentVO> getReply(@RequestParam(value = "parentCommentRef") int parentCommentRef){
+		List<RssCommentVO> list = newsCommentService.findReplyByParentCommentRef(parentCommentRef);
+		return list;
+	}
+	
+	
+	
 }

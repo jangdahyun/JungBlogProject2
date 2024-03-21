@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.RssCommentDAO">
+	<!-- 페이징 처리 -->
+	<select id="selectScrollByRssRef" parameterType="hashmap" resultType="RssCommentVO">
+		SELECT
+			rownum rnum, Q.*
+		FROM
+			(
+				SELECT
+					rc.*
+					, jm.nickName as nickname
+					, COALESCE(cc.childCommentCount, 0) AS childCommentCount
+				FROM
+					rss_comment rc
+				JOIN
+					jung_member jm ON jm.idx = rc.userRef
+				JOIN
+				    (
+				        SELECT 
+				            parentCommentRef,
+				            COUNT(*) AS childCommentCount
+				        FROM 
+				            rss_comment
+				        WHERE 
+				            depth = 1
+				        GROUP BY 
+				            parentCommentRef
+				    ) cc ON cc.parentCommentRef = rc.idx
+				WHERE
+					<![CDATA[
+						rss_comment.idx < #{lastItemIdx}
+					]]>
+					and depth = 0
+					and rssBoardRef = #{rssBoardRef}
+				ORDER BY
+					rc.idx DESC
+			) Q
+		WHERE
+			<![CDATA[
+				rownum <= #{sizeOfPage}
+			]]>
+	</select>
+		
+	<select id="findLastItemIdx" resultType="int">
+		SELECT 
+		    CASE 
+		        WHEN MAX(rss_comment.idx) IS NULL THEN 0 
+		        ELSE MAX(rss_comment.idx) 
+		    END
+		FROM 
+		    rss_comment
+		WHERE
+		    rss_comment.depth = 0
+	</select>
+	
+	<select id="selectTotalCountByRssBoardRef" parameterType="int" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			rss_comment
+		WHERE
+			rssBoardRef = #{rssBoardRef}
+	</select>
+	
+	<select id="findReplyByParentCommentRef" parameterType="int" resultType="RssCommentVO">
+		SELECT
+			rc.*
+			, jm.nickName as nickname
+		FROM
+			rss_comment rc
+		JOIN
+			jung_member jm ON jm.idx = rc.userRef
+		WHERE
+			rc.parentCommentRef = #{parentCommentRef} and rc.depth = 1
+		ORDER BY
+			rc.idx
+	</select>
+	
+	<!-- 댓글 저장 -->
+	<insert id="insert" parameterType="RssCommentVO">
+		insert into rss_comment values (rss_comment_idx_seq.nextval, #{rssBoardRef}, #{depth}, #{parentCommentRef}, #{userRef}, #{reply}, sysdate)
+	</insert>
+	
+	<!-- 댓글 수정 -->
+	<update id="update" parameterType="RssCommentVO">
+		update rss_comment set reply = #{reply} where idx = #{idx}
+	</update>
+	
+	<!-- 댓글 1개 삭제 -->
+	<delete id="deleteByIdx" parameterType="int">
+		delete from rss_comment where idx = #{idx}
+	</delete>
+</mapper>

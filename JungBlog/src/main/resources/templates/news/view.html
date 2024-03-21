@@ -37,6 +37,17 @@
 		    word-wrap: break-word;
 		}
 		
+		.figure-caption{
+			max-width: 100%;
+		    margin: 10px auto 0;
+		    color: #888;
+		    text-align: left;
+		    font-size: 0.778em;
+		    line-height: 1.57em;
+		}
+		
+		
+		
 		#goTopBtn{
 			width: 50px; height: 50px;
 			background: rgba(0,0,0,0.5);
@@ -47,6 +58,7 @@
 			align-items: center;
 			justify-content: center;
 			cursor: pointer;
+			z-index: 999;
 		}
 		
 		
@@ -104,11 +116,18 @@
 			<div id="contentBox">[(${item.content})]</div>
 		</main>
 	</div>
-	<div id="footer" style="position: fixed; bottom: 0; width: 100%;">
-		<div id="footerInner" style="width: 600px; margin: auto; height: 70px; background: #fff; display: flex; align-items: center;">
+	<div id="footer" style="position: fixed; bottom: 0; width: 100%; background: #333">
+		<div id="footerInner" style="width: 600px; margin: auto; height: 70px; border:1px solid #aaa; border-bottom: none; display: flex; align-items: center; justify-content: space-between;">
 			<div id="like" style="position: relative; margin-left: 25px;margin-top: 2px; cursor: pointer; display: flex;">
 				<div class="heart"></div>
-				<div class="heartCount" style="margin-left: 10px; color: #333; font-weight: bold;">[[${item.likeCount}]]</div>
+				<div class="heartCount" style="margin-left: 10px; color: #fff; font-weight: bold;">[[${item.likeCount}]]</div>
+			</div>
+			<div style="padding-right: 20px; display: flex; align-items: center;">
+				<div>
+					<span id="readCount" style="margin-left: 20px; font-size: 12px;">조회수 [[${item.readCount}]]</span>
+					<span id="commentCount" style="margin-left: 20px; font-size: 12px;">댓글수 0</span>	
+				</div>
+				<button id="commentButton" style="text-align:right;margin-left: 20px; font-size: 12px; color: #333; width: 50px; height: 20px; padding: 0; display: flex;align-items: center;justify-content: center;" class="uk-button">댓글보기</button>		
 			</div>
 		</div>
 	</div>
@@ -133,11 +152,11 @@
 			        $(".heart").css('transform', 'scale(1) rotate(-45deg)');
 			        $(".heart, .heart::before, .heart::after").removeClass('pinkBackground');
 			        
-			        // 10초 후에 다시 클릭 이벤트 활성화
-			        setTimeout(() => {
-			            $("#like").one('click', likeClickEvent);
-			        }, 5000);
 			    }, 500);
+		        // 5초 후에 다시 클릭 이벤트 활성화
+		        setTimeout(() => {
+		            $("#like").one('click', likeClickEvent);
+		        }, 5000);
 			}
 			
 			function updateLikeCount(){
@@ -156,6 +175,27 @@
 					console.log(err);
 				})
 			}
+			
+			let popupWindow;
+
+			$("#commentButton").click(function() {
+			    const popupURL = `/news/view/${idx}/comment`;
+			    const popupWidth = 400;
+			    const popupHeight = 800;
+			    const leftPosition = (window.innerWidth - popupWidth) / 2;
+			    const topPosition = (window.innerHeight - popupHeight) / 2;
+
+			    // 팝업 창이 이미 열려있거나 닫혀있는 경우
+			    if (!popupWindow || popupWindow.closed) {
+			        popupWindow = window.open(popupURL, "_blank", "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition);
+
+			        popupWindow.onunload = function() {
+			            popupWindow = null;
+			        };
+			    } else {
+			        popupWindow.focus();
+			    }
+			});
 		})
 	</script>
 </body>
