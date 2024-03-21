@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<head>
+    <meta charset="UTF-8">
+    <title>JungBlog - 공지사항</title> 
+    
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/file.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    
+	<link rel="stylesheet" href="/css/mainHeader.css">
+	<script src="/js/mainHeader.js"></script>
+	<style type="text/css">
+		.highLight{font-weight: 700; color: #333;}
+		#writeBtn{
+			background: #ccc; color: #fff; border-radius: 15px;
+			transition:0.3s;
+		}
+		#writeBtn:hover {
+			background: #2F409F;
+		}
+		#page a {cursor: pointer;}
+    	#page .active { font-weight: 500; color: #333;}
+    	
+    	.tr1{ width: 100%; display: flex;}
+    	.tr2{width: 100%; display: flex;}
+    	
+    	.td1 {width: 50px; text-align: center;display: flex;align-items: center; justify-content: center; padding: 3px;}
+    	.td2 {width: calc(100% - 350px); padding: 3px;}
+    	.td3 {width: 200px;display: flex;align-items: center; justify-content: center; padding: 3px;}
+    	.td4 {width: 100px;display: flex;align-items: center; justify-content: center; padding: 3px;}
+    	.td5 {width: calc(100% - 50px); padding: 3px;}
+    	#thead div{border: 1px solid #ccc; background: #3F51B5; color: #fff; font-weight: 500;}
+    	#thead .tr2{border-top: none;}
+    	#thead .tr2 p{margin: 0; padding: 5px;}
+    	#thead .td2 {display: flex;align-items: center; justify-content: center;}
+    	#thead {margin: 0; padding: 0;}
+    	#tbody {margin: 0; padding: 0;}
+    	#thead li { margin:0}
+    	#tbody .tr1 {border-bottom: 1px solid #ccc;}
+    	#tbody li { border-bottom: 1px solid #aaa; margin: 0px;}
+    	#tbody p {margin: 0px;}
+	</style>
+</head>
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+    
+    <div id="wrap">
+    	<main style="width: 1000px; padding: 80px 0; margin: auto;">
+    		<div style="border: 1px solid #eee; padding: 20px; width: 100%;">
+	        	<h3 id="title">[공지] [[${board.title}]]</h3>
+	        	<div class="hr"></div>
+	        	<div id="image" th:each="fileboard : ${board.fileboardVO}">
+	    			<img style="margin-bottom: 10px;" th:src="@{'/upload/' + ${fileboard.filepath}}" alt="Image" />
+				</div>
+				<div>
+					<p style="word-wrap: break-word;">[[${board.content}]]</p>
+				</div>
+				<div class="hr"></div>
+        		<th:block th:if="${session.user != null && session.user.role == 'ROLE_ADMIN'}">
+		        	<div th:if="${session.user.idx == board.ref}" style="width: 100%; display: flex; justify-content: end; gap:20px;">
+				        <input type="button" class="uk-button" id="updateBtn" th:onclick="updateBtn([[${board.idx}]])" value="수정하기"/>			        
+			        </div>	        		        		
+        		</th:block>
+        	</div>
+    	</main>
+    </div>
+    <script type="text/javascript">
+    	function updateBtn(idx){
+    		location.href = "/adm/noticeUpdate/" + idx;
+    	}
+    </script>
+</body>
+</html>
