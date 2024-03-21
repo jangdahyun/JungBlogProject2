@@ -19,6 +19,8 @@ public interface RssDAO {
 	
 	/** 3. 조회수 증가! */
 	void updateReadCount(int idx) throws SQLException;
+	/** 3.1 좋아요 증가! */
+	void updateLikeCount(int idx) throws SQLException;
 	
 	/** 4. 뉴스 게시판 가져오기!(lastItemIdx, sizeOfPage, search, category, pugDate) */
 	List<Item> selectRssList(HashMap<String, String> map) throws SQLException;

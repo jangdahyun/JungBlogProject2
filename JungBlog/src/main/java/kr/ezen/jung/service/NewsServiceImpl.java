@@ -88,7 +88,7 @@ public class NewsServiceImpl implements NewsService{
 	public int updateLikeCount(int idx) {
 		int result = 0;
 		try {
-			rssDAO.updateReadCount(idx);
+			rssDAO.updateLikeCount(idx);
 			result = 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
