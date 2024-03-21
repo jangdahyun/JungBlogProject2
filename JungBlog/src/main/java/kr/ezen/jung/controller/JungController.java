@@ -179,7 +179,7 @@ public class JungController {
 		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
 		String path="";
 		if (categoryNum == 1) {
-			path="/blog/";
+			path="/blog/view/";
 		}
 		else if(categoryNum==2){
 			path="/fileboard/blog/";

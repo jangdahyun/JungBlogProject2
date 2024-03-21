@@ -57,7 +57,11 @@ public class BlogController {
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
 		if(boardVO == null) { // 해당글이 존재하는지 or 해당글이 blog 가 맞는지 확인
 			return "redirect:/blog?error=notFound";
-		} else if(boardVO.getCategoryNum() != 1){
+		}
+		if(boardVO.getDeleted() == 1) {
+			return "redirect:/blog?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 1){
 			return "redirect:/blog?error=notFound";
 		}
 		
@@ -108,16 +112,38 @@ public class BlogController {
             }
             response.addCookie(newCookie);
         }
+		log.info("값:{}",boardVO);
 		model.addAttribute("board", boardVO);
 		return "blog/blogView";
 	}
 	
+	@GetMapping(value = "/view/my/{idx}")
+	public String myhide(@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {
+			return "redirect:/blog?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 1) {
+			return "redirect:/blog?error=notFound";
+		}
+		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
+		if(request.getSession().getAttribute("user")!=null) {
+			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
+			model.addAttribute("heart",heart);		
+		}	
+		// 찾은 정보를 heart로 담아서 보냄
+		model.addAttribute("board",boardVO);
+		return "blog/myblogView"; // 임시값 blog.html
+	}
+	
+	
 	/** 글 쓰기 페이지 */
-	@GetMapping("/upload")
-	public String blogUpload(HttpSession session) {
+	@PostMapping("/upload")
+	public String blogUpload(HttpSession session, @ModelAttribute(value = "cv") CommonVO cv,Model model) {
 		if(session.getAttribute("user") == null) { // 로그인 하지 않았으면
 			return "redirect:/blog";
 		}
+		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "blog/blogUpload";
 	}
 	
@@ -152,6 +178,7 @@ public class BlogController {
 			memberVO = (JungMemberVO) session.getAttribute("user");
 		}
 		boardVO.setRef(memberVO.getIdx());
+		boardVO.setCategoryNum(1);
 		jungBoardService.insert(boardVO);
 		return "redirect:/blog";
 	}

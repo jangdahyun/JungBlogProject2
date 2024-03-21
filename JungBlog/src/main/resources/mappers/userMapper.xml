@@ -79,9 +79,6 @@
 			<if test="nickName != null">
 				nickName = #{nickName}			
 			</if>
-			<if test="username != null">
-				username = #{username}			
-			</if>
 			<if test="stAddress != null">
 				stAddress = #{stAddress},
 				dtAddress = #{dtAddress}

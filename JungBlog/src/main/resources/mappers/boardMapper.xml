@@ -39,6 +39,11 @@
 							<if test="categoryNum != null ">
 								and categoryNum = #{categoryNum}
 							</if>
+							<if test="categoryNum == null ">
+								and (
+									categoryNum = 1 OR categoryNum = 2 OR categoryNum = 4
+								)
+							</if>
 						</where>
 						order by
 							<choose>
@@ -75,7 +80,7 @@
 		from
 			jung_board
 		<where>						
-			<if test="1 == 1">
+			<if test="deleted == null">
 				deleted = 0
 			</if>
 			<if test="userRef != null">

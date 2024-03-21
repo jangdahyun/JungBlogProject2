@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<title>마이페이지</title>
+	<!-- font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+	<!-- 구글 아이콘 -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- Core theme CSS (includes Bootstrap)-->
+	<!-- UIkit CSS -->
+	<link rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+	
+	<!-- 부트스트랩 -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Ajax처리를 위한 포함 -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<!-- UIkit JS -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+		
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<!-- 커스텀 -->
+	<link href="/css/my/header.css" rel="stylesheet">
+	
+</head>
+<style>
+	#icon{
+		margin-right: 10px;
+		}
+	p{margin: 0;}
+		.title-info{font-size: 14px; font-weight: 500;}
+	#page a.active {font-weight: 500; font-size: 16px; color: #333;}
+		
+	.tr1{ width: 100%; display: flex;}
+   	.tr2{width: 100%; display: flex;}
+   	
+   	.td1 {width: 50px; text-align: center;display: flex;align-items: center; justify-content: center; padding: 3px;}
+   	.td2 {width: calc(100% - 350px); padding: 3px;}
+   	.td3 {width: 200px;display: flex;align-items: center; justify-content: center; padding: 3px;}
+   	.td4 {width: 100px;display: flex;align-items: center; justify-content: center; padding: 3px;}
+   	#thead div{border: 1px solid #ccc; background: #3F51B5; color: #fff; font-weight: 500;}
+   	#thead .tr2{border-top: none;}
+   	#thead .tr2 p{margin: 0; padding: 5px;}
+   	#thead .td2 {display: flex;align-items: center; justify-content: center;}
+   	
+   	#thead li { margin:0; border-bottom: 1px solid #ccc;}
+   	#thead {margin:0;}
+   	#tbody {margin:0;}
+   	#tbody .tr1 {border-bottom: 1px solid #ccc;}
+   	#tbody li { border-bottom: 1px solid #aaa; margin: 0px;}
+   	#tbody p {margin: 0px;}
+</style>
+
+<body style="display: flex;">
+	<th:block th:if="${categoryNum != null}">
+		<input type="hidden" id="categoryNum" th:value="${categoryNum}"/>
+	</th:block>
+	<!-- header -->
+	<th:block th:insert="~{/my/header.html}"></th:block>
+	<div id="container" class="container" style="margin-left: 30px; background: #F9FBFC; width: 1000px; height: 800px;">
+		<div id="content" class="content">
+			<div id="main" role="main">
+				<div id="headertop" class="headertop">
+					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; cursor: pointer; ">
+						<span id="icon" class="material-symbols-outlined" onclick="gotohome()">home</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="gallery()">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="file()">folder_open</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="news()">news</span>
+					</div>
+					<div style="width: 100%;">
+		        	<h3>1:1 문의 사항 [(${QnAInfo})]</h3>
+		        	
+		        	<div style="display: flex; justify-content: end; align-items: center; margin-bottom: 10px;">
+						<label style="margin-right:10px;">검색</label>
+						<div class="uk-inline" style="margin-right:10px;">
+				            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+				            <input id="searchText" name="search" class="uk-input" type="text" autocomplete='off' aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+				        </div>
+			        	<input type="button" class="uk-button" value="검색" id="searchBtn"/>
+		        	</div>
+		        	
+		        	<th:block th:if="${#lists.isEmpty(pv.list)}">
+		        		<div>등록된 QnA가 존재하지 않습니다.</div>
+		        	</th:block>
+		        	<th:block th:if="${not #lists.isEmpty(pv.list)}">
+	        			<ul id="thead">
+	        				<li>
+	        					<div class="tr1">
+	        						<div class="td1">No</div>
+	        						<div class="td2">제목</div>
+	        						<div class="td3">게시일</div>
+	        						<div class="td4">답변여부</div>
+	        					</div>
+	        				</li>
+	        			</ul>
+	        			<ul id="tbody">
+	        				<li th:each="board, vs: ${pv.list}">
+	        					<div class="tr1">
+	        						<div class="td1">[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage - vs.index}]]</div>
+	        						<div class="td2" style="text-align: left; padding-left: 5px;"><p style="word-wrap: break-word;"><a th:onclick="view([[${board.idx}]])">[[${board.title}]]</a></p></div>
+	        						<div class="td3">[[${#dates.format(board.regDate,'yyyy-MM-dd HH:mm:ss')}]]</div>
+	        						<div class="td4">[[${board.commentCount == 0 ? 'X' : 'O'}]]</div>
+	        					</div>
+	        				</li>
+	        			</ul>
+		        	</th:block>
+		        	<div style="text-align: right; margin-top: 10px;">
+		        		<a href="/member/myqnaupload" class="uk-button uk-button-default"  style="text-align: right;">글쓰기</a>		
+		        	</div>
+		        	<div id="page" style="display: flex; align-items: center;justify-content: center;">
+						[(${pv.pageList})]
+					</div>
+	        		</div>
+				</div>
+			</div>
+		</div>	
+	</div>
+    <script type="text/javascript">
+    	$(function(){
+    		let categoryNum = $("#categoryNum").val();
+    		
+    		
+    		$("#page a").click(function(e){
+    			e.preventDefault();
+    			content = ""
+    			const pageNum = $(this).text();
+    			if(categoryNum == null){
+    				content = `?p=${pageNum}`
+    			} else {
+    				content = `?p=${pageNum}&categoryNum=${categoryNum}`
+    			}
+    			
+    			location.href = content;
+    		})
+    		
+    	})
+    	
+    
+    function view(idx){
+		location.href = '/member/myqna/'+idx;
+	}
+    	
+   	$(function(){
+   		$("#searchBtn").click(function(){
+   			const search = $("#searchText").val();
+   			
+   			location.href = `/member/myqna?search=${search}`
+   		})
+   	})
+
+	 function gotohome() {
+	        // 여기에 이동할 주소를 입력합니다.
+	        var address = "/";
+	        // 현재 창에서 해당 주소로 이동합니다.
+	        window.location.href = address;
+	    }
+	 
+	 function gallery() {
+        // 여기에 이동할 주소를 입력합니다.
+        var address = "/gallery";
+        // 현재 창에서 해당 주소로 이동합니다.
+        window.location.href = address;
+    }
+	 
+	 function file() {
+	        // 여기에 이동할 주소를 입력합니다.
+	        var address = "/fileboard";
+	        // 현재 창에서 해당 주소로 이동합니다.
+	        window.location.href = address;
+	    }
+	
+	 function download() {
+	        // 여기에 이동할 주소를 입력합니다.
+	        var address = "/gallery";
+	        // 현재 창에서 해당 주소로 이동합니다.
+	        window.location.href = address;
+	 }
+	function news() {
+        // 여기에 이동할 주소를 입력합니다.
+        var address = "/news";
+        // 현재 창에서 해당 주소로 이동합니다.
+        window.location.href = address;
+	}
+	 
+	</script>
+</body>
+</html>

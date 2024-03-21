@@ -3,6 +3,34 @@
 *{margin: 0; padding: 0; box-sizing: border-box;}
 a{text-decoration: none; color: inherit;}
 
+#deleteButton, #hideButton{
+    background-color: #304331; /* 어두운 색상으로 변경 */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+/* 수정 버튼 스타일 */
+#updateBtn {
+    background-color: #465155; /* 어두운 색상으로 변경 */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+}
 
 
 body {color: #333;background: #302F2B;font-family: "Noto Sans KR", sans-serif;}

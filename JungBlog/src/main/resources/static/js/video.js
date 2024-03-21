@@ -9,8 +9,8 @@ $(function() {
    }) 
    
 })
-function viewfile(idx) {
-   location.href = "/fileboard/blog/" + idx;
+function viewvideo(idx) {
+   location.href = "/video/blog/" + idx;
 }
 
 //back 눌렀을때 리로드하는 함수
@@ -143,36 +143,7 @@ $(function() {
       }
       
    })
-   $("#commentSubmit").submit(function(){
-		let value=$("#comment").val();
-			console.log(value);
-		if(value.trim().length==0){
-			alert("댓글을 입력해주세요");
-			return false;
-			}
-	})
-	// form 요소가 제출될 때
-    document.getElementById("hideButton").addEventListener("click", function(event) {
-        // 기본 동작(페이지 새로고침)을 막습니다.
-        event.preventDefault();
-
-        // 게시글의 고유 번호 (idx)를 가져옵니다.
-        var boardIdx = document.getElementById("boardIdx").value;
-		axios.delete(`/blog/${boardIdx}`)
-		.then(res => {
-			let data = res.data;
-			if(data==1){
-				alert('게시글이 성공적으로 숨김되었습니다.');
-				window.location.href="/";				
-			} else {
-            	alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
-			}
-		})
-		.catch(e => {
-			console.error('게시글 숨김 중 오류가 발생했습니다:', e);
-            alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
-		})
-    });
+   
    
    // form 요소가 제출될 때
     document.getElementById("deleteButton").addEventListener("click", function(event) {
@@ -181,7 +152,7 @@ $(function() {
 
         // 게시글의 고유 번호 (idx)를 가져옵니다.
         var boardIdx = document.getElementById("boardIdx").value;
-      axios.delete(`/delete/${boardIdx}`)
+      axios.delete(`/blog/${boardIdx}`)
       .then(res => {
          let data = res.data;
          if(data==1){
@@ -200,7 +171,7 @@ $(function() {
    // 수정 버튼 클릭 이벤트 리스너 등록
 $(document).ready(function() {
     // 게시글 수정 버튼 클릭 시
-    $("#updateBtn2").click(function() {
+    $("#updateBtn").click(function() {
         // 수정할 게시글의 idx 가져오기
         var boardIdx = $("#boardIdx").val();
         // 수정할 게시글의 제목 가져오기
@@ -209,7 +180,7 @@ $(document).ready(function() {
         var editContent = $("#editContent").val();
 
         // 수정할 게시글 정보를 수정 폼으로 전송
-        window.location.href = "/fileboard/fileupdate/" + boardIdx;
+        window.location.href = "/videoboard/update/" + boardIdx;
     });
 });
 

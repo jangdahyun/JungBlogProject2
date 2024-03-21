@@ -47,7 +47,6 @@ public class JungMemberServiceImpl implements JungMemberService{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		log.info(memberVO + "리턴");
 		return memberVO;
 	}
 	
