@@ -15,6 +15,7 @@ import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
 import kr.ezen.jung.dao.JungQnABoardDAO;
 import kr.ezen.jung.dao.JungScrollBoardDAO;
+import kr.ezen.jung.dao.JungVideoDAO;
 import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
@@ -40,6 +41,9 @@ public class JungBoardServiceImpl implements JungBoardService {
 	
 	@Autowired
 	private JungFileBoardDAO jungFileBoardDAO;
+	
+	@Autowired
+	private JungVideoDAO jungVideoDAO;
 	
 	@Autowired
 	private JungCommentDAO jungCommentDAO;
@@ -81,6 +85,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 				// 파일
 				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				// 비디오
+				board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 
 				// 댓글수
 				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
@@ -114,6 +120,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 			board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 			// 파일
 			board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+			// 파일
+			board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 			// 댓글수
 			board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 		} catch (SQLException e) {
@@ -182,6 +190,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 			// 개선점: 비번을 입력하여 확인 후 지울 것인지 아님 그냥 지울 것인가?
 			jungBoardDAO.delete(idx);
 			jungFileBoardDAO.deleteByRef(idx);
+			jungVideoDAO.deleteByRef(idx);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -246,6 +255,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 					// 파일
 					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+					// 파일
+					board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 					// 댓글수
 					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 				
@@ -340,6 +351,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 					// 파일
 					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+					// 비디오
+					board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 					// 댓글수
 					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 					boardList.add(board);
@@ -410,6 +423,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 	                board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 	                // 파일
 	                board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+	                // 비디오
+	                board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 	                // 댓글수
 	                board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 	                list.add(board);
@@ -454,6 +469,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 					// 파일
 					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+					// 비디오
+					board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 					// 댓글수
 					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 					HashMap<String, Object> commentMap = new HashMap<>();
@@ -506,6 +523,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 				board.setMember(jungMemberService.selectByIdx(board.getRef()));
 				// 파일
 				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				// 파일
+				board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
