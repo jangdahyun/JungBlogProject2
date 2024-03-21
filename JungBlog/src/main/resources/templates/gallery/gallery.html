@@ -21,8 +21,9 @@
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-<link rel="stylesheet" href="/css/index.css">
-<script src="/js/index.js"></script>
+<link rel="stylesheet" href="/css/mainHeader.css">
+<script src="/js/mainHeader.js"></script>
+
 </head>
  <style>
  		*{padding: 0; margin: 0; box-sizing: border-box;}
@@ -51,7 +52,7 @@
         	height: 357px;
         	position:relative;
         	overflow: hidden;
-        	
+        	box-shadow: 1px 2px 5px #ccc;
         }
         .image {
         	width:100%;
@@ -113,43 +114,20 @@
 		}
     </style>
 <body>
-	
-	<form action="/gallery/galleryboardUpload" method="get" id="write">
-  		<div id="writeBtn" onclick="submitForm()">
-     		<span class="material-symbols-outlined" id="icon" th:type="submit">stylus</span><span>글쓰기</span>    
-    	</div>
-	</form>
+	<th:block th:if="${session.user != null}">
+		<form action="/gallery/galleryboardUpload" method="post" id="write">
+	  		<div id="writeBtn" onclick="submitForm()">
+	     		<span class="material-symbols-outlined" id="icon" th:type="submit">stylus</span><span>글쓰기</span>    
+	    	</div>
+		</form>
+	</th:block>
     <!-- 헤더 -->
-    <header>
-        <nav>
-            <div class="logo">
-                <img src="Spotify_Logo_RGB_White.png" alt="logo">
-            </div>
-
-            
-            <div class="menuBar">
-                <a href="/gallery">갤러리 페이지</a>
-                <a href="">fileupload</a>
-                <a href="">Support</a>
-                <a href="">Download</a>
-                <span>|</span>
-                <th:block th:if="${session.user != null}">
-                    <a href="/logout">Logout</a>                
-                </th:block>
-                <th:block th:if="${session.user == null}">
-                    <a href="/member/join">Sign up</a>
-                    <a href="/member/login">Log in</a>                
-                </th:block>
-            </div>
-        </nav>
-    </header>
+   <th:block th:insert="~{/mainHeader.html}"></th:block>
     
-    
-    <div id="container" style="max-width: 1320px; margin: 50px auto; margin-bottom: 50px">
-       
-		<div id="board-header" style="display: flex; justify-content: space-between; width: 100%">
+    <div id="container" style="max-width: 1320px;margin:0 auto; padding: 80px 0 ;">
+		<div id="board-header" style="display: flex; justify-content: space-between; width: 100%" >
 			<div>
-				<h3>게시판</h3>
+				<h3>갤러리 게시판</h3>
 			</div>
 			<div>
 				<form action="/gallery" method="get">
@@ -160,37 +138,35 @@
 				</form>
 			</div>
 		</div>
-       <div style="padding: 10px">
-        <div class="gallery" style="width: 100%">
-
-            <div th:each="board : ${sc}" class="gallery-item" th:onclick="view([[${board.idx}]])">
-            	<input type="hidden" class="idx" th:value="${board.idx}"/>
-            	<div class="img-container">
-					<div class="image" th:if="${not #lists.isEmpty(board.fileboardVO)}">
-						<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
-					</div>
-					<div class="gallery-item-overlay" >
-	                    <div class="gallery-item-overlay-content">
-	                        <p th:text="${board.content}">Description</p>
-	                    </div>
-	                </div>            	
-            	</div>
-                <div class="titla-area">
-                	<div th:text="${board.title}" style="font-weight: bold; font-size: 23px;">title</div>
-                	<div th:text="${board.member.name}">name</div>
-					<div style="font-size: 14px; align-items: center; display: flex;">
-						<span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span>
-               			<span class="time" style="padding-right: 10px;">[[${#dates.format(board.regDate, 'yy-MM-dd')}]] </span>ㆍ<span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">chat</span>
-               			<span> [[${board.commentCount}]]</span>ㆍ<span class="material-symbols-outlined" style="font-size: 20px; margin-right: 5px;">visibility</span><span>[[${board.readCount}]]</span>
-               		</div>
-               			<span class="elapsed" th:text="${#dates.format(board.regDate, 'yyyy-MM-dd HH:mm:ss')}">게시일</span>
-                </div>
-            </div>
-        </div>
-     </div>
-    
-   </div>
-   <script type="text/javascript" th:inline="javascript">
+		<div style="padding: 10px">
+	        <div class="gallery" style="width: 100%">
+	            <div th:each="board : ${sc}" class="gallery-item" th:onclick="view([[${board.idx}]])">
+	            	<input type="hidden" class="idx" th:value="${board.idx}"/>
+	            	<div class="img-container">
+						<div class="image" th:if="${not #lists.isEmpty(board.fileboardVO)}">
+							<img th:src="@{'./upload/' + ${board.fileboardVO[0].filepath}}" alt="" />
+						</div>
+						<div class="gallery-item-overlay" >
+		                    <div class="gallery-item-overlay-content">
+		                        <p th:text="${board.content}">Description</p>
+		                    </div>
+		                </div>            	
+	            	</div>
+	                <div class="titla-area">
+	                	<div th:text="${board.title}" style="font-weight: bold; font-size: 23px;">title</div>
+	                	<div th:text="${board.member.name}">name</div>
+						<div style="font-size: 14px; align-items: center; display: flex;">
+							<span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span>
+	               			<span class="time" style="padding-right: 10px;">[[${#dates.format(board.regDate, 'yy-MM-dd')}]] </span>ㆍ<span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">chat</span>
+	               			<span> [[${board.commentCount}]]</span>ㆍ<span class="material-symbols-outlined" style="font-size: 20px; margin-right: 5px;">visibility</span><span>[[${board.readCount}]]</span>
+	               		</div>
+	               			<span class="elapsed" th:text="${#dates.format(board.regDate, 'yyyy-MM-dd HH:mm:ss')}">게시일</span>
+	                </div>
+	            </div>
+	        </div>
+		</div>
+	</div>
+	<script type="text/javascript" th:inline="javascript">
    	   let lastItemIdx=0;
    	   const sizeOfPage=20;
    	   const categoryNum=4;
@@ -198,27 +174,28 @@
    		$(function(){
    			updateTimer();
    			findLastItemIdx()
+   			window.addEventListener('scroll', scrollHandler);
    		})
-   		window.addEventListener('scroll', function() {
-  	         // 현재 스크롤 위치를 가져옵니다.
-  	         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-  	         // 현재 브라우저 창의 높이를 가져옵니다.
-  	         const windowHeight = window.innerHeight;
-  	         // 문서의 총 높이를 가져옵니다.
-  	         const documentHeight = Math.max(
-  	             document.body.scrollHeight, document.documentElement.scrollHeight,
-  	             document.body.offsetHeight, document.documentElement.offsetHeight,
-  	             document.body.clientHeight, document.documentElement.clientHeight
-  	         );
+	   
+   		function scrollHandler() {
+ 	         // 현재 스크롤 위치를 가져옵니다.
+ 	         const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+ 	         // 현재 브라우저 창의 높이를 가져옵니다.
+ 	         const windowHeight = window.innerHeight;
+ 	         // 문서의 총 높이를 가져옵니다.
+ 	         const documentHeight = Math.max(
+ 	             document.body.scrollHeight, document.documentElement.scrollHeight,
+ 	             document.body.offsetHeight, document.documentElement.offsetHeight,
+ 	             document.body.clientHeight, document.documentElement.clientHeight
+ 	         );
 			 console.log(scrollTop);
 			 console.log(windowHeight);
 			 console.log(documentHeight);
-  	         // 현재 스크롤 위치와 브라우저 창의 높이, 문서의 총 높이를 비교하여 맨 아래에 도달했는지 확인합니다.
-  	         if (scrollTop + windowHeight +0.4 >= documentHeight) {
-  	             NextPage();
-  	         }
-  	     });
-	   
+ 	         // 현재 스크롤 위치와 브라우저 창의 높이, 문서의 총 높이를 비교하여 맨 아래에 도달했는지 확인합니다.
+ 	         if (scrollTop + windowHeight +0.4 >= documentHeight) {
+ 	             NextPage();
+ 	         }
+ 	     }
 	   function elapsedTime(date) {
 	       const start = new Date(date);
 	       const end = new Date();
@@ -277,6 +254,7 @@
 
      // 다음 페이지를 로드하는 함수
      function NextPage() {
+    	 window.removeEventListener('scroll', scrollHandler)
 		    axios.post('/getScrollItem', {
 		    	'lastItemIdx': lastItemIdx,
 		        'search': search,
@@ -336,6 +314,7 @@
 			            $(".gallery").append(content);	// 새로운 내용을 추가하고
 			            findLastItemIdx();				// lastItemIdx를 새로 구함
 			        });
+			        window.addEventListener('scroll', scrollHandler);
 	        }
 	    }).catch(function (error) {
 	        console.error('다음 페이지 로드 실패:', error);

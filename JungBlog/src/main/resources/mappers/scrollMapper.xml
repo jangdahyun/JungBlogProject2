@@ -60,9 +60,12 @@
 	</select>
 	
 	<select id="findLastItemIdx" resultType="int">
-		select 
-			MAX(jung_board.idx)
-		from
-			jung_board
+		SELECT 
+		    CASE 
+		        WHEN MAX(jung_board.idx) IS NULL THEN 0 
+		        ELSE MAX(jung_board.idx) 
+		    END
+		FROM 
+		    jung_board
 	</select>
 </mapper>

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,9 @@ public class RssReader {
 	@Autowired
 	private RssDAO rssDAO;
 	
-	// @Scheduled(fixedRate = 60000) // 1분마다 실행
+
+	//@Scheduled(fixedRate = 60000) // 1분마다 실행
+
     public void checkForUpdates() {
 		log.info("뉴스 읽기 시작");
         try {
@@ -56,7 +59,12 @@ public class RssReader {
                 	// 포맷팅된 문자열을 item 객체에 설정
                 	item.setPubDate(formattedDate);
                 	item.setCategory(getNewsCategory(item.getLink()));
-                	log.info("게시글 {}", item);
+                	// log.info("게시글 {}", item);
+                	log.info("사진 => {}", item.getImage());
+                	if(item.getImage().equals("")) {
+                		log.info("사진 => {}", item.getImage());
+                		item.setImage(" ");
+                	}
                 	int check = rssDAO.findByLink(item.getLink());
                 	if(check != 1) {
                 		rssDAO.insert(item);
@@ -84,6 +92,7 @@ public class RssReader {
             item.setPubDate(rssItem.select("pubDate").text());
             items.add(item);
         }
+        Collections.reverse(items);
         return items;
     }
     

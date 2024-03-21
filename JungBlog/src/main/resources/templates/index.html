@@ -2,347 +2,416 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta name="viewport"
-   content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
 <title>Clean Blog - Start Bootstrap Theme</title>
 <!-- font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
+	rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <!-- Core theme CSS (includes Bootstrap)-->
 <!-- UIkit CSS -->
 <link rel="stylesheet"
-   href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+	href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
 
 <!-- UIkit JS -->
 <script
-   src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
 <script
-   src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 <link rel="stylesheet" href="./css/index.css">
 <script src="/js/index.js"></script>
 <style>
-   *{margin: 0; padding: 0; box-sizing: border-box;}
-    /* 헤더 */
-   header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-      background-color: transparent; /* 배경색을 투명하게 설정 */
-      box-shadow: none; /* 그림자 효과 제거 */
-   }
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+/* 헤더 */
+header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	background-color: transparent; /* 배경색을 투명하게 설정 */
+	box-shadow: none; /* 그림자 효과 제거 */
+}
 
-   /* 메인 페이지 그림 */
-   .main-image {
-      background-image: url('mainpage.jpg'); /* 배경 이미지 지정 */
-      background-size: cover; /* 배경 이미지를 컨테이너에 맞게 조정 */
-      height: 400px; /* 그림의 높이 설정 */
-   }
-   #menuContent {
-      position: fixed;
-      width: 520px;
-      margin-top: 80px;
-      left: -520px;
-      height: calc(100vh - 80px);
-      background-color: rgba(0,0,0,0.9);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      z-index: 1;
-      color: #fff;
-      padding: 50px 40px;
-      transition: 0.3s;
-   }
-   #menuCloseBtn{
-      position: absolute;
-      top: 20px; right: 20px;
-      width: 30px; height: 30px;
-      cursor: pointer;
-   }
-   #menuContent img {
-      max-width: 100%;
-      filter: invert();
-   }
-   #menuContent ul {
-      padding: 0; margin: 0;
-   }
-   #menuContent ul li a {
-      padding: 20px 0;
-      display: block;
-      color: #fff;
-      font-size: 16px;
-      text-decoration: none;
-      position: relative;
-   }
-   #menuContent ul li a::before{
-      content: "";
-      width: 100%;
-      height: 1px;
-      position: absolute;
-      top: 0; left: 0;
-      background: #929292;
-   }
-   #menuContent ul li:last-child a::after {
-      content: "";
-      width: 100%;
-      height: 1px;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      background: #929292;
-   }
-   li{list-style: none;}
-   #info{
-      margin-bottom: 50px;
-      font-size: 24px;
-      font-weight: bold;
-   }
-   #boardPage{
+/* 메인 페이지 그림 */
+.main-image {
+	background-image: url('mainpage.jpg'); /* 배경 이미지 지정 */
+	background-size: cover; /* 배경 이미지를 컨테이너에 맞게 조정 */
+	height: 400px; /* 그림의 높이 설정 */
+}
+
+#menuContent {
+	position: fixed;
+	width: 520px;
+	margin-top: 80px;
+	left: -520px;
+	height: calc(100vh - 80px);
+	background-color: rgba(0, 0, 0, 0.9);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	z-index: 1;
+	color: #fff;
+	padding: 50px 40px;
+	transition: 0.3s;
+}
+
+#menuCloseBtn {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+}
+
+#menuContent img {
+	max-width: 100%;
+	filter: invert();
+}
+
+#menuContent ul {
+	padding: 0;
+	margin: 0;
+}
+
+#menuContent ul li a {
+	padding: 20px 0;
+	display: block;
+	color: #fff;
+	font-size: 16px;
+	text-decoration: none;
+	position: relative;
+}
+
+#menuContent ul li a::before {
+	content: "";
+	width: 100%;
+	height: 1px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: #929292;
+}
+
+#menuContent ul li:last-child a::after {
+	content: "";
+	width: 100%;
+	height: 1px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background: #929292;
+}
+
+li {
+	list-style: none;
+}
+
+#info {
+	margin-bottom: 50px;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+#boardPage {
 	border: 1px dashed rgb(211, 211, 211);
 	border-radius: 3px;
 }
+#smallboard p{
+	padding: 0;
+	margin: 0;
+}
 </style>
 </head>
- 
+
 
 <body>
-   <div id="menuContent">
-      <span id="menuCloseBtn"><img src="./img/mainpageImg/closeBtn.png" alt=""></span>
-      <p id="info">메뉴</p>
-      <ul>
-         <li><a href="/gallery">갤러리 페이지</a></li>
-         <li><a href="">fileupload</a></li>
-         <li><a href="">Support</a></li>
-         <li><a href="">Download</a></li>
-         <li><a href="/adm">관리자 페이지</a></li>
-         <li><a href="/member/mypage">My Page</a></li>
-         <li><a href="/logout">Logout</a></li>
-      </ul>
-   </div>
-   <!-- 헤더 -->
-   <header>
-      <nav>
-            
-         <img src="/img/mainpageImg/menubar.png" id="menuIcon" alt="menuIcon" style="width:30px; height: 30px; text-align: left;">
-               
-         <div class="logo" style="text-align: center;">
-                <img src="./img/mainpageImg/JungProjectLogo.png" alt="logo">
-            </div>
-            <div>
-              <a href="/member/login" style="color: black; text-align: right;"><b>Log in</b></a>
-              &nbsp;&nbsp;
-              <a href="/member/join" style="color: black; text-align: right;"><b>Sign up</b></a>
-            </div>
-        </nav>
-         <!-- <div style="position: relative;">
-             <img src="./fileicon/mainpage.jpg" style="width: 1140px; height: 700px;" alt="">
-             <span style="position: relative; bottom: 10px; left: 10px;">
-                 <b>JungBlog</b>
-             </span>
-         </div> -->
-   </header>
-   <div style="position: relative;">
-       <img src="./img/mainpageImg/mainpage.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
-       <span style="position: absolute; bottom: 300px; left: 200px; color: black; font-size: 24px; font-weight: bold;">JungBlog</span>
-       <span style="position: absolute; bottom: 200px; left: 200px; color: black; font-size: 16px; font-weight: bold;">블로그에서 제안드립니다</span>
-       <span style="position: absolute; bottom: 150px; left: 200px; color: black; font-size: 16px; font-weight: bold;">아무글귀 메인페이지</span>
-   </div>
-	<br><br>
-      <div style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">전체 게시판</div>
-	<br>
-<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
-    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
-        <div style="width: 350px; height: 100%; flex-shrink: 0;">
-            <div style="position: relative;">
-			    <img src="/img/mainpageImg/allboard.jpg" style="width: 100%; height: 400pt;" alt="이미지">
-			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">자신만의 다이어리를 <br>써보세요!</div>
-			</div>
-        </div>
-        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 20px;">
-            <span style="font-weight: bold; font-size: 18pt;"><br>오늘 하루를 기록해보세요! :)></span><br>
-           	<div style="justify-content: flex-end;">
-				<form action="/ckeditor2" method="post" id="writeBtn">
-					<input type="hidden" name="p" th:value="${cv.p}">
-					<input type="hidden" name="search" th:value="${cv.search}">
-					<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
-					<input type="submit" class="uk-button uk-button-link" value="글 쓰러 가기 >>" style="color: #888888; transition: color 1.5s;"/>			
-				</form>
-			</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 0px;">
-                <div th:each="vo, iterStat : ${pvall.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
-                    <div id="smallboard" th:onclick="viewfile([[${vo.idx}]])">
-	                    <div>
-	                    	<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px">
-	                    </div>
-	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
-	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
-                    	<div id="smallboardtext">
-	                    	<span>작성자</span><br>
-	                    	<span>조회수 [[${vo.readCount}]] |</span>
-	               			<span>좋아요 [[${vo.countHeart}]] |</span>
-	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
-                    	</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-   <br><br>
-      <div style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">블로그</div>
-	<br>
-<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
-    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
-        <div style="width: 350px; height: 100%; flex-shrink: 0;">
-            <div style="position: relative;">
-			    <img src="/img/mainpageImg/diary.jpg" style="width: 100%; height: 400pt;" alt="이미지">
-			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">자신만의 다이어리를 <br>써보세요!</div>
-			</div>
-        </div>
-        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 20px;">
-            <span style="font-weight: bold; font-size: 18pt;"><br>오늘 하루를 기록해보세요! :)   ></span><br>
-           	<div style="justify-content: flex-end;">
-				<form action="/ckeditor2" method="post" id="writeBtn">
-					<input type="hidden" name="p" th:value="${cv.p}">
-					<input type="hidden" name="search" th:value="${cv.search}">
-					<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
-					<input type="submit" class="uk-button uk-button-link" value="글 쓰러 가기 >>" style="color: #888888; transition: color 1.5s;"/>			
-				</form>
-			</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
-                <div th:each="vo, iterStat : ${pvblog.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
-                    <div id="smallboard" th:onclick="viewblog([[${vo.idx}]])">
-	                    <div><img src="/img/mainpageImg/allboard1.jpg" style="border-radius: 5px"></div>
-	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
-	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
-                    	<div id="smallboardtext">
-	                    	<span>작성자</span><br>
-	                    	<span>조회수 [[${vo.readCount}]] |</span>
-	               			<span>좋아요 [[${vo.countHeart}]] |</span>
-	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
-                    	</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-    <br><br>
-      <div style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">갤러리</div>
-	<br>
-<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
-    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
-        <div style="width: 350px; height: 100%; flex-shrink: 0;">
-            <div style="position: relative;">
-            	<a href="/gallery">
-			    <img src="/img/mainpageImg/gallery.jpg" style="width: 100%; height: 400pt;" alt="이미지">
-            	</a>
-			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">사진으로 오늘을 <br>써보세요!</div>
-			</div>
-        </div>
-        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 20px;">
-            <span style="font-weight: bold; font-size: 18pt;"><br>오늘 일상을 사진으로 남겨보세요! :)></span><br>
-           	<div style="justify-content: flex-end;">
-				<form action="/gallery/galleryboardUpload" method="post" id="write">
-					<div id="writeBtn" onclick="submitForm()">
-						<input type="hidden" name="p" th:value="${cv.p}">
-						<input type="hidden" name="search" th:value="${cv.search}">
-						<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
-						<input type="submit" class="uk-button uk-button-link" value="글 쓰러 가기 >>" style="color: #888888; transition: color 1.5s;"/>			
-					</div>
-				</form>
-			</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
-                <div th:each="vo, iterStat : ${pvgallery.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
-                    <div id="smallboard" th:onclick="viewgallery([[${vo.idx}]])">
-	                    <div class="image" th:if="${not #lists.isEmpty(vo.fileboardVO)}">
-							<img th:src="@{'./upload/' + ${vo.fileboardVO[0].filepath}}" alt="" style="border-radius: 5px;"/>
-						</div>
-	                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
-	                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: center;"></span><br>
-                    	<div id="smallboardtext">
-	                    	<span>작성자</span><br>
-	                    	<span>조회수 [[${vo.readCount}]] |</span>
-	               			<span>좋아요 [[${vo.countHeart}]] |</span>
-	                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
-                    	</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-	<br><br>
-      <div style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">자료실</div>
-	<br>
-<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
-    <div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
-        <div style="width: 350px; height: 100%; flex-shrink: 0;">
-            <div style="position: relative;">
-				<a href="/fileboard">
-			    <img src="/img/mainpageImg/fileboard.jpg" style="width: 100%; height: 400pt;" alt="이미지">
-				</a>	
-			    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">나만의 자료를 <br>다른유저에게 <br>공유해보세요!</div>
-			</div>
-        </div>
-        <div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 20px;">
-            <span style="font-weight: bold; font-size: 18pt;"><br>다른사람들과 유익한 정보를 나눠보세요! :)   ></span><br>
-           	<div style="justify-content: flex-end;">
-				<form action="/fileboard/fileupload" method="post" id="writeBtn">
-					<input type="hidden" name="p" th:value="${cv.p}">
-					<input type="hidden" name="search" th:value="${cv.search}">
-					<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
-					<input type="submit" class="uk-button uk-button-link" value="글 쓰러 가기 >>" style="color: #888888; transition: color 1.5s;"/>			
-				</form>
-			</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
-                <div th:each="vo, iterStat : ${pvfileboard.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
-                    <div id="smallboard" th:onclick="viewfile([[${vo.idx}]])">
-                    	<div th:each="file : ${vo.fileboardVO}">
-		                    <div><img src="/img/mainpageImg/file.jpg" style="border-radius: 5px"></div>
-		                    <span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
-		                    <span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
-	                    	<div id="smallboardtext">
-		                    	<span>작성자</span><br>
-		                    	<span>조회수 [[${vo.readCount}]] |</span>
-		               			<span>좋아요 [[${vo.countHeart}]] |</span>
-		                    	<span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
-	                    	</div>
-                    	</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-  
-   <script>
-      $(function(){
-         $("#menuIcon").click(function(){
-            $("#menuContent").css('left','0px');
-         })
-         $("#menuCloseBtn").click(function(){
-            $("#menuContent").css('left','-520px');
-         })
-      })
-      /*
-       document.getElementById("menuIcon").addEventListener("mouseover", function() {
-           var menu = document.getElementById("menuContent");
-           menu.style.display = "block";
-       });
-   
-       document.getElementById("menuIcon").addEventListener("mouseleave", function() {
-           var menu = document.getElementById("menuContent");
-           setTimeout(function() {
-               menu.style.display = "none";
-           }, 2000); // 2초 동안 메뉴를 유지한 후에 숨김
-       });
-      */
+	  <!-- 헤더 -->
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
 
-    </script>
-        
-   
+	<div style="position: relative;">
+		<img src="./img/mainpageImg/mainpage.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+		<span style="position: absolute; bottom: 300px; left: 200px; color: black; font-size: 24px; font-weight: bold;">JungBlog</span>
+		<span style="position: absolute; bottom: 200px; left: 200px; color: black; font-size: 16px; font-weight: bold;">블로그에서 제안드립니다</span>
+		<span style="position: absolute; bottom: 150px; left: 200px; color: black; font-size: 16px; font-weight: bold;">아무글귀 메인페이지</span>
+	</div>
+	<br>
+	<br>
+	<div style="max-width: 1400px; margin: auto;">
+		<div style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">전체 게시판</div>
+		<br>
+		<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+			<div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+				<div style="width: 350px; height: 100%; flex-shrink: 0;">
+					<div style="position: relative;">
+						<img src="/img/mainpageImg/allboard.jpg" style="width: 100%; height: 400pt;" alt="이미지">
+						<div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">
+							자신만의 다이어리를 <br>써보세요!
+						</div>
+					</div>
+				</div>
+				<div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 50px;">
+					<span style="font-weight: bold; font-size: 18pt;"><br>오늘 하루를 기록해보세요! :)></span><br>
+					<div style="justify-content: flex-end;">
+						<form action="/ckeditor2" method="post" id="writeBtn">
+							<input type="hidden" name="p" th:value="${cv.p}">
+							<input type="hidden" name="search" th:value="${cv.search}">
+							<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+							<input type="submit" class="uk-button uk-button-link" value="글 쓰러 가기 >>" style="color: #888888; transition: color 1.5s;" />
+						</form>
+					</div>
+					<div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 0px;">
+						<div th:each="vo, iterStat : ${pvall.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
+							<th:block th:if="${vo.categoryNum} == 1 ">
+								<div id="smallboard" th:onclick="viewblog([[${vo.idx}]])">
+									<div>
+										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 170px;">
+									</div>
+									<span
+										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+									<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
+									<div id="smallboardtext">
+										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+									</div>
+								</div>
+							</th:block>
+							<th:block th:if="${vo.categoryNum} == 2 ">
+								<div id="smallboard" th:onclick="viewfile([[${vo.idx}]])">
+									<div>
+										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 170px;">
+									</div>
+									<span
+										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+									<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
+									<div id="smallboardtext">
+										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+									</div>
+								</div>
+							</th:block>
+							<th:block th:if="${vo.categoryNum} == 4 ">
+								<div id="smallboard" th:onclick="viewgallery([[${vo.idx}]])">
+									<div>
+										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 170px;">
+									</div>
+									<span
+										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+									<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
+									<div id="smallboardtext">
+										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+									</div>
+								</div>
+							</th:block>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		<br>
+		<div
+			style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">블로그</div>
+		<br>
+		<div
+			style="width: 100%; display: flex; justify-content: center; align-items: center;">
+			<div
+				style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+				<div style="width: 350px; height: 100%; flex-shrink: 0;">
+					<div style="position: relative;">
+						<img src="/img/mainpageImg/diary.jpg"
+							style="width: 100%; height: 400pt;" alt="이미지">
+						<div
+							style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">
+							자신만의 다이어리를 <br>써보세요!
+						</div>
+					</div>
+				</div>
+				<div
+					style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 50px;">
+					<span style="font-weight: bold; font-size: 18pt;"><br>오늘
+						하루를 기록해보세요! :) ></span><br>
+					<div style="justify-content: flex-end;">
+						<form action="/ckeditor2" method="post" id="writeBtn">
+							<input type="hidden" name="p" th:value="${cv.p}"> <input
+								type="hidden" name="search" th:value="${cv.search}"> <input
+								type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+							<input type="submit" class="uk-button uk-button-link"
+								value="글 쓰러 가기 >>"
+								style="color: #888888; transition: color 1.5s;" />
+						</form>
+					</div>
+					<div
+						style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
+						<div th:each="vo, iterStat : ${pvblog.list}"
+							style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;"
+							th:if="${iterStat.count &lt;= 3}">
+							<div id="smallboard" th:onclick="viewblog([[${vo.idx}]])">
+								<div>
+									<img src="/img/mainpageImg/allboard1.jpg"
+										style="border-radius: 5px">
+								</div>
+								<span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+								<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
+								<div id="smallboardtext">
+									<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		<br>
+		<div style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">갤러리</div>
+		<br>
+		<div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+			<div style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+				<div style="width: 350px; height: 100%; flex-shrink: 0;">
+					<div style="position: relative;">
+						<a href="/gallery"> <img src="/img/mainpageImg/gallery.jpg" style="width: 100%; height: 400pt;" alt="이미지">
+						</a>
+						<div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">
+							사진으로 오늘을 <br>써보세요!
+						</div>
+					</div>
+				</div>
+				<div style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 50px;">
+					<span style="font-weight: bold; font-size: 18pt;"><br>오늘
+						일상을 사진으로 남겨보세요! :)></span><br>
+					<div style="justify-content: flex-end;">
+						<form action="/gallery/galleryboardUpload" method="post" id="write">
+							<div id="writeBtn" onclick="submitForm()">
+								<input type="hidden" name="p" th:value="${cv.p}"> <input type="hidden" name="search" th:value="${cv.search}"> <input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+								<input type="submit" class="uk-button uk-button-link" value="글 쓰러 가기 >>" style="color: #888888; transition: color 1.5s;" />
+							</div>
+						</form>
+					</div>
+					<div
+						style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px; width: 650px;">
+						<div th:each="vo, iterStat : ${pvgallery.list}"
+							style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;"
+							th:if="${iterStat.count &lt;= 3}">
+							<div id="smallboard" th:onclick="viewgallery([[${vo.idx}]])">
+								<div class="image" th:if="${not #lists.isEmpty(vo.fileboardVO)}">
+									<img th:src="@{'./upload/' + ${vo.fileboardVO[0].filepath}}"
+										alt=""
+										style="border-radius: 5px; width: 100%; height: 170px;" />
+								</div>
+								<span
+									th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}"
+									style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+								<span
+									th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}"
+									style="text-align: center;"></span><br>
+								<div id="smallboardtext">
+									<span>작성자</span><br> <span>조회수 [[${vo.readCount}]]
+										|</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span
+										th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		<br>
+		<div
+			style="font-size: 30px; font-weight: bold; position: relative; left: 125px;">자료실</div>
+		<br>
+		<div
+			style="width: 100%; display: flex; justify-content: center; align-items: center;">
+			<div
+				style="width: 80%; height: 400px; display: flex; text-align: center; border: 1px dashed rgb(211, 211, 211); border-radius: 3px; overflow: hidden;">
+				<div style="width: 350px; height: 100%; flex-shrink: 0;">
+					<div style="position: relative;">
+						<a href="/fileboard"> <img
+							src="/img/mainpageImg/fileboard.jpg"
+							style="width: 100%; height: 400pt;" alt="이미지">
+						</a>
+						<div
+							style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 30px; font-weight: bold; white-space: nowrap;">
+							나만의 자료를 <br>다른유저에게 <br>공유해보세요!
+						</div>
+					</div>
+				</div>
+				<div
+					style="width: calc(100% - 400px); height: 100%; display: flex; flex-direction: column; justify-content: left; align-items: flex-start; padding-left: 50px;">
+					<span style="font-weight: bold; font-size: 18pt;"><br>다른사람들과
+						유익한 정보를 나눠보세요! :) ></span><br>
+					<div style="justify-content: flex-end;">
+						<form action="/fileboard/fileupload" method="post" id="writeBtn">
+							<input type="hidden" name="p" th:value="${cv.p}"> <input
+								type="hidden" name="search" th:value="${cv.search}"> <input
+								type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+							<input type="submit" class="uk-button uk-button-link"
+								value="글 쓰러 가기 >>"
+								style="color: #888888; transition: color 1.5s;" />
+						</form>
+					</div>
+					<div
+						style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
+						<div th:each="vo, iterStat : ${pvfileboard.list}"
+							style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;"
+							th:if="${iterStat.count &lt;= 3}">
+							<div id="smallboard" th:onclick="viewfile([[${vo.idx}]])">
+								<div th:each="file : ${vo.fileboardVO}">
+									<div>
+										<img src="/img/mainpageImg/file.jpg"
+											style="border-radius: 5px">
+									</div>
+									<span
+										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}"
+										style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+									<span
+										th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}"
+										style="text-align: left;"></span><br>
+									<div id="smallboardtext">
+										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]]
+											|</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span
+											th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(function() {
+			$("#menuIcon").click(function() {
+				$("#menuContent").css('left', '0px');
+			})
+			$("#menuCloseBtn").click(function() {
+				$("#menuContent").css('left', '-520px');
+			})
+		})
+		/*
+		 document.getElementById("menuIcon").addEventListener("mouseover", function() {
+		     var menu = document.getElementById("menuContent");
+		     menu.style.display = "block";
+		 });
+		
+		 document.getElementById("menuIcon").addEventListener("mouseleave", function() {
+		     var menu = document.getElementById("menuContent");
+		     setTimeout(function() {
+		         menu.style.display = "none";
+		     }, 2000); // 2초 동안 메뉴를 유지한 후에 숨김
+		 });
+		 */
+	</script>
+
+
 </body>
 </html>

@@ -25,6 +25,9 @@
 </head>
 <link rel="stylesheet" href="/css/file.css">
 <script src="/js/file.js"></script>
+
+<link rel="stylesheet" href="/css/mainHeader.css">
+<script src="/js/mainHeader.js"></script>
 <style>
     hr { 
         width: 100%; /* 너비를 50%로 지정 */
@@ -35,10 +38,11 @@
     }
 </style>
 <body>
-	<div style="font-size: 50pt; text-align: center;"> File Details</div>
+	 <!-- 헤더 -->
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
 
 	<main style="width: 940px; padding: 20px; margin: auto;">
-      <div style="width: 100%;  margin: 20px; text-align: left;">
+      <div style="width: 100%;  margin: 20px; text-align: left; margin-top: 50px;">
          <article style="width: 740px; margin: 20px auto;">
 		<hr />
          	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
@@ -64,7 +68,7 @@
                [(${board.content})]
             </div>
           	<br><br>
-            <div id="download">
+            <div id="download" th:onclick="fileDown([[${board.fileboardVO[0].url}]] , [[${board.fileboardVO[0].filepath}]])">
             	<!-- 다운로드 버튼 -->
             	download
             </div>
@@ -75,7 +79,7 @@
             <div class="hr"></div><br>
             <span id="image" th:each="file : ${board.fileboardVO}">
             	<span>파일 : </span>
-    			<img style="float: left;" th:src="@{'./img/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" width="30" height="30"/>
+    			<img style="float: left;" th:src="@{'/img/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" width="30" height="30"/>
     			<span th:text="${file.url}"></span>
 			</span>
             <div style="display: flex;justify-content: space-between; float:right;">
@@ -110,27 +114,17 @@
 	       <article style="width: 740px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
-				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload">
+				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
+					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
 					<input type="hidden" th:value="${board.idx}" name="boardidx">
-					<textarea placeholder="댓글을 작성해주세요" name="reply"></textarea>
+					<textarea id="comment" placeholder="댓글을 작성해주세요" name="reply"></textarea>
 					<div id="submitBtn">
 						<input type="submit" class="styled-button" value="등록"/>	           
 					</div>
 				</form>
 				<div>
 					<ul id="commentList">
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
-						<li>
-							<span class="nickName">유저이름</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">yy-MM-dd hh:mm</span>
-							<p class="reply">댓글이구요</p>
-						</li>
+					
 					</ul>
 					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
 					<section>
@@ -140,15 +134,17 @@
 				</div>
 	       </article>
       </div>
-      	<th:block th:if="${session.user.idx == board.ref}">
+      	<th:block th:if="${session.user != null && session.user.idx == board.ref}">
       		<input type="hidden" id="deleteCk" value="0">
 				<div style="text-align: right; ">
     				<!-- 게시글 삭제 버튼 -->
-   					<button id="deleteButton">삭제</button>    			
-   						
+   					<button id="deleteButton">삭제</button> 
+   					
     				<!-- 게시글 수정 버튼 -->
-   					<button id="updateBtn">수정</button>    				
+   					<button id="updateBtn2">수정</button>    				
 		
+   					<!-- 게시글 삭제 버튼 -->
+   					<button id="hideButton">숨기기</button>
 				</div>
 		</th:block>
 		

@@ -67,7 +67,7 @@ public class JungFileBoardController {
 	private PopularService popularService;
 	
 	
-	@GetMapping("/fileupload")
+	@PostMapping("/fileupload")
 	public String fileupload(Model model, @ModelAttribute(value = "cv") CommonVO cv) {
 		model.addAttribute("cv", cv);
 		return "file/fileupload";
@@ -161,13 +161,15 @@ public class JungFileBoardController {
 	@GetMapping(value = "/blog/{idx}")
 	public String as (@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
-		boardVO.setMember(jungMemberService.selectByIdx(boardVO.getRef()));
-		
-		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
-	
-		boardVO.setCountHeart(jungBoardService.countHeart(idx));
-		
-		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
+		if(boardVO == null) {
+			return "redirect:/fileboard?error=notFound";
+		}
+		if(boardVO.getDeleted() == 1) {
+			return "redirect:/fileboard?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 2) {
+			return "redirect:/fileboard?error=notFound";
+		}
 		
 		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		
@@ -193,12 +195,13 @@ public class JungFileBoardController {
 				oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
 				oldCookie.setPath("/");
 				oldCookie.setMaxAge(60);
-				PopularVO p = new PopularVO();
-				p.setBoardRef(idx);
-				p.setUserRef(memberVO.getIdx());
-				p.setInteraction(1);
-				popularService.insertPopular(p);
-				log.info("무야:{}", p);
+				if(memberVO != null) {
+					PopularVO p = new PopularVO();
+					p.setBoardRef(idx);
+					p.setUserRef(memberVO.getIdx());
+					p.setInteraction(1);
+					popularService.insertPopular(p);					
+				}
 				response.addCookie(oldCookie);
 			}
 		}	else {
@@ -211,6 +214,79 @@ public class JungFileBoardController {
 		
 		return "file/file"; // 임시값
 	}
+	
+	// 게시글 수정 처리
+	@GetMapping(value = "/fileupdate/{boardIdx}")
+	public String updateBoard(@PathVariable("boardIdx") int boardIdx,Model model) {
+		JungBoardVO updatedBoard=jungBoardService.selectByIdx(boardIdx);
+		model.addAttribute("board",updatedBoard);
+		log.debug("뭐냐고:{}",model);
+		return "/file/fileupdate"; // 수정된 게시글로 리다이렉트
+	}
+	
+	@GetMapping("/fileupdateOk")
+	public String fileupdateOk(Model model) {
+		return "redirect:/";
+	}
+	
+	
+	
+	//MultipartHttpServletRequest 파일을 받을 수 있는.
+	@Transactional //한꺼번에 저장하기 위해 하나가 에러가되면 모든게 막히게
+	@PostMapping("/fileupdateOk")
+	public String fileupdateOk(HttpSession session, @ModelAttribute(value = "boardVO") JungBoardVO boardVO, MultipartHttpServletRequest request) {
+		// 1.board 저장
+		log.debug("왜요:{}", boardVO);
+		jungFileBoardService.deleteByRef(boardVO.getIdx()); // 파일지우고
+		log.debug("왜요 2");
+		jungBoardService.update(boardVO); // 업뎃하고
+		log.debug("왜요 3");
+		String uploadPath = request.getServletContext().getRealPath("./upload/");
+		
+		 File file2 = new File(uploadPath);
+	     if (!file2.exists()) {
+	        file2.mkdirs();
+	     }
+	    log.info("서버 실제 경로 : " + uploadPath); // 확인용
+	    
+	    // 여러개 파일 받기
+        List<MultipartFile> list = request.getFiles("file"); // form에 있는 name과 일치
+        String url = "";
+        String filepath = "";
+        try {
+           if (list != null && list.size() > 0) { // 받은 파일이 존재한다면
+              // 반복해서 받는다.
+              for (MultipartFile file : list) {
+                 // 파일이 없으면 처리하지 않는다.
+                 if (file != null && file.getSize() > 0) {
+                    // 저장파일의 이름 중복을 피하기 위해 저장파일이름을 유일하게 만들어 준다.
+                    String saveFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                    // 파일 객체를 만들어 저장해 준다.
+                    File saveFile = new File(uploadPath, saveFileName);
+                    // 파일 복사
+                    FileCopyUtils.copy(file.getBytes(), saveFile);
+                    
+                    url = file.getOriginalFilename();	// original
+                    filepath = saveFileName;			// savefileName
+                    JungFileBoardVO fileBoardVO = new JungFileBoardVO();
+                    
+                    fileBoardVO.setUrl(url);
+                    fileBoardVO.setFilepath(filepath);
+                    fileBoardVO.setRef(boardVO.getIdx());
+                    log.debug("뭐냐:{}",fileBoardVO);
+                    jungFileBoardService.insert(fileBoardVO);
+                   
+                 }
+              }
+           }
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+        return "redirect:/fileboard/blog/"+boardVO.getIdx();
+	}
+	
+	
+	
 	
 	@PostMapping(value = "/commentupload")
 	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {

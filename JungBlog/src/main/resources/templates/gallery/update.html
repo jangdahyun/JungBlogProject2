@@ -120,7 +120,6 @@
 </head>
 <body>
 <div id="jjj">
-[[${board}]]
     <form action="/gallery/galleryboardUpdateOk" method="post" enctype="multipart/form-data" id="insertForm">
         <input type="text" name="title" id="title" placeholder="글 제목을 입력해 주세요." required="required" th:value="${board.title}"/>
         <input type="hidden" th:value="board.content" id="editContent">

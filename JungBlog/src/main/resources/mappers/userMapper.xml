@@ -84,7 +84,7 @@
 				dtAddress = #{dtAddress}
 			</if>
 			<if test="phone != null">
-				,phone = #{phone}			
+				phone = #{phone}			
 			</if>
 		WHERE
 			idx = #{idx}

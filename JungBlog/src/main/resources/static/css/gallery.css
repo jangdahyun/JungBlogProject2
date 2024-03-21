@@ -3,34 +3,6 @@
 *{margin: 0; padding: 0; box-sizing: border-box;}
 a{text-decoration: none; color: inherit;}
 
-#deleteButton, #hideButton{
-    background-color: #304331; /* 어두운 색상으로 변경 */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 8px;
-}
-
-/* 수정 버튼 스타일 */
-#updateBtn {
-    background-color: #465155; /* 어두운 색상으로 변경 */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 8px;
-}
 
 
 body {color: #333;background: #302F2B;font-family: "Noto Sans KR", sans-serif;}
@@ -73,6 +45,34 @@ textarea {
 	margin-left: 3px;
 	width: 20px; height: 20px;
 }
+#deleteButton,#updateBtn,#hideButton {
+	text-align: right;
+	background-color: white;
+	color: #fff;
+	font-weight: bold;
+	padding: 10px 20px;
+	text-decoration: none;
+	cursor: pointer;
+	border: 0px solid;
+	border-radius: 10px;
+	transition: background-color 0.3s ease;
+	background-color: #595746;
+	}
+#deleteButton:hover{
+	background-color: black;
+	border: 1px solid grey;
+	color: white;
+	}
+#hideButton:hover{
+	background-color: black;
+	border: 1px solid grey;
+	color: white;
+	}
+#updateBtn:hover{
+	background-color: black;
+	border: 1px solid grey;
+	color: white;
+	}
 #heart, #heart2{
     /*색 보충*/
     fill: #fff;

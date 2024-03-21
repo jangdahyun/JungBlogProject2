@@ -259,7 +259,7 @@ public class JungController {
 	
 	
 	@PostMapping(value = "/commentupload")
-	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
+	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx,@RequestParam(value = "categoryNum") int categoryNum) {
 		log.debug("값 : {}", commentVO);
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		commentVO.setUserRef(memberVO.getIdx());
@@ -271,7 +271,16 @@ public class JungController {
 		popularService.insertPopular(p);
 		jungCommentService.insert(commentVO);
 		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
-		return "redirect:/blog/" + boardidx;
+		String path="";
+		if (categoryNum == 1) {
+			path="/blog/view/";
+		}
+		else if(categoryNum==2){
+			path="/fileboard/blog/";
+		}else if(categoryNum==4) {
+			path="/gallery/";
+		}
+		return "redirect:" + path + boardidx;
 	}
 	
 	/**
