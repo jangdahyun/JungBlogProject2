@@ -148,11 +148,6 @@ hr {
 }
 </style>
 <body>
-	<input type="hidden" name="p" id="p" th:value="${cv.currentPage}" />
-	<input type="hidden" name="s" id="s" th:value="${cv.sizeOfPage}" />
-	<input type="hidden" name="b" id="b" th:value="${cv.sizeOfBlock}" />
-	<input type="hidden" name="search" id="search" th:value="${cv.search}" />
-	
 	<header>
 		
 	</header>
@@ -161,8 +156,9 @@ hr {
 			<b>Youtube UPLOAD</b>
 		</div>
 		<hr>
-		<form action="videouploadOk" method="post" enctype="multipart/form-data" id="insertForm">
+		<form action="/videoboard/videoupdateOk" method="post" enctype="multipart/form-data" id="insertForm">
 		<input type="hidden" name="categoryNum" id="category" th:value="5" />
+		<input type="hidden" name="idx" id="idx" th:value="${board.idx}" />
 			<table>
 				<colgroup>
 				    <col style="width:15%;">
@@ -170,17 +166,17 @@ hr {
 				</colgroup>
 				<tr>
 					<td id="left" style="line-height: 3;">제목</td>
-					<td id="right"><input type="text" name="title" id="title" placeholder="글 제목을 입력해주세요" required="required"></td>
+					<td id="right"><input type="text" name="title" id="title" placeholder="글 제목을 입력해주세요" required="required" th:value="${board.title}"></td>
 				</tr>
 				<tr>
 					<td id="left">유튜브 주소</td>
-					<td id="right"><input type="text" name="youtube"  placeholder="유튜브주소를 정확히 입력해주세요" required="required"><br>
+					<td id="right"><input type="text" name="youtube"  placeholder="유튜브주소를 정확히 입력해주세요" required="required "><br>
 					<span>&nbsp;&nbsp;<span style="color:red;">*</span>유튜브주소를 정확히 입력해야 Player 및 썸네일 이미지가 정상적으로 출력이 됩니다.</span>
 					</td>
 				</tr>
 				<tr>
 					<td id="left">영상 소개</td>
-					<td id="right"><textarea id="summernote" name="content"></textarea></td>
+					<td id="right"><textarea id="summernote" name="content">[[${board.content}]]</textarea></td>
 				</tr>
 			</table><br>
 		

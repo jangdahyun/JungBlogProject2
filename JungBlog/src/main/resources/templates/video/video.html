@@ -21,26 +21,118 @@
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
-	<title>file</title>
+	<title>video</title>
 </head>
+<link rel="stylesheet" href="/css/video.css">
 <script src="/js/video.js"></script>
+
 <body>
-		<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
-         	<input type="hidden"  th:value="${board.title}" id="editTitle"/>
-         	<input type="hidden"  th:value="${board.content}" id="editContent"/>
-	<div>[[${board.title}]]</div>
-	<th:block th:if="${session.user.idx == board.ref}">
+<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
+<input type="hidden"  th:value="${board.title}" id="editTitle"/>
+<input type="hidden"  th:value="${board.content}" id="editContent"/>
+<div style="text-align: center;">
+<table style="text-align: left; margin: auto;">
+	<colgroup>
+				<col width="75px" /> 
+				<col width="75px" />
+				<col width="75px" />
+				<col width="75px" />
+				<col width="75px" />
+				<col width="75px" />
+				<col width="75px" />
+				<col width="75px" />
+				<col width="75px" />
+				<col width="75px" />
+			</colgroup>
+	<tr>
+		<td colspan="10" style="font-size: 20pt; font-weight: bold; border-bottom: 1px solid #AAAAAA;">[[${board.title}]]</td>
+	</tr>
+	<tr style="border-bottom: 1px solid #AAAAAA; ">
+		<td style="background-color: #EEEEEE; border-right: 1px solid #AAAAAA;">글쓴이</td>
+		<td style="border-right: 1px solid #AAAAAA;">글쓴이</td>
+		<td style="background-color: #EEEEEE; border-right: 1px solid #AAAAAA;">조회수</td>
+		<td style="border-bottom: 1px solid #AAAAAA; border-right: 1px solid #AAAAAA;">[[${board.readCount}]]</td>
+		<td style="background-color: #EEEEEE; border-right: 1px solid #AAAAAA;">좋아요</td>
+		<td>
+			<div style="display: flex; align-items: center; ">
+					<th:block th:if="${session.user ==null}">
+	               		<input type="hidden" id="heartCk" value="1">
+						<span id="ch" style="display: inline-block;">[[${board.countHeart}]]</span>
+				        <svg t="1689815540548" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2271"><path d="M742.4 101.12A249.6 249.6 0 0 0 512 256a249.6 249.6 0 0 0-230.72-154.88C143.68 101.12 32 238.4 32 376.32c0 301.44 416 546.56 480 546.56s480-245.12 480-546.56c0-137.92-111.68-275.2-249.6-275.2z" fill="#231F20" p-id="2272" id="heart2"></path></svg>
+					</th:block>
+					<th:block th:if="${heart==1}">
+	               		<input type="hidden" id="heartCk" value="1">
+						<span id="ch" style="display: inline-block;">[[${board.countHeart}]]</span>
+				        <svg t="1689815540548" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2271"><path d="M742.4 101.12A249.6 249.6 0 0 0 512 256a249.6 249.6 0 0 0-230.72-154.88C143.68 101.12 32 238.4 32 376.32c0 301.44 416 546.56 480 546.56s480-245.12 480-546.56c0-137.92-111.68-275.2-249.6-275.2z" fill="#231F20" p-id="2272" id="heart" class="active"></path></svg>
+					</th:block>
+					
+					<th:block th:if="${heart==0}">
+	               		<input type="hidden" id="heartCk" value="0">
+						<span id="ch" style="display: inline-block;">[[${board.countHeart}]]</span>
+				        <svg t="1689815540548" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2271"><path d="M742.4 101.12A249.6 249.6 0 0 0 512 256a249.6 249.6 0 0 0-230.72-154.88C143.68 101.12 32 238.4 32 376.32c0 301.44 416 546.56 480 546.56s480-245.12 480-546.56c0-137.92-111.68-275.2-249.6-275.2z" fill="#231F20" p-id="2272" id="heart"></path></svg>
+					</th:block>
+			</div>
+		</td>
+		<td style="background-color: #EEEEEE; border-right: 1px solid #AAAAAA;">댓글</td>
+		<td style="border-right: 1px solid #AAAAAA;">[[${board.commentCount}]]</td>
+		<td style="background-color: #EEEEEE; border-right: 1px solid #AAAAAA;">등록일</td>
+		<td>[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</td>
+	</tr>
+	<tr>
+		<td  colspan="10">
+			<div class="boardviewbody" style="text-align:left">
+                <iframe th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1, board.videoVO[0].youtube.indexOf('&'))}" 
+                        width="1000" height="720" 
+                        th:src="@{'https://www.youtube.com/embed/' + ${key}}" 
+                        title="YouTube video player" frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div><br>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="10" th:utext="${board.content}" style="text-align: left; border-top: 1px solid #AAAAAA; border-bottom: 1px solid black;"></td>
+	</tr>
+</table>
+<div style="width: 100%;  margin: 20px 0;">
+	       <article style="width: 1500px; margin: 20px auto;">
+				<p style="font-family: Playfair Display;">COMMENTS</p>
+				<div class="hr"></div>
+				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
+					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
+					<input type="hidden" th:value="${board.idx}" name="boardidx">
+					<textarea id="comment" placeholder="댓글을 작성해주세요" name="reply"></textarea>
+					<div id="submitBtn">
+						<input type="submit" class="styled-button" value="등록"/>	           
+					</div>
+				</form>
+				<div>
+					<ul id="commentList">
+					
+					</ul>
+					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
+					<section>
+						<!-- 게시글 삭제 버튼 -->
+						
+					</section>
+				</div>
+	       </article>
+      </div>
+</div>
+<th:block th:if="${session.user != null && session.user.idx == board.ref}">
       		<input type="hidden" id="deleteCk" value="0">
 				<div style="text-align: right; ">
     				<!-- 게시글 삭제 버튼 -->
-   					<button id="deleteButton">삭제</button>    			
-   						
+   					<button id="deleteButton">삭제</button> 
+   					
     				<!-- 게시글 수정 버튼 -->
-   					<button id="updateBtn">수정</button>    				
+   					<button id="updateBtn2">수정</button>    				
 		
+   					<!-- 게시글 삭제 버튼 -->
+   					<button id="hideButton">숨기기</button>
 				</div>
 		</th:block>
-
 
 </body>
 </html>
