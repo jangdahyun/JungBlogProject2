@@ -9,13 +9,13 @@
 			(
 				SELECT
 					rc.*
-					, jm.nickName as nickname
+					, jm.nickName as userNickName
 					, COALESCE(cc.childCommentCount, 0) AS childCommentCount
 				FROM
 					rss_comment rc
-				JOIN
+				LEFT JOIN
 					jung_member jm ON jm.idx = rc.userRef
-				JOIN
+				LEFT JOIN
 				    (
 				        SELECT 
 				            parentCommentRef,
@@ -29,10 +29,10 @@
 				    ) cc ON cc.parentCommentRef = rc.idx
 				WHERE
 					<![CDATA[
-						rss_comment.idx < #{lastItemIdx}
+						rc.idx < #{lastItemIdx}
 					]]>
 					and depth = 0
-					and rssBoardRef = #{rssBoardRef}
+					and rc.rssBoardRef = #{rssBoardRef}
 				ORDER BY
 					rc.idx DESC
 			) Q
@@ -74,7 +74,7 @@
 		WHERE
 			rc.parentCommentRef = #{parentCommentRef} and rc.depth = 1
 		ORDER BY
-			rc.idx
+			rc.idx desc
 	</select>
 	
 	<!-- 댓글 저장 -->

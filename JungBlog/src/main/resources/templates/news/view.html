@@ -17,6 +17,8 @@
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <!-- moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <!-- Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -94,6 +96,9 @@
 			    background: #f7b2be !important;
 			}
 		}
+		#comments li{padding: 10px 10px; transition: 0.2s; border-bottom: 1px solid #aaa;}
+		#comments li:hover { background: #43413d;}
+		.replyBtn:hover{text-decoration: underline;}
     </style>
 </head>
 <body>
@@ -114,6 +119,39 @@
 			</div>
 			<hr />
 			<div id="contentBox">[(${item.content})]</div>
+			<hr />
+			<div id="commentBox">
+				<input type="hidden" id="commentLastItemIdx" th:value="${commentLastItemIdx}">
+				<p style="font-size: 24px;">댓글수 [[${commentCount}]]개</p>
+				<hr />
+				<th:block th:if="${session.user == null}">
+					<div style="display: flex; justify-content: space-between;">
+						<div style="display: flex; justify-content: center; align-items: top; width: 60px;">
+							<span>댓글</span>
+						</div>
+						<textarea disabled="disabled" class="uk-textarea" rows="1" style="background: #252422; color: #fff; width: 540px;height:36px; resize: none; overflow:hidden; border: none; border-bottom: 2px solid black;" placeholder="로그인후 이용가능합니다."  onkeyup="autoResize(this)" onkeydown="autoResize(this)"></textarea>				
+					</div>				
+				</th:block>
+				<th:block th:if="${session.user != null}">
+					<form action="/news/comment" method="post" id="mainCommentForm">
+						<input type="hidden" name="rssBoardRef" th:value="${item.idx}">
+						<div style="display: flex; justify-content: space-between;">
+							<div style="display: flex; justify-content: center; align-items: top; width: 60px;">
+								<span>댓글</span>
+							</div>
+							<textarea id="reply" name="reply" maxlength="200" class="uk-textarea" rows="1" style="background: #252422; color: #fff; width: 540px;height:36px; resize: none; overflow:hidden; border: none; border-bottom: 2px solid black;" placeholder="댓글 추가..."  onkeyup="autoResize(this)" onkeydown="autoResize(this)"></textarea>				
+						</div>
+						<div style="text-align: right;" id="commentBtn">
+							<input type="button" id="mainCancleBtn" value="취소">
+							<input type="submit" value="댓글">
+						</div>				
+					</form>
+				</th:block>
+				<ul id="comments" style="padding: 0;">
+					
+				</ul>
+				<!-- 댓글들 뿌리기! -->
+			</div>
 		</main>
 	</div>
 	<div id="footer" style="position: fixed; bottom: 0; width: 100%; background: #333">
@@ -125,21 +163,31 @@
 			<div style="padding-right: 20px; display: flex; align-items: center;">
 				<div>
 					<span id="readCount" style="margin-left: 20px; font-size: 12px;">조회수 [[${item.readCount}]]</span>
-					<span id="commentCount" style="margin-left: 20px; font-size: 12px;">댓글수 0</span>	
 				</div>
-				<button id="commentButton" style="text-align:right;margin-left: 20px; font-size: 12px; color: #333; width: 50px; height: 20px; padding: 0; display: flex;align-items: center;justify-content: center;" class="uk-button">댓글보기</button>		
 			</div>
 		</div>
 	</div>
 	<script type="text/javascript">
 		$(function(){
 			const idx = $("#idx").val();
+			const PAGE = 6;
+			readComment();
+			findCommentLastItemIdx();
+			
+			window.addEventListener('scroll', scrollHandler);
+			
 			$("#goTopBtn").click(function(){
 				window.scrollTo({
 			        top: 0,
 			        behavior: 'smooth' // 부드러운 스크롤 효과 적용
 			    });
 			})
+			
+			$("#mainCancleBtn").click(function(){
+				$("#reply").val('');
+				autoResize(document.querySelector("#reply"));
+			})
+			
 			
 			$("#like").one('click', likeClickEvent);
 			
@@ -176,27 +224,159 @@
 				})
 			}
 			
-			let popupWindow;
-
-			$("#commentButton").click(function() {
-			    const popupURL = `/news/view/${idx}/comment`;
-			    const popupWidth = 400;
-			    const popupHeight = 800;
-			    const leftPosition = (window.innerWidth - popupWidth) / 2;
-			    const topPosition = (window.innerHeight - popupHeight) / 2;
-
-			    // 팝업 창이 이미 열려있거나 닫혀있는 경우
-			    if (!popupWindow || popupWindow.closed) {
-			        popupWindow = window.open(popupURL, "_blank", "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition);
-
-			        popupWindow.onunload = function() {
-			            popupWindow = null;
-			        };
-			    } else {
-			        popupWindow.focus();
-			    }
-			});
+			function readComment(){
+				let commentLastItemIdx = $("#commentLastItemIdx").val();
+				window.removeEventListener('scroll', scrollHandler)
+				axios.get(`/news/comment?rssBoardRef=${idx}&sizeOfPage=${PAGE}&lastItemIdx=${commentLastItemIdx}`)
+				.then(res => {
+					const data = res.data;
+					console.log(data);
+					if(data.length == 0){
+						window.removeEventListener('scroll', scrollHandler)
+						return;
+					} else {
+						fillComment(data);
+						findCommentLastItemIdx();						
+					}
+				})
+				. catch(e => {
+					console.log(e);
+				})
+			}
+			
+			function fillComment(data){
+				const ul = $("#comments");
+				data.forEach(cm => {
+					const formattedDate = moment(cm.regDate).format('YY.MM.DD HH:mm:ss');
+					const newReply = cm.reply.replace(/\n/g, '<br>');
+					let more = "";
+					if(cm.childCommentCount != 0){
+						more = `<span style="font-size: 14px; color: #ccc; cursor: pointer;" onclick="replyload(this ,${cm.idx})">답글 ${cm.childCommentCount}개 더보기</span>`
+					}
+					content = `
+						<li>
+							<input type="hidden" class="commentIdx" value="${cm.idx}">
+							<div>${cm.userNickName} <span style="font-size: 12px; color: #ccc;">${formattedDate}</span></div>
+							<div>${newReply}</div>
+							<div style="text-align: right;">
+								${more}
+								<span class="replyBtn" style="font-size: 14px; color: #ccc; cursor: pointer;" onclick="replyFunc(this, ${cm.idx});">답글</span>
+							</div>
+						</li>
+					`
+					ul.append(content);
+				})
+			}
+			
+			function convertHtmlToText(text) {
+			    return text.replace(/<br\s*\/?>/gi, '\n');
+			}
+			
+			function scrollHandler(){
+	 	    	const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+	 	        const windowHeight = window.innerHeight;
+	 	        const documentHeight = Math.max(
+	 	        	document.body.scrollHeight, document.documentElement.scrollHeight,
+	 	            document.body.offsetHeight, document.documentElement.offsetHeight,
+	 	            document.body.clientHeight, document.documentElement.clientHeight
+	 	        );
+	 	        if (scrollTop + windowHeight +20 >= documentHeight) {
+	 	        	console.log('실행');
+	 	        	readComment();
+	 	        }
+			}
+			
+			function findCommentLastItemIdx(){
+				let lastLi = $("#comments li").last();
+			    let commentLastItemIdx = lastLi.find(".commentIdx").val();
+			    $("#commentLastItemIdx").val(commentLastItemIdx);
+			}
+			
+			
+			
+			$("#mainCommentForm").submit(function(event){
+				event.preventDefault();
+				let value = $("#reply").val();
+				if(value.trim().length==0){
+					alert('댓글을 입력해주세요.');
+					$("#reply").val('');
+					autoResize(document.querySelector("#reply"));
+					$("#reply").focus();
+					return false;
+				}
+				this.submit();
+			})
+			
 		})
+		
+		function replyload(obj, parentCommentIdx){
+			console.log(obj);
+			let parentLi = obj.parentNode;
+		    while (parentLi && parentLi.tagName !== 'LI') { // 부모노드찾기
+		    	parentLi = parentLi.parentNode;
+		    }
+			$(obj).remove();
+			axios.get(`/news/comments/reply?parentCommentRef=${parentCommentIdx}`)
+			.then(res => {
+				const data = res.data;
+				content = "";
+				content += `<div style="margin-left: 50px;">`;
+				data.forEach(cmm => {
+					const formattedDate = moment(cmm.regDate).format('YY.MM.DD HH:mm:ss');
+					content += `
+						<div>
+							<div>${cmm.userNickName} <span style="font-size: 12px; color: #ccc;">${formattedDate}</span></div>
+							<div>${cmm.reply}</div>
+						</div>
+					`
+				})
+				content += `</div>`;
+				parentLi.innerHTML += content;
+			})
+			.catch(e => {
+				console.log(e);
+			})
+		}
+		
+		function removeSubCommentForm(obj){
+			$(".subCommentForm").remove();
+			$(".replyBtn").removeClass('active');
+		}
+		
+		function replyFunc(obj, parentCommentIdx){
+			if (obj.classList.contains('active')) {
+		        return;
+		    }
+			$(".subCommentForm").remove();
+			$(".replyBtn").removeClass('active');
+			let idx = $("#idx").val();
+		    let div = obj.parentNode;
+		    while (div && div.tagName !== 'DIV') { // 부모노드찾기
+		    	div = div.parentNode;
+		    }
+		    content = `
+		    	<form action="/news/comment" method="post" class="subCommentForm">
+					<input type="hidden" name="rssBoardRef" value="${idx}">
+					<input type="hidden" name="parentCommentRef" value="${parentCommentIdx}">
+					<input type="hidden" name="depth" value="1">
+					<div style="display: flex; justify-content: end; align-item:center">
+						<span style="margin-right:5px;">답글</span>
+						<input id="subreply" name="reply" maxlength="30" class="uk-input" style="background: #252422; color: #fff; width: 400px;height:36px; border: none; border-bottom: 2px solid black;" placeholder="답글 추가..."/>				
+					</div>
+					<div style="text-align: right;" id="commentBtn">
+						<input type="button" class="subCancleBtn" value="취소" onclick="removeSubCommentForm(this)">
+						<input type="submit" value="댓글">
+					</div>				
+				</form>
+		    `
+		    obj.classList.add('active');
+	    	div.innerHTML += content;
+		}
+		
+		function autoResize(textarea) {
+			textarea.style.height = 'auto';
+			textarea.style.height = textarea.scrollHeight + 'px';
+		}
 	</script>
 </body>
 </html>
