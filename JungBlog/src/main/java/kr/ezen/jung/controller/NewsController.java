@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.NewsCommentService;
 import kr.ezen.jung.service.NewsService;
+import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.RssCommentVO;
 import kr.ezen.jung.vo.RssVO.Item;
 import lombok.extern.slf4j.Slf4j;
@@ -203,7 +206,10 @@ public class NewsController {
             response.addCookie(newCookie);
         }
 		
-		
+        int lastItemIdx = newsCommentService.findLastItemIdx();
+		model.addAttribute("commentLastItemIdx", lastItemIdx + 1);
+		model.addAttribute("commentCount", newsCommentService.getTotalCountByRssBoardRef(idx));
+		model.addAttribute("rssBoardRef", idx);
 		model.addAttribute("item", item);
 		return "news/view";
 	}
@@ -233,12 +239,14 @@ public class NewsController {
 		return list;
 	}
 	
-	// 글 쓰기
+	// 댓글 쓰기
 	@PostMapping(value = "/comment")
-	@ResponseBody
-	public int writeComment(@RequestBody RssCommentVO rcv) {
-		int result = newsCommentService.insertRssComment(rcv);
-		return result;
+	public String writeComment(@ModelAttribute RssCommentVO rcv, HttpSession session) {
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		rcv.setUserRef(memberVO.getIdx());
+		log.info("댓글쓰기 => {}", rcv);
+		newsCommentService.insertRssComment(rcv);
+		return "redirect:/news/view/" + rcv.getRssBoardRef();
 	}
 	
 	// 글 수정

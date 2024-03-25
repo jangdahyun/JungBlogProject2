@@ -7,8 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,8 +36,7 @@ public class RssReader {
 	private RssDAO rssDAO;
 	
 
-	//@Scheduled(fixedRate = 60000) // 1분마다 실행
-
+	@Scheduled(fixedRate = 60000) // 1분마다 실행
     public void checkForUpdates() {
 		log.info("뉴스 읽기 시작");
         try {
@@ -58,11 +59,10 @@ public class RssReader {
 
                 	// 포맷팅된 문자열을 item 객체에 설정
                 	item.setPubDate(formattedDate);
-                	item.setCategory(getNewsCategory(item.getLink()));
-                	// log.info("게시글 {}", item);
-                	log.info("사진 => {}", item.getImage());
-                	if(item.getImage().equals("")) {
-                		log.info("사진 => {}", item.getImage());
+                	Map<String, String> data = getData(item.getLink());
+                	item.setCategory(data.get("catogory"));
+                	item.setImage(data.get("str"));
+                	if(item.getImage() == null || item.getImage().equals("")) {
                 		item.setImage(" ");
                 	}
                 	int check = rssDAO.findByLink(item.getLink());
@@ -96,16 +96,24 @@ public class RssReader {
         return items;
     }
     
-    private static String getNewsCategory(String urlAddress) throws IOException{
-    	String result = null;
+    private static Map<String, String> getData(String urlAddress) throws IOException{
+    	Map<String, String> map = new HashMap<>();
     	Document doc = Jsoup.connect(urlAddress).get();
     	Elements breadcrumb = doc.select(".breadcrumb");
+    	Elements figureImg = doc.select(".figure-img");
 		if(breadcrumb != null && breadcrumb.size() > 0) {
             Element category = breadcrumb.first().selectFirst("a");
             if(category != null) {
-                result = category.text();
+                 map.put("catogory", category.text());
             }
         }
-		return result;
+		if(figureImg != null && figureImg.size() > 0) {
+			Elements imgTags = figureImg.select("img");
+			String src = imgTags.get(0).attr("src");
+			if (src != null && !src.equals("")) {
+				map.put("str", src);
+			}
+		}
+		return map;
     }
 }
