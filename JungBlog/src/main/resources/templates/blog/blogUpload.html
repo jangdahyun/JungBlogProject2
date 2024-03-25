@@ -25,10 +25,6 @@
 	</style>
 </head>
 <body>
-	<input type="hidden" name="p" id="p" th:value="${cv.currentPage}" />
-	<input type="hidden" name="s" id="s" th:value="${cv.sizeOfPage}" />
-	<input type="hidden" name="b" id="b" th:value="${cv.sizeOfBlock}" />
-	<input type="hidden" name="search" id="search" th:value="${cv.search}" />
 	<input type="hidden" name="categoryNum" value="1">
 	<header>
 		
@@ -46,18 +42,7 @@
 		$(function(){
 			// 되돌아가기 버튼
 			$("#homeBtn").click(function(){
-				let p = $("#p").val();
-				let search = $("#search").val();
-				let category = $("#category").val();
-				if(search=="" && categoryNum == ""){
-					location.href=`/?p=${p}`;					
-				} else if(categoryNum=="") {
-					location.href=`/?p=${p}&&search=${search}`;										
-				} else if(search=="") {
-					location.href=`/?p=${p}&&categoryNum=${category}`;										
-				} else {
-					location.href=`/?p=${p}&&search=${search}&&categoryNum=${category}`;
-				}
+				location.href="/blog";
 			});
 			
 			// ckeditor 꾸미기

@@ -40,12 +40,10 @@
     align-items: center;
 }
 
-
 .uk-table th,
 .uk-table td {
     padding: 10px;
 }
-
 .uk-table th {
     text-align: left;
     background-color: #f0f0f0;
@@ -104,7 +102,7 @@
 					<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
 						vs.index}]]</td>
 					<td>[[${vo.categoryName}]]</td>
-					<td>[[${vo.title}]]</td>
+					<td th:text="${#strings.length(vo.title) > 10 ? #strings.substring(vo.title, 0, 10) + '...' : vo.title}"></td>
 					<td>[[${vo.member.nickName}]]</td>
 					<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
 					<td>[[${vo.readCount}]]</td>

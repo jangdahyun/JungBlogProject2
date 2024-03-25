@@ -129,8 +129,9 @@ public class JungController {
 		if(boardVO.getRef() != sessionUser.getIdx()){		// 맞는 유저가 게시글을 삭제한 것인지 확인
 			return "0";
 		}
-		int result = jungBoardService.show(boardVO.getIdx());
-		return result + "";
+		jungBoardService.show(boardVO.getIdx());
+		String result = "1";
+		return result;
 	}
 	
 	/**
@@ -161,6 +162,14 @@ public class JungController {
 	public String deleteblog(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
 		log.info("deleteblog({}) 실행", boardIdx);
 		int result = jungBoardService.hide(boardIdx);
+		return result+"";
+	}
+	
+	@PutMapping(value = "/show2/{boardIdx}")
+	@ResponseBody
+	public String show2(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
+		log.info("deleteblog({}) 실행", boardIdx);
+		int result = jungBoardService.show(boardIdx);
 		return result+"";
 	}
 	

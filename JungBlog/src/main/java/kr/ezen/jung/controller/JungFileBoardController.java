@@ -215,6 +215,27 @@ public class JungFileBoardController {
 		return "file/file"; // 임시값
 	}
 	
+	@GetMapping(value = "/my/{idx}")
+	public String myhide(@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {
+			return "redirect:/fileboard?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 2) {
+			return "redirect:/fileboard?error=notFound";
+		}
+		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
+		if(request.getSession().getAttribute("user")!=null) {
+			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
+			model.addAttribute("heart",heart);		
+		}	
+		// 찾은 정보를 heart로 담아서 보냄
+		model.addAttribute("board",boardVO);
+		log.debug("삭제{}",boardVO);
+		return "file/myfile"; // 임시값 blog.html
+	}
+	
+	
 	// 게시글 수정 처리
 	@GetMapping(value = "/fileupdate/{boardIdx}")
 	public String updateBoard(@PathVariable("boardIdx") int boardIdx,Model model) {
