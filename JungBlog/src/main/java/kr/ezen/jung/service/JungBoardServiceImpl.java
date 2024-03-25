@@ -118,6 +118,8 @@ public class JungBoardServiceImpl implements JungBoardService {
 				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 				// 파일
 				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				// 비디오
+				board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 				// 댓글수
 				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));				
 			}
@@ -254,7 +256,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 					// 파일
 					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-					// 파일
+					// 비디오
 					board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 					// 댓글수
 					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
