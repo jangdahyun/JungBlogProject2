@@ -151,28 +151,6 @@ $(function() {
 			return false;
 			}
 	})
-	// form 요소가 제출될 때
-    document.getElementById("hideButton").addEventListener("click", function(event) {
-        // 기본 동작(페이지 새로고침)을 막습니다.
-        event.preventDefault();
-
-        // 게시글의 고유 번호 (idx)를 가져옵니다.
-        var boardIdx = document.getElementById("boardIdx").value;
-		axios.delete(`/blog/${boardIdx}`)
-		.then(res => {
-			let data = res.data;
-			if(data==1){
-				alert('게시글이 성공적으로 숨김되었습니다.');
-				window.location.href="/fileboard";				
-			} else {
-            	alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
-			}
-		})
-		.catch(e => {
-			console.error('게시글 숨김 중 오류가 발생했습니다:', e);
-            alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
-		})
-    });
    
    // form 요소가 제출될 때
     document.getElementById("deleteButton").addEventListener("click", function(event) {
@@ -186,7 +164,7 @@ $(function() {
          let data = res.data;
          if(data==1){
             alert('게시글이 성공적으로 삭제되었습니다.');
-            window.location.href="/fileboard";            
+            window.location.href="/";            
          } else {
                alert('게시글 삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
          }
@@ -198,19 +176,65 @@ $(function() {
     });
     
    // 수정 버튼 클릭 이벤트 리스너 등록
-$(document).ready(function() {
-    // 게시글 수정 버튼 클릭 시
-    $("#updateBtn2").click(function() {
-        // 수정할 게시글의 idx 가져오기
-        var boardIdx = $("#boardIdx").val();
-        // 수정할 게시글의 제목 가져오기
-        var editTitle = $("#editTitle").val();
-        // 수정할 게시글의 내용 가져오기
-        var editContent = $("#editContent").val();
+	$(document).ready(function() {
+	    // 게시글 수정 버튼 클릭 시
+	    $("#updateBtn").click(function() {
+	        // 수정할 게시글의 idx 가져오기
+	        var boardIdx = $("#boardIdx").val();
+	        // 수정할 게시글의 제목 가져오기
+	        var editTitle = $("#editTitle").val();
+	        // 수정할 게시글의 내용 가져오기
+	        var editContent = $("#editContent").val();
+	
+	        // 수정할 게시글 정보를 수정 폼으로 전송
+	        window.location.href = "/fileboard/fileupdate/" + boardIdx;
+	    });
+	});
 
-        // 수정할 게시글 정보를 수정 폼으로 전송
-        window.location.href = "/fileboard/fileupdate/" + boardIdx;
-    });
-});
+	$("#showButton").click(function(event) {
+		// 기본 동작(페이지 새로고침)을 막습니다.
+		event.preventDefault();
+
+	    // 게시글의 고유 번호 (idx)를 가져옵니다.
+	    var boardIdx = document.getElementById("boardIdx").value;
+	    axios.put(`/show/${boardIdx}`)
+	    .then(res => {
+	        let data = res.data;
+	        console.log(res);
+	        if(data == 1) {
+	            alert('게시글이 성공적으로 숨김취소되었습니다.');
+	            window.location.href = "/member/myblog";                
+	        } else {
+	            alert('게시글 숨김취소 중 오류가 발생했습니다. 다시 시도해주세요.');
+	        }
+	    })
+	    .catch(e => {
+	        console.error('게시글 숨김취소 중 오류가 발생했습니다:', e);
+	        alert('게시글 숨김취소 중 오류가 발생했습니다. 다시 시도해주세요.');
+	    });
+	});
+	
+	$("#hideButton").click(function(event) {
+	    // 기본 동작(페이지 새로고침)을 막습니다.
+	    event.preventDefault();
+	
+	    // 게시글의 고유 번호 (idx)를 가져옵니다.
+	    var boardIdx = document.getElementById("boardIdx").value;
+	    axios.delete(`/blog/${boardIdx}`)
+	    .then(res => {
+	        let data = res.data;
+	        if(data == 1) {
+	            alert('게시글이 성공적으로 숨김되었습니다.');
+	            window.location.href = "/member/myblog";                
+	        } else {
+	            alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
+	        }
+	    })
+	    .catch(e => {
+	        console.error('게시글 숨김 중 오류가 발생했습니다:', e);
+	        alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
+	    });
+	});
+
 
 })

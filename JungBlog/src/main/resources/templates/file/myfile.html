@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8"/>
+	<meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 	<!-- 폰트 -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,36 +21,69 @@
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
-	<title>게시글 보기</title>
-	<link rel="stylesheet" href="/css/my/mygallery.css">
-	<script src="/js/my/mygallery.js"></script>
-	<link rel="stylesheet" href="/css/mainHeader2.css">
-	<script src="/js/mainHeader.js"></script>
+	<title>file</title>
 </head>
+<link rel="stylesheet" href="/css/my/myfile.css">
+<script src="/js/my/myfile.js"></script>
+
+<link rel="stylesheet" href="/css/mainHeader.css">
+<script src="/js/mainHeader.js"></script>
+<style>
+    hr { 
+        width: 100%; /* 너비를 50%로 지정 */
+        
+    }
+    main{
+    	margin: auto;
+    }
+</style>
 <body>
+	 <!-- 헤더 -->
 	<th:block th:insert="~{/mainHeader.html}"></th:block>
-	
-	<main style="width: 940px; padding: 80px; margin: auto;background: #292820; max-width:1320px">
-      <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
+
+	<main style="width: 940px; padding: 20px; margin: auto;">
+      <div style="width: 100%;  margin: 20px; text-align: left; margin-top: 50px;">
          <article style="width: 740px; margin: 20px auto;">
+		<hr />
          	<input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
          	<input type="hidden"  th:value="${board.title}" id="editTitle"/>
          	<input type="hidden"  th:value="${board.content}" id="editContent"/>
-            <div id="user">[[${board.member.name}]] ㆍ<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp; </div>
             <div id="title"><h1>[[${board.title}]]</h1></div>
+            	
+            <div id="user" style="color: grey; font-size: 8pt;">작성자 : [[${board.member.name}]] 
+            	&nbsp;&nbsp;<span> 조회수 [[${board.readCount}]]   </span> | <span>   댓글 [[${board.commentCount}]]</span>
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            	<span id="time">[[${#dates.format(board.regDate, 'yyyy-MM-dd hh:mm:ss')}]]</span> &nbsp; 
+            </div>
             <div class="hr"></div>
-            <div id="image" th:each="fileboard : ${board.fileboardVO}">
-    			<img style="margin-bottom: 10px;" th:src="@{'/upload/' + ${fileboard.filepath}}" alt="Image" />
-    			
-			</div>
+          
             <div id="content">
                [(${board.content})]
             </div>
-            <div class="hr"></div>
-            <div style="display: flex;justify-content: space-between;">
-               <div>
-               		<span>[[${board.readCount}]] views</span> ㆍ <span>[[${board.commentCount}]] comments</span>
-               </div>
+          	<br><br>
+            <div id="download" th:onclick="fileDown([[${board.fileboardVO[0].url}]] , [[${board.fileboardVO[0].filepath}]])">
+            	<!-- 다운로드 버튼 -->
+            	download
+            </div>
+            <br><br>
+            <div id="list">
+            	&nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="hr"></div><br>
+            <span id="image" th:each="file : ${board.fileboardVO}">
+            	<span>파일 : </span>
+    			<img style="float: left;" th:src="@{'/img/fileicon/' + ${#strings.substring(file.url, file.url.lastIndexOf('.') + 1)} + '.gif'}" alt="" width="30" height="30"/>
+    			<span th:text="${file.url}"></span>
+			</span>
+            <div style="display: flex;justify-content: space-between; float:right;">
+
                <div style="display: flex; align-items: center;">
 					<th:block th:if="${session.user ==null}">
 	               		<input type="hidden" id="heartCk" value="1">
@@ -71,25 +104,27 @@
 
 				</div>            
             </div>
+	       <hr/>
          </article>
          
         
       </div>
       
-       <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
+       <div style="width: 100%;  margin: 20px 0;">
 	       <article style="width: 740px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
 				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
 					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
 					<input type="hidden" th:value="${board.idx}" name="boardidx">
-					<textarea id="comment" placeholder="Write a comments..." name="reply"></textarea>
+					<textarea id="comment" placeholder="댓글을 작성해주세요" name="reply"></textarea>
 					<div id="submitBtn">
-						<input type="submit" class="styled-button" value="Click me"/>	           
+						<input type="submit" class="styled-button" value="등록"/>	           
 					</div>
 				</form>
 				<div>
 					<ul id="commentList">
+					
 					</ul>
 					<div id="page" style="display:flex; align-items: center; justify-content: center;"></div>
 					<section>
@@ -99,10 +134,10 @@
 				</div>
 	       </article>
       </div>
-      	<th:block th:if="${session.user !=null && session.user.idx == board.ref}">
+      	<th:block th:if="${session.user != null && session.user.idx == board.ref}">
       		<input type="hidden" id="deleteCk" value="0">
 				<div style="text-align: right; ">
-					<th:block th:if="${board.deleted} == 0">
+    				<th:block th:if="${board.deleted} == 0">
 						<!-- 게시글 삭제 버튼 -->
 	   					<button id="hideButton">게시글 숨기기</button>
 					</th:block>
@@ -120,5 +155,23 @@
 		</th:block>
 		
    </main>
+<script>
+        // 클릭 이벤트 핸들러 설정
+        document.getElementById('list').addEventListener('click', function() {
+            // 클릭 시 이동할 페이지의 URL 설정
+            var destination = 'http://localhost/fileboard';
+            
+            // 페이지 이동
+            window.location.href = destination;
+        });
+        
+        function fileDown(ofile, sfile){
+            location.href='/fileboard/download?of=' + encodeURI(ofile) +'&sf=' + encodeURI(sfile);
+        }       
+        function filecontents(){
+        	location.href='/fileboard/'
+        }
+        
+</script>
 </body>
 </html>

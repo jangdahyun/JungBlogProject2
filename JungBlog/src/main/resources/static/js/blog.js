@@ -134,7 +134,7 @@ $(function() {
 			let data = res.data;
 			if(data==1){
 				alert('게시글이 성공적으로 숨김되었습니다.');
-				window.location.href="/";				
+				window.location.href="/blog";				
 			} else {
             	alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
 			}
@@ -157,7 +157,7 @@ $(function() {
 			let data = res.data;
 			if(data==1){
 				alert('게시글이 성공적으로 삭제되었습니다.');
-				window.location.href="/";				
+				window.location.href="/blog";				
 			} else {
             	alert('게시글 삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
 			}
@@ -180,7 +180,7 @@ $(document).ready(function() {
         var editContent = $("#editContent").val();
 
         // 수정할 게시글 정보를 수정 폼으로 전송
-        window.location.href = "/gallery/update/" + boardIdx;
+        window.location.href = "/blog/update/" + boardIdx;
     });
 });
 

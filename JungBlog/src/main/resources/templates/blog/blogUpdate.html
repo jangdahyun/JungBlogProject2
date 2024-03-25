@@ -1,35 +1,97 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-	<!-- 폰트 -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
-	<!-- jQuery.js -->
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<!-- moment.js -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-	<!-- axios.js -->
-	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<meta charset="UTF-8" />
+	<title>Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- ckeditor -->
+	<script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+	<!-- jquery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<!-- UIkit CSS -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
-    <!-- UIkit JS -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
-	<title>게시글 보기</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+	<!-- UIkit JS -->
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	
+	<style type="text/css">
+	body{ background: #302F2B; height: 100%}
+	#jjj{
+		margin: auto;
+		width: 760px;
+	}
+	
+	</style>
 </head>
 <body>
-	<h2>수정페이지임!</h2>
-	<hr />
-	[[${board}]]
-	<hr />
-	수정 버튼
-	<hr />
-	삭제버튼
+	
+	<header>
+		
+	</header>
+	<div id="jjj">
+		<form action="/blog/updateOk" method="post" enctype="multipart/form-data" id="insertForm">
+			<input type="hidden" name="idx" th:value="${board.idx}">
+			<input type="hidden" name="ref" th:value="${board.ref}">
+			<input type="hidden" name="categoryNum" value="1">
+			<input type="text" class="uk-input" name="title" id="title" th:value="${board.title}" required="required" size="100"/>
+			<textarea id="content" name="content" th:class="form-control" rows="10" required="required">[[${board.content}]]</textarea>
+			<input type="submit" id="submitBtn" value="글수정하기" class="btn btn-sm btn-outline-danger"/>
+			<input type="button" id="homeBtn" value="Home으로" class="btn btn-sm btn-outline-danger"/>
+		</form>
+	</div>
+	
+	<script type="text/javascript">
+		$(function(){
+			// 되돌아가기 버튼
+			$("#homeBtn").click(function(){
+				location.href="/blog";
+			});
+			
+			// ckeditor 꾸미기
+			CKEDITOR.plugins.addExternal('autogrow', 'http://localhost/js/', 'plugin.js');
+			CKEDITOR.replace('content',{
+				filebrowserUploadUrl: 'fileupload',
+				extraPlugins: 'autogrow',
+				autoGrow_minHeight: 200,
+	            autoGrow_maxHeight: 2000,
+	            autoGrow_bottomSpace: 50,
+	          	width : 760,
+	          	uiColor : '#F9BBE6',
+	          	fontSize_defaultLabel : '16px',
+			});
+			
+			CKEDITOR.on('instanceReady', function(e) {
+			    e.editor.document.getBody().setStyle('background-color', '#292820');
+			    e.editor.document.getBody().setStyle('color', 'white');
+			    e.editor.document.getBody().setStyle('font-size', '16px');
+			    e.editor.document.getBody().setStyle('padding', '10px 10px');
+			    e.editor.document.getBody().setStyle('margin', '0px');
+			    e.editor.on('contentDom', function() {
+			        e.editor.document.getBody().setStyle('background-color', '#292820');
+			    });
+			});
+			
+			// 폼체크
+			$("#insertForm").submit(function () {
+				let value = $("#title").val();
+				if(value.trim().length == 0) {
+					alert("제목을 입력해주세요.");
+					$("#title").val("")
+					$("#title").focus()
+					return false;
+				}
+				
+				let content = CKEDITOR.instances.content.getData();
+				if(content.trim().length == 0){
+					alert("내용을 입력해주세요.");
+					CKEDITOR.instances.content.focus();
+					return false;
+				}
+				return true;
+			})
+			
+		});
+	</script>
 </body>
 </html>

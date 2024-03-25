@@ -147,6 +147,7 @@ public class GalleryController {
 		}	
 		// 찾은 정보를 heart로 담아서 보냄
 		model.addAttribute("board",boardVO);
+		log.debug("삭제{}",boardVO);
 		return "gallery/mygalleryblog"; // 임시값 blog.html
 	}
 	

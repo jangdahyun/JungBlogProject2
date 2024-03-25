@@ -1,0 +1,100 @@
+@charset 'UTF-8';
+
+*{margin: 0; padding: 0; box-sizing: border-box;}
+a{text-decoration: none; color: inherit;}
+
+#deleteButton, #hideButton,#showButton{
+    background-color: #304331; /* 어두운 색상으로 변경 */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+/* 수정 버튼 스타일 */
+#updateBtn {
+    background-color: #465155; /* 어두운 색상으로 변경 */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+
+body {color: #333;background: #302F2B;font-family: "Noto Sans KR", sans-serif;}
+main{color: #fff}
+
+#title h1{
+	margin: 20px 0;
+	color: inherit;
+}
+textarea {
+	width: 740px; height: 150px; resize: none; overflow: auto;
+	background-color: #292820; /* 원하는 배경 색상으로 조절 */
+  	color: white; /* 글씨 색상을 흰색으로 조절 */
+  	font-family: "Noto Sans KR", sans-serif;
+  	padding: 20px 20px;
+  
+}
+.hr{
+	width: 100%; height: 1px; background: #525040; border-radius: 50%; margin: 12px 0;
+}
+#submitBtn{text-align: right;}
+
+
+/* 버튼 스타일링을 위한 CSS */
+.styled-button {
+	padding: 10px 20px;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	transition: background-color 0.3s ease;
+	background-color: #595746;
+}
+
+.icon{
+	margin-left: 3px;
+	width: 20px; height: 20px;
+}
+#heart, #heart2{
+    /*색 보충*/
+    fill: #fff;
+	cursor: pointer;
+    /*stroke속성은 선, 문자, 원소등의 테두리에대해서 디자인 가능*/
+    stroke: var(--c);
+    /*선의 넓이*/
+    stroke-width: 40px;
+    /*선을 점선으로 설정, 점선의 길이 설정*/
+    stroke-dasharray: 3000;
+    /*displacement of line*/
+    stroke-dashoffset: 3000;
+    /*끝점은 둥글게*/
+    stroke-linecap: round;
+}
+#heart.active{
+    fill: red;
+}
+
+#commentList li	{padding: 10px 3px; border: 1px solid #333;}
+.nickName {margin-right: 10px;}
+.reply{margin: 0;}
+
+#page span{cursor: pointer;}
+#page span.active {font-weight: 500; color: #fff;}

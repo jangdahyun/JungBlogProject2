@@ -13,29 +13,64 @@
 </head>
 <style>
   body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }	
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
 .container {
-            margin-top: 50px;
-            width: 600px;
-            border: 1px solid #ced4da; /* 얇은 테두리 적용 */
-            border-radius: 20px;
-            padding: 20px;
-        }
+    margin-top: 50px;
+    max-width: 600px;
+    border-radius: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.form-control {
+    border-radius: 10px;
+}
 
+.btn {
+    border-radius: 10px;
+}
 .row {
             margin-bottom: 20px;
         }	
 	#popupBackground{
 		position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 5; display: none;
 		}
-	#popup4{
-		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
-	}
-	#popup4 > div{position: relative; width: 100%; height: 100%;}
+	 #popup4 {
+        position: absolute;
+        top: 20%;
+        left: 40%;
+        width: 350px;
+        height: 320px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: none;
+        z-index: 7;
+    }
+
+    .popup-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: #000;
+        font-size: 24px;
+    }
+
+    .popup-close:hover {
+        color: #888;
+    }
+
+    #popup4 > div {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
 </style>
 <body>
 	<div class="container"

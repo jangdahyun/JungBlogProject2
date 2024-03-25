@@ -26,13 +26,24 @@
 
 </head>
  <style>
+ 		p{
+ 		overflow: hidden;
+  		text-overflow: ellipsis;
+  		white-space: nowrap;
+  		max-width: 150px; /* 최대 너비 설정 */
+ 		}
+ 		#title{
+ 		overflow: hidden;
+  		text-overflow: ellipsis;
+  		white-space: nowrap;
+  		max-width: 150px; /* 최대 너비 설정 */
+ 		}
  		*{padding: 0; margin: 0; box-sizing: border-box;}
         /* 갤러리 스타일 */
         .gallery {
     		display: grid;
     		grid-template-columns: repeat(4, 1fr);
     		grid-auto-rows: minmax(100px, auto); /* 각 행의 높이를 자동으로 조절합니다. */
-   	 	
     		gap: 10px;
     		border: 1px solid #ccc; /* 선 스타일 추가 */
    			padding: 70px; /* 간격 조정 */
@@ -153,7 +164,7 @@
 		                </div>            	
 	            	</div>
 	                <div class="titla-area">
-	                	<div th:text="${board.title}" style="font-weight: bold; font-size: 23px;">title</div>
+	                	<div id="title" th:text="${board.title}" style="font-weight: bold; font-size: 23px;">title</div>
 	                	<div th:text="${board.member.name}">name</div>
 						<div style="font-size: 14px; align-items: center; display: flex;">
 							<span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span>
