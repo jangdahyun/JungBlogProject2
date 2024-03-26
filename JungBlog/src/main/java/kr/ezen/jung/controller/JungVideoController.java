@@ -61,8 +61,7 @@ public class JungVideoController {
 	@Autowired
 	private PopularService popularService;
 	
-	
-	@GetMapping("/videoupload")
+	@RequestMapping(value = {"/videoupload"}, method = {RequestMethod.GET, RequestMethod.POST})
 	public String video(Model model, @ModelAttribute(value = "cv") CommonVO cv) {
 		model.addAttribute("cv", cv);
 		return "video/videoupload";
@@ -70,7 +69,7 @@ public class JungVideoController {
 	
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
 	public String fileboard(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
-		cv.setCategoryNum(5); //갤러리 번호 5번인데 일단 4번으로 함
+		cv.setCategoryNum(6); //갤러리 번호 5번인데 일단 4번으로 함
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		log.info("pv => {}", pv);
 		log.info("cv => {}", cv);
