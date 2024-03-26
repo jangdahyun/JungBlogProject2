@@ -99,7 +99,7 @@
 	       <article style="width: 1500px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
-				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
+				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/videoboard/commentupload">
 					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
 					<input type="hidden" th:value="${board.idx}" name="boardidx">
 					<textarea id="comment" placeholder="댓글을 작성해주세요" name="reply"></textarea>

@@ -156,7 +156,7 @@ public class JungVideoController {
 		popularService.insertPopular(p);
 		jungCommentService.insert(commentVO);
 		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
-		return "redirect:/video/" + boardidx;
+		return "redirect:/videoboard/blog/" + boardidx;
 	}
 	
 	/**
