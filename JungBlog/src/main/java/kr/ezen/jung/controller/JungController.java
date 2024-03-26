@@ -75,11 +75,14 @@ public class JungController {
 		PagingVO<JungBoardVO> pvfileboard = jungBoardService.selectList(cv);
 		cv.setCategoryNum(4);
 		PagingVO<JungBoardVO> pvgallery = jungBoardService.selectList(cv);
+		cv.setCategoryNum(6);
+		PagingVO<JungBoardVO> pvvideo = jungBoardService.selectList(cv);
 		
 		model.addAttribute("pvall", pvall);
 		model.addAttribute("pvblog", pvblog);
 		model.addAttribute("pvfileboard", pvfileboard);
 		model.addAttribute("pvgallery", pvgallery);
+		model.addAttribute("pvvideo", pvvideo);
 		model.addAttribute("cv", cv);
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "index";

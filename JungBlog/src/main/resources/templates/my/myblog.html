@@ -125,6 +125,7 @@
 						<span id="icon" class="material-symbols-outlined" onclick="gotoblog()">book_2</span>
                 		<span id="icon" class="material-symbols-outlined" onclick="file()">folder_open</span>
                 		<span id="icon" class="material-symbols-outlined" onclick="gallery()">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="gotovideo()">videocam</span>
                 		<span id="icon" class="material-symbols-outlined" onclick="news()">news</span>
                 		
 					</div>
@@ -268,6 +269,14 @@
 	        // 현재 창에서 해당 주소로 이동합니다.
 	        window.location.href = address;
 	 }
+	 
+	 function gotovideo() {
+	        // 여기에 이동할 주소를 입력합니다.
+	        var address = "/videoboard";
+	        // 현재 창에서 해당 주소로 이동합니다.
+	        window.location.href = address;
+		}
+	 
 	function news() {
         // 여기에 이동할 주소를 입력합니다.
         var address = "/news";
