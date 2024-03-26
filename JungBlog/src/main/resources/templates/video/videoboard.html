@@ -45,6 +45,7 @@
 <div th:if="${#lists.isEmpty(pv.list)}">
     <p>현재 자료가 없습니다.</p>
 </div>
+</th:block>
 <!-- 검색어 입력란 -->
 <div style="text-align: right;">
     <form action="/" method="get">
@@ -66,12 +67,16 @@
 		                     alt="유튜브 동영상 이미지입니다." th:onclick="viewvideo([[${board.idx}]])" style="cursor: pointer;" id="thumbnail"/>
 		            </div>
 	        	</th:block>
-	        	 <div>
+	        	<th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&')}">
+	        	<div>
 		         	<img th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1)}" 
 		            	 th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
 		                 alt="유튜브 동영상 이미지입니다." th:onclick="viewvideo([[${board.idx}]])" style="cursor: pointer;" id="thumbnail"/>
-		         </div>	          
-	        		                
+		        </div>
+		        </th:block>
+		        <th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&') or #strings.contains(board.videoVO[0].youtube,'=')}">
+		      		<img src="" alt="dasdsa" /> 	
+		        </th:block>         
 	            <div style="display: flex; align-items: center; justify-content: space-between;">
 	                
 	                <div>
