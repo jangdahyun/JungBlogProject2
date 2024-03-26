@@ -41,7 +41,6 @@
 <body>
 
 <div style="text-align: center; color: #AAAAAA; font-size: 30pt;">Youtube영상공유하기</div><br>
-<div>[[${pv.list}]]</div>
 <div th:if="${#lists.isEmpty(pv.list)}">
     <p>현재 자료가 없습니다.</p>
 </div>
@@ -60,38 +59,51 @@
     <div th:if="${not #lists.isEmpty(pv.list)}" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;">
     	<th:block th:each="board : ${pv.list}">
 	        <div class="image-box">
-	        	<th:block th:if="${#strings.contains(board.videoVO[0].youtube,'&')}">
-		            <div>
-		                <img th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1, board.videoVO[0].youtube.indexOf('&'))}" 
-		                     th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
-		                     alt="유튜브 동영상 이미지입니다." th:onclick="viewvideo([[${board.idx}]])" style="cursor: pointer;" id="thumbnail"/>
-		            </div>
+	        	<th:block th:if="${#strings.contains(board.videoVO[0].youtube,'youtube')}">
+		        	<th:block th:if="${#strings.contains(board.videoVO[0].youtube,'&')}">
+			            <div>
+			                <img th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1, board.videoVO[0].youtube.indexOf('&'))}" 
+			                     th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
+			                     alt="유튜브 동영상 이미지입니다.11" th:onclick="viewvideo([[${board.idx}]])" style="cursor: pointer;" id="thumbnail"/>
+			            </div>
+		        	</th:block>
+		        	<th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&')}">
+		        	<div>
+			         	<img th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1)}" 
+			            	 th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
+			                 alt="유튜브 동영상 이미지입니다.22" th:onclick="viewvideo([[${board.idx}]])" style="cursor: pointer;" id="thumbnail"/>
+			        </div>
+			        </th:block>
 	        	</th:block>
-	        	<th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&')}">
-	        	<div>
-		         	<img th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1)}" 
-		            	 th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
-		                 alt="유튜브 동영상 이미지입니다." th:onclick="viewvideo([[${board.idx}]])" style="cursor: pointer;" id="thumbnail"/>
-		        </div>
-		        </th:block>
-		        <th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&') or #strings.contains(board.videoVO[0].youtube,'=')}">
-		      		<img src="" alt="dasdsa" /> 	
-		        </th:block>         
-	            <div style="display: flex; align-items: center; justify-content: space-between;">
-	                
-	                <div>
-	                    <span th:text="${#strings.length(board.title) &gt; 5 ? #strings.substring(board.title, 0, 5) + '...' : board.title}" th:onclick="viewvideo([[${board.idx}]])" style="font-weight: bold; font-size: 16pt; text-align: left;"></span>
+	        	<th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'youtube')}">
+			        <th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&') or #strings.contains(board.videoVO[0].youtube,'=')}">
+			      		 <img th:src="@{'img/novideo.jpg'}" th:onclick="viewvideo([[${board.idx}]])" style="cursor: pointer; width: 320px; height: 180px;" id="thumbnail">
+			        </th:block>         
+		        </th:block>   
+		        <th:block th:if="${#strings.contains(board.videoVO[0].youtube,'youtube')} or ${#strings.contains(board.videoVO[0].youtube,'&') or #strings.contains(board.videoVO[0].youtube,'=')}">
+		            <div style="display: flex; align-items: center; justify-content: space-between;">
+		                
+		                <div>
+		                    <span th:text="${#strings.length(board.title) &gt; 5 ? #strings.substring(board.title, 0, 5) + '...' : board.title}" th:onclick="viewvideo([[${board.idx}]])" style="font-weight: bold; font-size: 16pt; text-align: left;"></span>
+		                </div>
+		                <div>
+	                        <span uk-icon="comments"></span>
+	                        <span>[[${board.commentCount}]]</span>
+	                        <span uk-icon="eye"></span>
+	                        <span>[[${board.readCount}]]</span>
+	                        <span uk-icon="heart"></span>
+	                        <span>[[${board.countHeart}]]</span>
+		                </div>
+		            </div>
+	                <p>[(${#strings.length(board.content) &gt; 10 ? #strings.substring(board.content, 0, 10) + '...' : board.content})]</p>
+	                <div style="font-size: 10pt; color: #AAAAAA">
+	                	<span>작성자</span>
+	                	<span>[[${board.member.nickName}]]</span>
 	                </div>
-	                <div>
-                        <span uk-icon="comments"></span>
-                        <span>[[${board.commentCount}]]</span>
-                        <span uk-icon="eye"></span>
-                        <span>[[${board.readCount}]]</span>
-                        <span uk-icon="heart"></span>
-                        <span>[[${board.countHeart}]]</span>
-	                </div>
-	            </div>
-                <p>[(${#strings.length(board.content) &gt; 10 ? #strings.substring(board.content, 0, 10) + '...' : board.content})]</p>
+        		</th:block>
+        		<th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'youtube')} or ${#strings.contains(board.videoVO[0].youtube,'&') or #strings.contains(board.videoVO[0].youtube,'=')}">
+        			<br><br><span>잘못된 유튜브 주소를 올리셨습니다!</span>
+        		</th:block>
 	        </div>
     	</th:block>
     </div>
