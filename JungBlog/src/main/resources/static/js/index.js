@@ -19,6 +19,9 @@ function viewgallery(idx) {
 function viewfile(idx) {
    location.href = "/fileboard/blog/" + idx;
 }
+function viewvideo(idx) {
+   location.href = "/videoboard/blog/" + idx;
+}
 
 
 //back 눌렀을때 리로드하는 함수

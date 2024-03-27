@@ -32,6 +32,7 @@ public class SecurityConfig {
 					.requestMatchers("/new").permitAll()
 					.requestMatchers("/notice/**").permitAll()
 					.requestMatchers("/fileboard","/fileboard/blog/**").permitAll()
+					.requestMatchers("/videoboard","/videoboard/blog/**").permitAll()
 					// 회원가입 폼과 회원가입 완료는 누구나 접근 가능 
 					.requestMatchers("/member/**").permitAll()
 					.requestMatchers("/member/mypage").hasRole("USER")

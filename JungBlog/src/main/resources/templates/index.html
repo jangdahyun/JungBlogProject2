@@ -172,40 +172,40 @@ li {
 						<div th:each="vo, iterStat : ${pvall.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
 							<th:block th:if="${vo.categoryNum} == 1 ">
 								<div id="smallboard" th:onclick="viewblog([[${vo.idx}]])">
-									<div>
-										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 170px;">
+									<div style="">
+										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 160px;">
 									</div>
 									<span
 										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
 									<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
 									<div id="smallboardtext">
-										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+										<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
 									</div>
 								</div>
 							</th:block>
 							<th:block th:if="${vo.categoryNum} == 2 ">
 								<div id="smallboard" th:onclick="viewfile([[${vo.idx}]])">
 									<div>
-										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 170px;">
+										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 160px;">
 									</div>
 									<span
 										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
 									<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
 									<div id="smallboardtext">
-										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+										<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
 									</div>
 								</div>
 							</th:block>
 							<th:block th:if="${vo.categoryNum} == 4 ">
 								<div id="smallboard" th:onclick="viewgallery([[${vo.idx}]])">
 									<div>
-										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 170px;">
+										<img th:src="'/img/mainpageImg/allboard' + ${vo.categoryNum} + '.jpg'" style="border-radius: 5px; width: 100%; height: 160px;;">
 									</div>
 									<span
 										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
 									<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
 									<div id="smallboardtext">
-										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+										<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
 									</div>
 								</div>
 							</th:block>
@@ -261,7 +261,7 @@ li {
 								<span th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}" style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
 								<span th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}" style="text-align: left;"></span><br>
 								<div id="smallboardtext">
-									<span>작성자</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+									<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
 								</div>
 							</div>
 						</div>
@@ -313,7 +313,7 @@ li {
 									th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}"
 									style="text-align: center;"></span><br>
 								<div id="smallboardtext">
-									<span>작성자</span><br> <span>조회수 [[${vo.readCount}]]
+									<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]]
 										|</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span
 										th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
 								</div>
@@ -376,7 +376,7 @@ li {
 										th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}"
 										style="text-align: left;"></span><br>
 									<div id="smallboardtext">
-										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]]
+										<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]]
 											|</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span
 											th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
 									</div>
@@ -424,35 +424,55 @@ li {
 					<div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;">
 						<div th:each="vo, iterStat : ${pvvideo.list}" style="width: calc(33.33% - 10px); height: 150px; cursor: pointer;" th:if="${iterStat.count &lt;= 3}">
 							<div id="smallboard" th:onclick="viewvideo([[${vo.idx}]])">
-								<div th:each="file : ${vo.fileboardVO}">
-									<th:block th:if="${#strings.contains(board.videoVO[0].youtube,'&')}">
+								<div th:each="video : ${vo.videoVO}">
+								<th:block th:if="${#strings.contains(vo.videoVO[0].youtube,'youtube')}">
+									<th:block th:if="${#strings.contains(vo.videoVO[0].youtube,'&')}">
 										<div>
 											<img th:with="key=${#strings.substring(vo.videoVO[0].youtube, vo.videoVO[0].youtube.indexOf('=') + 1, vo.videoVO[0].youtube.indexOf('&'))}" 
 							                     th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
 							                     alt="유튜브 동영상 이미지입니다." style="border-radius: 5px"/>
 										</div>
-									</th:block>
-									<th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&')}">
-							        	<div>
-								         	<img th:with="key=${#strings.substring(vo.videoVO[0].youtube, vo.videoVO[0].youtube.indexOf('=') + 1)}" 
-								            	 th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
-								                 alt="유튜브 동영상 이미지입니다." style="border-radius: 5px"/>
-								        </div>
-								        </th:block>
-							        <th:block th:unless="${#strings.contains(vo.videoVO[0].youtube,'&') or #strings.contains(vo.videoVO[0].youtube,'=')}">
-							      		<img src="" alt="dasdsa" /> 	
-							        </th:block>         
-									<span
+										<span
 										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}"
 										style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
-									<span
-										th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}"
-										style="text-align: left;"></span><br>
-									<div id="smallboardtext">
-										<span>작성자</span><br> <span>조회수 [[${vo.readCount}]]
-											|</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span
-											th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
-									</div>
+										<span
+											th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}"
+											style="text-align: left;"></span><br>
+										<div id="smallboardtext">
+											<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]]
+												|</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span
+												th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+										</div>
+									</th:block>
+									<th:block th:unless="${#strings.contains(vo.videoVO[0].youtube,'&')}">
+										<div>
+									         <img th:with="key=${#strings.substring(vo.videoVO[0].youtube, vo.videoVO[0].youtube.indexOf('=') + 1)}" 
+									              th:src="@{'https://img.youtube.com/vi/' + ${key} + '/mqdefault.jpg'}" 
+									              alt="유튜브 동영상 이미지입니다." style="border-radius: 5px; width: 700px; height: 115px;"/>
+								        </div>
+								        <span
+										th:text="${#strings.length(vo.title) > 5 ? #strings.substring(vo.title, 0, 5) + '...' : vo.title}"
+										style="font-weight: bold; font-size: 16pt; text-align: left;"></span><br>
+										<span
+											th:utext="${#strings.length(vo.content) &gt; 10 ? #strings.substring(vo.content, 0, 10) + '...' : vo.content}"
+											style="text-align: left;"></span><br>
+										<div id="smallboardtext">
+											<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]]
+												|</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span
+												th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+										</div>
+								    </th:block>
+							    </th:block>
+								<th:block th:unless="${#strings.contains(vo.videoVO[0].youtube,'youtube')}">
+							        <th:block th:unless="${#strings.contains(vo.videoVO[0].youtube,'&') or #strings.contains(vo.videoVO[0].youtube,'=')}">
+							      		<img th:src="@{'img/novideo.jpg'}" th:onclick="viewvideo([[${vo.idx}]])" style="cursor: pointer; width: 320px; height: 115px; border-radius: 5px;">
+							      		<span style="font-weight: bold; font-size: 13pt; text-align: left;">잘못된 유튜브 주소입니다</span><br><br />
+										<div id="smallboardtext" style="padding-top: 40px;">
+											<span>[[${vo.member.nickName}]]</span><br> <span>조회수 [[${vo.readCount}]] |</span> <span>좋아요 [[${vo.countHeart}]] |</span> <span th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></span>
+										</div>
+							        </th:block>         
+						        </th:block>
+									
 								</div>
 							</div>
 						</div>

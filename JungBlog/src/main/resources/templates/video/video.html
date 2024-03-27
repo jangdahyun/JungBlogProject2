@@ -25,13 +25,18 @@
 </head>
 <link rel="stylesheet" href="/css/video.css">
 <script src="/js/video.js"></script>
+<link rel="stylesheet" href="/css/mainHeader.css">
+<script src="/js/mainHeader.js"></script>
 
 <body>
+
+<th:block th:insert="~{/mainHeader.html}"></th:block>
+
 <input type="hidden"  th:value="${board.idx}" id="boardIdx"/>
 <input type="hidden"  th:value="${board.title}" id="editTitle"/>
 <input type="hidden"  th:value="${board.content}" id="editContent"/>
 <div style="text-align: center;">
-<table style="text-align: left; margin: auto;">
+<table style="text-align: left; margin: auto; padding-top: 80px;">
 	<colgroup>
 				<col width="75px" /> 
 				<col width="75px" />
@@ -81,13 +86,32 @@
 	<tr>
 		<td  colspan="10">
 			<div class="boardviewbody" style="text-align:left">
-                <iframe th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1, board.videoVO[0].youtube.indexOf('&'))}" 
-                        width="1000" height="720" 
-                        th:src="@{'https://www.youtube.com/embed/' + ${key}}" 
-                        title="YouTube video player" frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                </iframe>
+				<th:block th:if="${#strings.contains(board.videoVO[0].youtube,'youtube')} and ${#strings.contains(board.videoVO[0].youtube,'&')}">
+	                <iframe th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1, board.videoVO[0].youtube.indexOf('&'))}" 
+	                        width="1000" height="720" 
+	                        th:src="@{'https://www.youtube.com/embed/' + ${key}}" 
+	                        title="YouTube video player" frameborder="0" 
+	                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+	                        allowfullscreen>
+	                </iframe>
+	            </th:block>
+				<th:block th:if="${#strings.contains(board.videoVO[0].youtube,'youtube')} ">
+					<th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&')}">
+		                <iframe th:with="key=${#strings.substring(board.videoVO[0].youtube, board.videoVO[0].youtube.indexOf('=') + 1)}" 
+		                        width="1000" height="720" 
+		                        th:src="@{'https://www.youtube.com/embed/' + ${key}}" 
+		                        title="YouTube video player" frameborder="0" 
+		                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+		                        allowfullscreen>
+		                </iframe>
+					</th:block>
+	            </th:block>
+	            <th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'youtube')}">
+	                <th:block th:unless="${#strings.contains(board.videoVO[0].youtube,'&') or #strings.contains(board.videoVO[0].youtube,'=')}">
+	                	<img src="/img/novideo.jpg" alt="" />
+	                	<div>잘못된 주소입니다</div>
+	                </th:block>         
+              	</th:block>   
             </div><br>
 		</td>
 	</tr>

@@ -141,7 +141,7 @@ public class BlogController {
 	@PostMapping("/upload")
 	public String blogUpload(HttpSession session, @ModelAttribute(value = "cv") CommonVO cv,Model model) {
 		if(session.getAttribute("user") == null) { // 로그인 하지 않았으면
-			return "redirect:/blog";
+			return "redirect:/member/login";
 		}
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "blog/blogUpload";
