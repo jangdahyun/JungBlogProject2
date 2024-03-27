@@ -70,10 +70,10 @@ public class JungVideoController {
 	@RequestMapping(value = {"","/"}, method = { RequestMethod.GET, RequestMethod.POST })
 	public String fileboard(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
 		cv.setCategoryNum(6); //갤러리 번호 5번인데 일단 4번으로 함
+		cv.setS(12);
 		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
 		log.info("pv => {}", pv);
 		log.info("cv => {}", cv);
-		
 		model.addAttribute("pv", pv);
 		model.addAttribute("cv", cv);
 		
@@ -125,7 +125,9 @@ public class JungVideoController {
 				oldCookie.setMaxAge(60);
 				PopularVO p = new PopularVO();
 				p.setBoardRef(idx);
-				p.setUserRef(memberVO.getIdx());
+				if(request.getSession().getAttribute("user")!=null) {
+					p.setUserRef(memberVO.getIdx());					
+				}
 				p.setInteraction(1);
 				popularService.insertPopular(p);
 				log.info("무야:{}", p);
