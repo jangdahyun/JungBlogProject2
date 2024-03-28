@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd" >
+<mapper namespace="kr.ezen.jung.dao.JungQnABoardDAO">
+	<!-- QnA 만 따로 조회하기 위한 DAO -->
+	
+	
+	<!-- QnA 페이징 해서 보기! -->
+	<select id="selectQnAList" parameterType="hashmap" resultType="JungBoardVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						select
+							jung_board.*
+							, (
+								SELECT
+									COUNT(*)
+								FROM
+									heart_tb 
+								WHERE
+									heart_tb.boardRef = jung_board.idx
+							) AS countHeart
+							, (
+								SELECT
+									COUNT(*)
+								FROM
+									jung_comment
+								WHERE
+									jung_comment.boardRef = jung_board.idx
+							) AS commentCount
+						from
+							jung_board
+						where
+							categoryNum = 5
+							<if test="userRef != null">
+								AND
+								ref = #{userRef}
+							</if>							
+							<if test="search != null">
+								and (
+									title like '%' || #{search} || '%'
+									or content like '%' || #{search} || '%'
+								)
+							</if>
+							<choose>
+					            <when test="commentSize != null and commentSize == 0">
+					                and (
+					                    select
+					                    	count(*)
+					                    from
+					                    	jung_comment
+					                    where
+					                    	jung_comment.boardRef = jung_board.idx
+					                ) = 0
+					            </when>
+					            <when test="commentSize != null and commentSize == 1">
+					                and (
+					                    select
+					                    	count(*)
+					                    from
+					                    	jung_comment
+					                    where
+					                    	jung_comment.boardRef = jung_board.idx
+					                ) = 1
+					            </when>
+					        </choose>
+						order by
+							jung_board.idx DESC
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]> 
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
+	</select>
+	
+	<select id="selectQnACount" parameterType="hashmap" resultType="int">
+		select
+			count(*)
+		from
+			jung_board
+		where
+			categoryNum = 5
+			<if test="userRef != null">
+				AND
+				ref = #{userRef}
+			</if>	
+			<if test="search != null">
+				and (
+					title like '%' || #{search} || '%'
+					or content like '%' || #{search} || '%'
+				)
+			</if>
+			<choose>
+	            <when test="commentSize != null and commentSize == 0">
+	                and (
+	                    select
+	                    	count(*)
+	                    from
+	                    	jung_comment
+	                    where
+	                    	jung_comment.boardRef = jung_board.idx
+	                ) = 0
+	            </when>
+	            <when test="commentSize != null and commentSize == 1">
+	                and (
+	                    select
+	                    	count(*)
+	                    from
+	                    	jung_comment
+	                    where
+	                    	jung_comment.boardRef = jung_board.idx
+	                ) = 1
+	            </when>
+	        </choose>
+	</select>
+</mapper>

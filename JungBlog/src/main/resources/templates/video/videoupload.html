@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- include libraries(jQuery, bootstrap) -->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	
+	<!-- include summernote css/js -->
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+	<!-- UIkit CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+	<script src="uikit/dist/js/uikit-icons.min.js"></script>
+	<!-- 언어 -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ko-KR.min.js"></script>
+	
+	<link rel="stylesheet" href="/css/mainHeader2.css">
+	<script src="/js/mainHeader.js"></script>
+	
+	<script type="text/javascript">
+		window.onload = function(){
+			$('#summernote').summernote({
+				lang : "ko-KR",
+			    placeholder: '내용을 입력하세요',
+			    tabsize: 2,
+			    height: 250,
+			    toolbar: [
+				    	['fontname', ['fontname']],
+					    ['fontsize', ['fontsize']],
+					    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+					    ['color', ['forecolor','color']],
+					    ['table', ['table']],
+					    ['para', ['ul', 'ol', 'paragraph']],
+					    ['height', ['height']],
+					    ['insert',['picture','link','video']],
+					    ['view', ['fullscreen', 'help']]
+			        ],
+			        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+					fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
+				focus : true,
+				// 이미지가 1MB를 넘을경우 수동으로 업로드를 처리하고 실행될 코드를 지정해준다.
+				callbacks : {
+					 onInit: function() {
+			                // 초기화 시 내용이 비어있도록 설정
+			                $('#summernote').summernote('code', '');
+		            },
+					onImageUpload : function(files, editor, welEditable) {
+						for (var i = files.length - 1; i >= 0; i--) {
+							sendFile(files[i], this);
+						}
+					}
+				}
+			});
+			// 폼체크
+			$("#insertForm").submit(function () {
+				let value = $("#title").val();
+				if(value.trim().length == 0) {
+					alert("제목을 입력해주세요.");
+					$("#title").val("")
+					$("#title").focus()
+					return false;
+				}
+				
+				let content = $('#summernote').summernote('code');
+				console.log(content);
+				if(content.trim().length == 0){
+					alert("내용을 입력해주세요.");
+					return false;
+				}
+				return true;
+			})
+		}
+		// 실제 업로드되는 서버의 파일을 Ajax로 호출해 줘야한다.
+		function sendFile(file, el) {
+			// 폼 작성
+			var form_data = new FormData();
+	      	form_data.append('upload', file);
+	      	// Ajax 호출
+	      	$.ajax({
+	        	data: form_data,
+	        	type: "POST",
+	        	url: '/fileupload',
+	        	cache: false,
+	        	contentType: false,
+	        	enctype: 'multipart/form-data',
+	        	processData: false,
+	        	success: function(img_name) { // 성공
+	          		$(el).summernote('editor.insertImage', img_name.url);
+	        	}
+	      	});
+	    }
+	</script>
+	
+</head>
+<style>
+body {color: #333;font-family: "Noto Sans KR", sans-serif;}
+#jjj {
+	margin: auto;
+	max-width: 1000px;
+	background: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#writingheader {
+	color: #AAAAAA;
+	font-size: 25pt;
+	font-weight: bold;
+	text-align: center;
+}
+#left {
+	color: #AAAAAA;
+	background-color: #EEEEEE;
+	text-align: center;
+	font-size: 18pt;
+	font-weight: bold;
+	border-bottom: 1px solid #AAAAAA;
+	border-right: 1px solid #AAAAAA;
+}
+#right {
+	width: 100%;
+	border-bottom: 1px solid #AAAAAA;
+}
+input[type="text"] {
+    width: 97%;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+hr { 
+       width: 100%; /* 너비를 50%로 지정 */
+       border: none;
+       border-top: 3px dotted #999; /* 점선 스타일, 색상은 여러분이 원하는 색으로 변경할 수 있습니다. */
+       margin: 0px 0; /* 수평선 위 아래 여백 조정 */
+       
+}
+#submitBtn {
+	border: 1px solid black;
+	padding: 10px 20px;
+	border-radius: 20px;
+	color: black;
+	background-color: white;
+	cursor: pointer;
+    text-align: center;
+}
+#listBtn {
+	border: 1px solid black;
+	padding: 10px 20px;
+	border-radius: 20px;
+	color: black;
+	background-color: white;
+	cursor: pointer;
+    text-align: center;
+}
+#submitBtn:hover {
+    background-color: black; 
+    color: white; 
+    border-color: black; 
+}
+#listBtn:hover {
+    background-color: black; 
+    color: white; 
+    border-color: black; 
+}
+</style>
+<body>
+	<input type="hidden" name="p" id="p" th:value="${cv.currentPage}" />
+	<input type="hidden" name="s" id="s" th:value="${cv.sizeOfPage}" />
+	<input type="hidden" name="b" id="b" th:value="${cv.sizeOfBlock}" />
+	<input type="hidden" name="search" id="search" th:value="${cv.search}" />
+	
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<div id="jjj" style="padding: 80px 20px;">
+		<div id="writingheader">
+			<b>Youtube UPLOAD</b>
+		</div>
+		<hr>
+		<form action="videouploadOk" method="post" enctype="multipart/form-data" id="insertForm">
+		<input type="hidden" name="categoryNum" id="category" th:value="6" />
+			<table>
+				<colgroup>
+				    <col style="width:15%;">
+				    <col style="width:85%;">
+				</colgroup>
+				<tr>
+					<td id="left" style="line-height: 3;">제목</td>
+					<td id="right"><input type="text" cl name="title" id="title" placeholder="글 제목을 입력해주세요" required="required"></td>
+				</tr>
+				<tr>
+					<td id="left">유튜브 주소</td>
+					<td id="right"><input type="text" name="youtube"  placeholder="유튜브주소를 정확히 입력해주세요" required="required"><br>
+					<span>&nbsp;&nbsp;<span style="color:red;">*</span>유튜브주소를 정확히 입력해야 Player 및 썸네일 이미지가 정상적으로 출력이 됩니다.</span>
+					</td>
+				</tr>
+				<tr>
+					<td id="left">영상 소개</td>
+					<td id="right">
+						<textarea id="summernote" name="content"></textarea>
+					</td>
+				</tr>
+			</table><br>
+		
+			
+	        <div style="text-align: center;">
+				<input type="submit" id="submitBtn" value="UPLOADING"/>
+	        </div>
+			<div style="text-align: right;">
+				<input type="button" id="listBtn" onclick="window.location.href='/videoboard'" value="List"  >
+			</div>	
+		</form>
+	</div>
+
+</body>
+</html>

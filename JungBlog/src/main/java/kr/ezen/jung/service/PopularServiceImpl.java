@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
+import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.PagingVO;
 import kr.ezen.jung.vo.PopularVO;
 
@@ -52,7 +53,10 @@ public class PopularServiceImpl implements PopularService{
 			List<PopularVO> popularList = popularDAO.getUserTrendAnalysis(map);
 			for(PopularVO p : popularList) {
 				p.setMember(jungMemberService.selectByIdx(p.getUserRef()));
-				p.setBoard(jungBoardService.selectByIdx(p.getBoardRef()));
+				JungBoardVO boardVO = jungBoardService.selectByIdx(p.getBoardRef());
+				if(boardVO != null) {
+					p.setBoard(boardVO);					
+				}
 			}
 			pv.setList(popularList);
 		} catch (SQLException e) {

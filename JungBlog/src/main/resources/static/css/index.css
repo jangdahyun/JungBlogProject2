@@ -44,3 +44,21 @@ div.menuBar > a:hover{
 tbody tr:hover {
 	background: #F9BBE6 !important;
 }
+#smallboard {
+	border: 1px transparent;
+	text-align: left;
+}
+#smallboard:hover{
+	border: 1px solid transparent;
+	background-color: rgb(211, 211, 211);
+}
+#smallboardtext {
+	font-size: 8pt;
+	color: grey;
+	text-align: left;
+}
+#wirteBtn {
+	text-align: right;
+	border: 1px transparent;
+	
+}

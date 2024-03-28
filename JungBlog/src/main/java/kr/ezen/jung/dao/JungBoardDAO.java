@@ -19,6 +19,7 @@ public interface JungBoardDAO {
 	void hide(int idx) throws SQLException;
 	void show(int idx) throws SQLException;
 	void delete(int idx) throws SQLException;
+	void deleteByUserRef(int ref) throws SQLException;
 	
 	
 	// 관리자용 및 마이페이지용

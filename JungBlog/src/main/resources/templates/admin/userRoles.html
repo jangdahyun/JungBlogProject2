@@ -37,13 +37,6 @@
 	        <div id="right-area">
 	        	<h3>회원권한수정</h3>
 	        	<div style="display: flex; justify-content: end; align-items: center;">
-        			<label for="" style="margin-right:10px;">정렬기준</label>
-	        		<div class="uk-inline" style="margin-right:40px;">
-	        			<select id="sort" class="uk-select">
-	        				<option value="">최신순</option>
-	        				<option value="">이름순</option>
-	        			</select>
-	        		</div>
 					<label style="margin-right:10px;">검색</label>
 					<form action="" method="get">
 						<div class="uk-inline">
@@ -58,6 +51,7 @@
 				        <tr>
 				            <th>No</th>
 				            <th>아이디</th>
+				            <th>이메일</th>
 				            <th>이름</th>
 				            <th>닉네임</th>
 				            <th>주소</th>
@@ -76,6 +70,7 @@
 				    	<tr th:each="user : ${pv.list}">
 				    		<td class="idx">[[${user.idx}]]</td>
 				    		<td>[[${user.username}]]</td>
+				    		<td>[[${user.email}]]</td>
 				    		<td>[[${user.name}]]</td>
 				    		<td>[[${user.nickName}]]</td>
 				    		<td>[[${user.stAddress}]] , [[${user.dtAddress}]]</td>

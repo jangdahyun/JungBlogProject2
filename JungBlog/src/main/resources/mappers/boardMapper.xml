@@ -24,9 +24,12 @@
 						from
 							jung_board
 						<where>						
-							<if test="1 == 1">
+							<if test="deleted == null">
 								deleted = 0
 							</if>
+							<if test="userRef != null">
+                				and ref = #{userRef}
+            				</if>	
 							<if test="search != null">
 								and (
 									title like '%' || #{search} || '%'
@@ -35,6 +38,11 @@
 							</if>
 							<if test="categoryNum != null ">
 								and categoryNum = #{categoryNum}
+							</if>
+							<if test="categoryNum == null ">
+								and (
+									categoryNum = 1 OR categoryNum = 2 OR categoryNum = 4 OR categoryNum = 6
+								)
 							</if>
 						</where>
 						order by
@@ -72,9 +80,12 @@
 		from
 			jung_board
 		<where>						
-			<if test="1 == 1">
+			<if test="deleted == null">
 				deleted = 0
 			</if>
+			<if test="userRef != null">
+        		and ref = #{userRef}
+    		</if>	
 			<if test="search != null">
 				and (
 					title like '%' || #{search} || '%'
@@ -83,6 +94,11 @@
 			</if>
 			<if test="categoryNum != null ">
 				and categoryNum = #{categoryNum}
+			</if>
+			<if test="categoryNum == null ">
+				<![CDATA[
+					and categoryNum <> 3 AND  categoryNum <> 5
+				]]>
 			</if>
 		</where>
 	</select>
@@ -114,6 +130,10 @@
 		delete from jung_board where idx = #{idx}
 	</delete>
 	
+	<!-- userRef로 삭제 -->
+	<delete id="deleteByUserRef" parameterType="int">
+		delete from jung_board where ref = #{ref}
+	</delete>
 	
 	<!-- 관리자용 및 마이페이지용-->
 	<select id="selectCountByUserIdx" parameterType="int" resultType="int">

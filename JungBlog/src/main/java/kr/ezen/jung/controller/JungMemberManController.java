@@ -1,5 +1,6 @@
 package kr.ezen.jung.controller;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,26 +8,36 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
+import kr.ezen.jung.service.JungCommentService;
+import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
 import kr.ezen.jung.service.MailService;
 import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.service.VisitService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.JungBoardVO;
+import kr.ezen.jung.vo.JungCommentVO;
+import kr.ezen.jung.vo.JungFileBoardVO;
 import kr.ezen.jung.vo.JungMemberVO;
 import kr.ezen.jung.vo.PagingVO;
 import kr.ezen.jung.vo.PopularVO;
@@ -48,6 +59,10 @@ public class JungMemberManController {
 	private VisitService visitService;
 	@Autowired
 	private PopularService popularService;
+	@Autowired
+	private JungFileBoardService jungFileBoardService;
+	@Autowired
+	private JungCommentService jungCommentService;
 	
 	
 	//=========================================================================================================================================
@@ -151,7 +166,7 @@ public class JungMemberManController {
 	    
 	    Map<String, Object> map = new HashMap<>();
 	    for(int i : mailList) {
-	    	map.put(jungMemberService.selectByIdx(i).getUsername(), i);
+	    	map.put(jungMemberService.selectByIdx(i).getEmail(), i);
 	    }
 	    model.addAttribute("userMap", map);
 	    return "admin/mailSendToUser";
@@ -160,7 +175,7 @@ public class JungMemberManController {
 	
 	
 	@PostMapping(value = "/sendToUserOk")
-	public String sendToUserOk(HttpSession session, Model model, @RequestParam("userIdx") List<Integer> userList, @RequestParam("title") String title, @RequestParam("subject") String subject) {
+	public String sendToUserOk(HttpSession session, Model model, @RequestParam(value = "userIdx") List<Integer> userList, @RequestParam("title") String title, @RequestParam("subject") String subject) {
 		if(session.getAttribute("user") == null) {
 	        return "redirect:/";
 	    }
@@ -222,9 +237,11 @@ public class JungMemberManController {
 		return "redirect:/adm/user-roles?p="+cv.getP()+"&search="+cv.getSearch();
 	}
 	
+	// ==========================
+	// 회원 동향분석
 	@GetMapping(value = "/userTrendAnalysis")
 	public String userTrendAnalysis(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
-		log.info("bestPost실행 cv: {}",cv);
+		log.info("userTrendAnalysis실행 cv: {}",cv);
 		if(session.getAttribute("user") == null) {
 	        return "redirect:/";
 	    }
@@ -246,9 +263,47 @@ public class JungMemberManController {
 	// 인기게시물
 	//=========================================================================================================================================
 	@GetMapping(value = "/bestPost")
-	public String bestPost(HttpSession session, Model model, @ModelAttribute(value = "cv") CommonVO cv) {
+	public String bestPost(HttpSession session, Model model) {
+		log.info("bestPost실행");
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
 		
+		List<JungBoardVO> popularBoardList = jungBoardService.findPopularBoard();
+		model.addAttribute("list", popularBoardList);
+		log.info("popularBoardList : {}", popularBoardList);
 		return "admin/bestPost";
+	}
+	
+	//=====
+	// 게시판 관리
+	@GetMapping(value = "/boardManagement")
+	public String boardMangement(HttpSession session, @ModelAttribute(value = "cv") CommonVO cv, Model model) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+		PagingVO<JungBoardVO> pv = jungBoardService.selectByRef(cv);
+        log.info("boardMangement실행 cv: {}",cv);
+        model.addAttribute("pv",pv);
+        model.addAttribute("cv", cv);
+        if(cv.getCategoryNum() != null) {
+        	model.addAttribute("categoryNum", cv.getCategoryNum());
+        }
+        List<String> categoryList = jungBoardService.findCategoryList();
+        categoryList.remove("QnA");
+        categoryList.remove("공지사항");
+        model.addAttribute("categoryList",categoryList);
+        return "admin/boardManagement";
 	}
 	
 	
@@ -278,5 +333,288 @@ public class JungMemberManController {
 		}
 		map.put("countList", countList);
 		return map;
+	}
+	
+	//=====================================================================================================================
+	// QnA 관리
+	//=====================================================================================================================
+	@GetMapping(value = "/Qnas")
+	public String QnAs(HttpSession session, Model model, @ModelAttribute CommonVO cv) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+	    cv.setS(20);
+	    cv.setB(5);
+	    log.info("orderCode : {}",cv.getOrderCode());
+	    if(cv.getOrderCode() == null || cv.getOrderCode().trim().isEmpty()) {
+	        model.addAttribute("orderCode", null);
+	        cv.setOrderCode(null);
+	    } else if (cv.getOrderCode().equals("0") || cv.getOrderCode().equals("1")) {
+	        model.addAttribute("orderCode", cv.getOrderCode());
+	    }
+	    PagingVO<JungBoardVO> pv = jungBoardService.selectQnAList(cv);
+	    model.addAttribute("pv", pv);
+	    model.addAttribute("QnAInfo", jungBoardService.getQnAInfo());
+	    model.addAttribute("cv", cv);
+		return "admin/QnAList";
+	}
+	
+	@GetMapping(value = "/QnaAnswer/{idx}")
+	public String QnaAnswer(HttpSession session, Model model, @PathVariable(value = "idx") int idx) {
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		model.addAttribute("name", memberVO.getName());
+		log.info("도달함!! idx : {}", idx);
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		boardVO.setCommentList(jungCommentService.selectByRef(idx, new CommonVO()).getList());
+		if(boardVO.getCategoryNum() != 5) {
+			return "redirect:/error=2";
+		}
+		model.addAttribute("board", boardVO);
+		return "/admin/QnaAnswer";
+	}
+	
+	
+	@PostMapping(value = "/commentupload")
+	public String commentUpload(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		log.debug("값 : {}", commentVO);
+		commentVO.setUserRef(memberVO.getIdx());
+		commentVO.setBoardRef(boardidx);
+		jungCommentService.insert(commentVO);
+		log.info("QnA답변 달기 실행");
+		return "redirect:/adm/QnaAnswer/" + boardidx;
+	}
+	
+	@PostMapping(value = "/commentupdate")
+	public String commentUpdate(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
+		log.info("{}번 QnA답변 업데이트 실행 {}", boardidx, commentVO);
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		log.debug("값 : {}", commentVO);
+		jungCommentService.update(commentVO);
+		log.info("{}번 QnA답변 업데이트 완료", boardidx);
+		return "redirect:/adm/QnaAnswer/" + boardidx;
+	}
+	//=====================================================================================================================
+	// 공지사항 관리
+	//=====================================================================================================================
+	/** 공지사항 목록보기 페이지*/
+	@GetMapping(value = "/notices")
+	public String notice(HttpSession session, Model model, @ModelAttribute CommonVO cv, @RequestParam(value = "error", required = false) String error) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+	    if(error != null) {
+	    	model.addAttribute("error", error);
+	    }
+	    cv.setS(10);
+	    cv.setB(5);
+	    cv.setCategoryNum(3);
+	    PagingVO<JungBoardVO> noticeList = jungBoardService.selectList(cv);
+	    model.addAttribute("pv", noticeList);
+	    return "admin/notices";
+	}
+	
+	/** 공지사항 쓰기 페이지 */
+	@GetMapping(value = "/noticeUpload")
+	public String noticeUpload(HttpSession session, Model model, @RequestParam(value = "error", required = false) String error) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+	    if(error != null) {
+	    	model.addAttribute("error", error);
+	    }
+		return "admin/noticeUpload";
+	}
+	
+	/** 공지사항 쓰기 get 방지 주소 */
+	@GetMapping(value = "/noticeUploadOk")
+	public String noticeUploadOkGet() {
+		return "redirect:/";
+	}
+	
+	/** 공지사항 쓰기 업로드 */
+	@PostMapping(value = "/noticeUploadOk")
+	public String noticeUploadOkPost(HttpSession session, @ModelAttribute(value = "board") JungBoardVO boardVO, MultipartHttpServletRequest request) {
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		boardVO.setRef(memberVO.getIdx());
+		jungBoardService.insert(boardVO);
+		
+		String uploadPath = request.getServletContext().getRealPath("./upload/");
+		
+		 File file2 = new File(uploadPath);
+	     if (!file2.exists()) {
+	        file2.mkdirs();
+	     }
+	    log.info("서버 실제 경로 : " + uploadPath); // 확인용
+	    
+        List<MultipartFile> list = request.getFiles("file"); // form에 있는 name과 일치
+        String url = "";
+        String filepath = "";
+        try {
+           if (list != null && list.size() > 0) { // 받은 파일이 존재한다면
+              // 반복해서 받는다.
+              for (MultipartFile file : list) {
+                 // 파일이 없으면 처리하지 않는다.
+                 if (file != null && file.getSize() > 0) {
+                    // 저장파일의 이름 중복을 피하기 위해 저장파일이름을 유일하게 만들어 준다.
+                    String saveFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                    // 파일 객체를 만들어 저장해 준다.
+                    File saveFile = new File(uploadPath, saveFileName);
+                    // 파일 복사
+                    FileCopyUtils.copy(file.getBytes(), saveFile);
+                    
+                    url = file.getOriginalFilename();	// original
+                    filepath = saveFileName;			// savefileName
+                    JungFileBoardVO fileBoardVO = new JungFileBoardVO();
+                    fileBoardVO.setUrl(url);
+                    fileBoardVO.setFilepath(filepath);
+                    fileBoardVO.setRef(boardVO.getIdx());
+                    jungFileBoardService.insert(fileBoardVO);
+                 }
+              }
+           }
+           return "redirect:/adm/notice/" + boardVO.getIdx(); // 글 하나보기로 이동!
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+		return "redirect:/adm/noticeUpload?error=failUpload"; // 업로드페이지로 돌아감!
+	}
+	
+	/** 공지 사항 1개 보기 */
+	@GetMapping(value = "/notice/{idx}")
+	public String notice(HttpSession session, Model model, @PathVariable(value = "idx") int idx) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+		
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    
+	    model.addAttribute("name", memberVO.getName());
+	    
+	    JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+	    if (boardVO == null) {
+	        log.info("notice null or category num not matched");
+	        return "redirect:/adm/notices?error=notFound"; // 목록으로 돌아감!
+	    }
+	    model.addAttribute("board", boardVO);
+		return "admin/notice";
+	}
+	
+	/** 공지사항 수정하기 페이지 */
+	@GetMapping(value = "/noticeUpdate/{idx}")
+	public String noticeUpdate(@PathVariable(value = "idx") int idx, HttpSession session, Model model, @RequestParam(value = "error", required = false) String error) {
+		if(session.getAttribute("user") == null) {
+	        return "redirect:/";
+	    }
+	    JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+	        return "redirect:/";
+	    }
+	    model.addAttribute("name", memberVO.getName());
+	    JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+	    if(boardVO == null ||boardVO.getRef() != memberVO.getIdx()) {
+	    	return "redirect:/";
+	    }
+	    if(error != null) {
+	    	model.addAttribute("error", error);
+	    }
+	    model.addAttribute("board", boardVO);
+		return "admin/noticeUpload";
+	}
+	
+	/** 공지사항 수정하기 */
+	@PostMapping(value = "/noticeUpdateOk")
+	@Transactional
+	public String noticeUpdateOk(HttpSession session, MultipartHttpServletRequest request, @ModelAttribute(value = "board") JungBoardVO boardVO) {
+		if(session.getAttribute("user") == null) {
+			return "redirect:/";
+		}
+		JungMemberVO memberVO = (JungMemberVO) session.getAttribute("user");
+		if(!memberVO.getRole().equals("ROLE_ADMIN")) {
+			return "redirect:/";
+		}
+		jungFileBoardService.deleteByRef(boardVO.getIdx());			// 파일 지우고
+		jungBoardService.update(boardVO);							// 게시글 업데이트하고
+		String uploadPath = request.getServletContext().getRealPath("./upload/");
+		
+		 File file2 = new File(uploadPath);
+	     if (!file2.exists()) {
+	        file2.mkdirs();
+	     }
+	    log.info("서버 실제 경로 : " + uploadPath); // 확인용
+	    
+        List<MultipartFile> list = request.getFiles("file"); // form에 있는 name과 일치
+        String url = "";
+        String filepath = "";
+        try {
+           if (list != null && list.size() > 0) { // 받은 파일이 존재한다면
+              // 반복해서 받는다.
+              for (MultipartFile file : list) {
+                 // 파일이 없으면 처리하지 않는다.
+                 if (file != null && file.getSize() > 0) {
+                    // 저장파일의 이름 중복을 피하기 위해 저장파일이름을 유일하게 만들어 준다.
+                    String saveFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+                    // 파일 객체를 만들어 저장해 준다.
+                    File saveFile = new File(uploadPath, saveFileName);
+                    // 파일 복사
+                    FileCopyUtils.copy(file.getBytes(), saveFile);
+                    
+                    url = file.getOriginalFilename();	// original
+                    filepath = saveFileName;			// savefileName
+                    JungFileBoardVO fileBoardVO = new JungFileBoardVO();
+                    fileBoardVO.setUrl(url);
+                    fileBoardVO.setFilepath(filepath);
+                    fileBoardVO.setRef(boardVO.getIdx());
+                    jungFileBoardService.insert(fileBoardVO);
+                 }
+              }
+           }
+           return "redirect:/adm/notice/" + boardVO.getIdx(); // 글 하나보기로 이동!
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+		return "redirect:/adm/noticeUpdate/"+boardVO.getIdx()+"?error=failUpdate"; // 업로드페이지로 돌아감!
 	}
 }

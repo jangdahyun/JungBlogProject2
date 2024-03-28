@@ -9,11 +9,11 @@ public interface JungCommentService {
 	
 	int selectCountByRef(int boardRef);
 	
-	void insert(JungCommentVO jungCommentVO);
+	int insert(JungCommentVO jungCommentVO);
 	
-	void update(JungCommentVO jungCommentVO);
+	int update(JungCommentVO jungCommentVO);
 	
-	void delete(int idx);
+	int delete(int idx);
 	
 	void deleteByBoardRef(int boardRef);
 

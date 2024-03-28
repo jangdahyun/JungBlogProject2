@@ -6,13 +6,23 @@ $(function() {
 	})
 	
 	$("#writeBtn").submit(function(){
-		return true;
+		return true; 
 	})
 	
 })
-function view(idx) {
-	location.href = "/blog/" + idx
+function viewblog(idx) {
+	location.href = "/blog/view/" + idx;
 }
+function viewgallery(idx) {
+	location.href = "/gallery/" + idx;
+}
+function viewfile(idx) {
+   location.href = "/fileboard/blog/" + idx;
+}
+function viewvideo(idx) {
+   location.href = "/videoboard/blog/" + idx;
+}
+
 
 //back 눌렀을때 리로드하는 함수
 window.onpageshow = function(event) {
@@ -20,3 +30,6 @@ window.onpageshow = function(event) {
 		document.location.reload();
 	}
 };
+function submitForm() {
+	document.getElementById("write").submit();
+}

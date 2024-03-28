@@ -14,19 +14,123 @@
 	    	   
 	</delete>
 	
+	<!-- 유저로 하트 삭제 -->
+	<delete id="deleteHeartByUserRef" parameterType="int">
+		delete from	heart_tb
+	    where userRef=#{userRef}
+	    	   
+	</delete>
+	
 	<!-- 좋아요 개수 가져오기 -->
 	<select id="countHeart" parameterType="int" resultType="int">
 		select count(*) from  heart_tb where boardRef=#{boardRef}
 	</select>
 	
 	<!-- 유저가 누른 좋아요 개수 가져오기 -->
-	<select id="selectHeartByUseridx" parameterType="int" resultType="int">
-		select boardRef from  heart_tb where userRef=#{userRef}
+	<select id="selectHeartByUseridx" parameterType="hashmap" resultType="HeartVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						select
+							boardRef
+						from
+							heart_tb
+						where
+							userRef=#{userRef}
+						order by
+							idx desc
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]> 
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
+	</select >
+	
+	<select id="heartCountByUserRef" parameterType="int" resultType="int">
+		select count(*) from heart_tb where userRef=#{userRef}
 	</select>
+	
 	
 	<!-- 하트 중복확인 -->
 	<select id="select" parameterType="hashmap" resultType="int">
 		select count(*) from  heart_tb where userRef=#{userRef} and boardRef=#{boardRef}
 	</select>
+	
+	<select id="selectHeartByUseridxAndcate" parameterType="hashmap" resultType="JungBoardVO">
+		select
+			R.*
+		from
+			(
+				select
+					rownum rnum, Q.*
+				from
+					(
+						
+						SELECT
+							jb.*
+						FROM
+							jung_board jb
+						JOIN
+							(
+								select
+									boardRef
+								from
+									heart_tb
+								where
+									userRef=#{userRef}
+								order by
+									idx desc							
+							) ht ON ht.boardRef = jb.idx
+						<where>
+							<if test="categoryNum != null">
+								jb.categoryNum = #{categoryNum}							
+							</if>
+						</where>
+						order by
+							jb.idx desc
+						
+					) Q
+				where
+					<![CDATA[
+						rownum <= #{endNo}
+					]]> 
+			) R
+		where
+			<![CDATA[
+				rnum >= #{startNo}
+			]]>
+	</select >
 	  
+	<select id="totalCount" parameterType="hashmap" resultType="int">
+		SELECT
+			count(jb.idx)
+		FROM
+			jung_board jb
+		JOIN
+			(
+				select
+					boardRef
+				from
+					heart_tb
+				where
+					userRef=#{userRef}
+				order by
+					idx desc							
+			) ht ON ht.boardRef = jb.idx
+		<where>
+			<if test="categoryNum != null">
+				jb.categoryNum = #{categoryNum}							
+			</if>
+		</where>
+	</select>
 </mapper>

@@ -17,25 +17,36 @@
 <link rel="stylesheet" href="/css/join.css">
 <script src="/js/join.js"></script>
 </head>
-
+<style>
+	
+</style>
 <body>
-	<div class="container"
-		style="margin: auto; width: 80%; margin-top: 50px;">
+	<div class="formcontainer" style="width: 80%; max-width: 1000pt; margin:0 auto; margin-top: 50px;">
+		<div style="text-align: center; font-size: 20pt; font-weight: bold;">회원 정보 입력
+		<hr>
+		</div>
 		<form method="POST" action="joinok" class="form-group">
-			<h2 class="form-heading" style="text-align: center;">회원가입</h2>
-				<div class="row g-2 align-items-center" style="margin-bottom: 10px">
-					<span id="message"></span>
+		<table style="width: 100%; max-width: 1000pt; margin:0 auto; margin-top: 8px;">
+			<tr style="margin-bottom: 8px; border-bottom: 1px solid #AAAAAA;">
+				<td style="font-size: 15pt; font-weight: bold;">기본 정보 입력<td>
+				<td></td>
+				<td style="font-size: 8pt"><span style="color:red;">*</span>필수 정보 입력</td>
+			</tr>
+			<tr>
+				<td>이메일<span style="color:red;">*</span></td>
+				<td colspan="2">
+					<div class="row g-2 align-items-center" style="margin-bottom: 10px">
 					<div class="col-auto">
-						<input type="hidden" name="username" id="realUserName"/>
-						<input id="username" type="text"
-							class="form-control" placeholder="사용자아이디 입력"
+						<input type="hidden" name="email" id="realUserEmail"/>
+						<input id="email" type="textarea"
+							class="form-control" placeholder="사용자 이메일 입력"
 							autofocus="autofocus" required="required"/>
 					</div>
 					<div class="col-auto">
 						<span>@</span>
 					</div>
 					<div class="col-auto">
-						<select id="email" class="form-select"
+						<select id="email2" class="form-select"
 							aria-label="Default select example" required="required">
 							<option selected value="0">메일을 선택하세요!</option>
 							<option value="naver.com">naver.com</option>
@@ -46,74 +57,124 @@
 						<input type="button" id="sendEmail"
 							class="btn btn-outline-danger btn-sm" value="메일 인증">
 					</div>
-				</div>
-
-				<div class="row g-2 align-items-center"
-					style="margin-bottom: 10px; display: none;" id="emailCheckBox">
-					<div class="col-auto">
-						<input type="text" id="check" class="form-control"
-							placeholder="인증번호를 입력해주세요">
 					</div>
-					<div class="col-auto">
-						<input type="button" id="checkMail"
-							class="btn btn-outline-danger btn-sm" value="인증번호 확인">
-					</div>
-				</div>
 
+					<div class="row g-2 align-items-center"
+						style="margin-bottom: 10px; display: none;" id="emailCheckBox">
+						<div class="col-auto">
+							<input type="text" id="check" class="form-control"
+								placeholder="인증번호를 입력해주세요">
+						</div>
+						<div class="col-auto">
+							<input type="button" id="checkMail"
+								class="btn btn-outline-danger btn-sm" value="인증번호 확인">
+						</div>
+					</div>
+					<span id="message2"></span>
+				</td>
+			</tr>
+			<tr>
+				<td>아이디<span style="color:red;">*</span></td>
+				<td colspan="2">	
+					<div class="col-auto">
+						<input name="username" id="username" type="text"
+							class="form-control" placeholder="사용자아이디 입력"
+							autofocus="autofocus" required="required" disabled="disabled"/>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>비밀번호<span style="color:red;">*</span></td>
+				<td colspan="2">
 				<input name="password" id="password" type="password"
 					class="form-control" placeholder="사용자 비밀번호 입력"
 					style="margin-bottom: 8px;" onkeyup="checkPasswordMatch();"
 					required="required" disabled="disabled"/>
-				<input name="confirmPassword"
+				</td>
+			</tr>
+			<tr style="border-bottom: 1px solid #AAAAAA;">
+				<td>비밀번호 확인<span style="color:red;">*</span></td>
+				<td colspan="2">
+					<input name="confirmPassword"
 					id="confirmPassword" type="password" class="form-control"
 					placeholder="사용자 비밀번호 재입력" style="margin-bottom: 8px;"
 					onkeyup="checkPasswordMatch();" required="required" disabled="disabled"/>
 					<span id="passwordMatchMessage"></span> <span id="passwordLengthMessage"></span>
-				<span id="passwordCharacterMessage"></span>
-				<input name="name" id="name"
+					<span id="passwordCharacterMessage"></span>
+				</td>
+			</tr>
+			<tr>
+				<td>이름<span style="color:red;">*</span></td>
+				<td colspan="2">
+					<input name="name" id="name"
 					type="text" class="form-control" placeholder="사용자 이름 입력"
 					style="margin-bottom: 8px;" required="required" disabled="disabled" />
-				<input
-					name="phone" id="phone" type="text" class="form-control"
-					placeholder="사용자 전화번호 입력" style="margin-bottom: 8px;"
-					required="required" disabled="disabled"/>
-				<input name="nickName" id= "nickName" type="text"
+				</td>
+			</tr>
+			<tr>
+				<td>닉네임<span style="color:red;">*</span></td>
+				<td colspan="2">
+					<input name="nickName" id= "nickName" type="text"
 					class="form-control" placeholder="사용자 닉네임 입력"
 					style="margin-bottom: 8px;" required="required" disabled="disabled"/>
-				<input name="bd" id="bd" type="date" class="form-control"
+				</td>
+			</tr>
+			<tr>
+				<td>성별<span style="color:red;">*</span></td>
+				<td colspan="2">
+					<label>남</label><input name="gender" type="radio" value="1" disabled="disabled">
+					<label>여</label><input name="gender" type="radio" value="0" disabled="disabled">
+				</td>
+			</tr>
+			<tr>
+				<td>생년월일<span style="color:red;">*</span></td>
+				<td colspan="2">
+					<input name="bd" id="bd" type="date" class="form-control"
 					style="margin-bottom: 8px;" required="required" disabled="disabled"/>
-				<label>남</label><input name="gender" type="radio" value="1" disabled="disabled">
-				<label>여</label><input name="gender" type="radio" value="0" disabled="disabled">
-				<div style="text-align: center;">
-
+				</td>
+			</tr>
+			<tr>
+				<td>휴대전화번호<span style="color:red;">*</span></td>
+				<td colspan="2">
+					<input name="phone" id="phone" type="text" class="form-control"
+					placeholder="사용자 전화번호 입력" style="margin-bottom: 8px;"
+					required="required" disabled="disabled"/>
+					<span id="message"></span>
+				</td>
+			</tr>
+			<tr style="border-bottom: 1px solid #AAAAAA;">
+				<td>주소<span style="color:red;">*</span></td>
+				<td colspan="2">	
 					<div class="row g-2 align-items-center" style="margin-bottom: 8px;">
-						<div class="col-auto">
-							<input type="text" name="postcode" id="postcode"
-								class="form-control" aria-describedby="passwordHelpInline"
-								readonly="readonly">
+							<div class="col-auto">
+								<input type="text" name="postcode" id="postcode"
+									class="form-control" aria-describedby="passwordHelpInline"
+									readonly="readonly">
+							</div>
+							<div class="col-auto">
+								<input class="btn btn-outline-danger btn-sm" type="button"
+									value="우편번호 검색" onclick="daumPostcode()" />
+							</div>
 						</div>
-						<div class="col-auto">
-							<input class="btn btn-outline-danger btn-sm" type="button"
-								value="우편번호 검색" onclick="daumPostcode()" />
-						</div>
-					</div>
-					<input name="stAddress" id="stAddress" type="text"
-						class="form-control" placeholder="사용자 주소"
-						style="margin-bottom: 8px;" readonly="readonly"
-						required="required" />
-					<input name="dtAddress" id="dtAddress"
-						type="text" class="form-control" placeholder="사용자 상세 주소"
-						style="margin-bottom: 8px;" required="required" disabled="disabled"/>
-
-
-					<div style="text-align: center;">
-						<button class="btn btn-outline-danger btn-sm" type="submit" onclick="submitForm()">회 원 가 입</button>
-						<button class="btn btn-outline-danger btn-sm" type="button"
-							onclick="location.href='/'">홈으로</button>
-					</div>
-				</div>
+						<input name="stAddress" id="stAddress" type="text"
+							class="form-control" placeholder="사용자 주소"
+							style="margin-bottom: 8px;" readonly="readonly"
+							required="required" />
+						<input name="dtAddress" id="dtAddress"
+							type="text" class="form-control" placeholder="사용자 상세 주소"
+							style="margin-bottom: 8px;" required="required" disabled="disabled"/>
+				</td>
+			</tr>
+		</table>
+		<br />
+		<div style="text-align: center;">
+			<button class="btn btn-outline-danger btn-sm" type="submit" onclick="submitForm()">회 원 가 입</button>
+			<button class="btn btn-outline-danger btn-sm" type="button" onclick="location.href='/'">홈으로</button>
+		</div> <br />
+					<div style="margin-left: 39%;">이미 계정이 있으신가요? <a href="/member/login">로그인</a> </div>
 		</form>
-
 	</div>
+	
 </body>
 </html>

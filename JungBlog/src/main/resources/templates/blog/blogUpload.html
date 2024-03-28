@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- ckeditor -->
+	<script src="//cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+	<!-- jquery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<!-- UIkit CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+	<!-- UIkit JS -->
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	<link rel="stylesheet" href="/css/mainHeader2.css">
+	<script src="/js/mainHeader.js"></script>
+	
+	<style type="text/css">
+	body{ background: #302F2B; height: 100%; box-sizing: border-box;}
+	#jjj{
+		margin: auto;
+		width: 760px;
+	}
+	
+	</style>
+</head>
+<body>
+	<input type="hidden" name="categoryNum" value="1">
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<div id="jjj" style="padding: 80px 0;">
+		<form action="/blog/uploadOk" method="post" enctype="multipart/form-data" id="insertForm">
+			<input type="text" class="uk-input" name="title" id="title" placeholder="글 제목을 입력해 주시기 바랍니다." required="required" style="width: 100%;"/>
+			<textarea id="content" name="content" th:class="form-control" rows="10" required="required"></textarea>
+			<input type="submit" id="submitBtn" value="글올리기" class="btn btn-sm btn-outline-danger"/>
+			<input type="button" id="homeBtn" value="Home으로" class="btn btn-sm btn-outline-danger"/>
+		</form>
+	</div>
+	
+	<script type="text/javascript">
+		$(function(){
+			// 되돌아가기 버튼
+			$("#homeBtn").click(function(){
+				location.href="/blog";
+			});
+			
+			// ckeditor 꾸미기
+			CKEDITOR.plugins.addExternal('autogrow', 'http://localhost/js/', 'plugin.js');
+			CKEDITOR.replace('content',{
+				filebrowserUploadUrl: '/fileupload',
+				extraPlugins: 'autogrow',
+				autoGrow_minHeight: 200,
+	            autoGrow_maxHeight: 2000,
+	            autoGrow_bottomSpace: 50,
+	          	width : 760,
+	          	uiColor : '#F9BBE6',
+	          	fontSize_defaultLabel : '16px',
+			});
+			
+			CKEDITOR.on('instanceReady', function(e) {
+			    e.editor.document.getBody().setStyle('background-color', '#292820');
+			    e.editor.document.getBody().setStyle('color', 'white');
+			    e.editor.document.getBody().setStyle('font-size', '16px');
+			    e.editor.document.getBody().setStyle('padding', '10px 10px');
+			    e.editor.document.getBody().setStyle('margin', '0px');
+			    e.editor.on('contentDom', function() {
+			        e.editor.document.getBody().setStyle('background-color', '#292820');
+			    });
+			});
+			
+			// 폼체크
+			$("#insertForm").submit(function () {
+				let value = $("#title").val();
+				if(value.trim().length == 0) {
+					alert("제목을 입력해주세요.");
+					$("#title").val("")
+					$("#title").focus()
+					return false;
+				}
+				
+				let content = CKEDITOR.instances.content.getData();
+				if(content.trim().length == 0){
+					alert("내용을 입력해주세요.");
+					CKEDITOR.instances.content.focus();
+					return false;
+				}
+				return true;
+			})
+			
+		});
+	</script>
+</body>
+</html>

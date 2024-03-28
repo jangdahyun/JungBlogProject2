@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<title>마이페이지</title>
+	<!-- font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+	<!-- 구글 아이콘 -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- Core theme CSS (includes Bootstrap)-->
+	<!-- UIkit CSS -->
+	<link rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+	
+	<!-- 부트스트랩 -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Ajax처리를 위한 포함 -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<!-- UIkit JS -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+		
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<!-- 커스텀 -->
+	<link href="/css/my/header.css" rel="stylesheet">
+	
+</head>
+<style>
+.section_delete{
+	font-size: 13px;
+	font-weight: bold;
+}
+</style>
+
+<body style="display: flex;">
+	<!-- header -->
+	<th:block th:insert="~{/my/header.html}"></th:block>
+	
+	
+	<div id="container" class="container" style="margin-left: 30px; background: #F9FBFC; width: 1000px; height: 800px;">
+		<div id="content" class="content">
+			<div id="main" role="main">
+				<div id="headertop" class="headertop">
+					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; ">
+                		<span id="icon" class="material-symbols-outlined" th:onclick="gallery">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" th:onclick="file">folder_open</span>
+                		<span id="icon" class="material-symbols-outlined" th:onclick="support">support_agent</span>
+                		<span id="icon" class="material-symbols-outlined" th:onclick="download">download</span>
+					</div>
+					<h3 style="text-align: left;">탈퇴 안내</h3>
+					<p class="content">회원탈퇴를 신청하기 전에 안내 사항을 꼭 확인해주세요.</p><br />
+					<div class="section_delete">
+						<p class="h_dropout">
+							사용하고 계신 아이디(
+							<em>[[${user.name}]]</em>
+							)님은 탈퇴할 경우 복구가 불가능합니다.					
+						</p>
+						<h5>탈퇴 후 회원정보 및 개인형 서비스 이용기록은 모두 삭제됩니다.</h5>
+						<p class="dropout_dsc">
+							회원정보 및 메일, 블로그 등 개인형 서비스 이용기록은 모두 삭제되며, 삭제된 데이터는 복구되지 않습니다.
+						</p>
+						<table cellspacing="0" border="1">
+							<colgroup>
+								<col width="100">
+								<col width="250px;	">
+							</colgroup>
+							<tbody id="tblBullet1">
+								<tr style="display:  table-row;">
+									<th scope="row">블로그</th>
+									<td>블로그 계정 및 게시물 삭제</td>
+								</tr>
+								<tr style="display:  table-row;">
+									<th scope="row">정보</th>
+									<td>모든 활동의 정보 삭제</td>
+								</tr>
+							</tbody>
+						</table>
+					</div><br /><br />
+					<div class="dropout_agree_area">
+						<p class="contxt">
+							<strong>
+								탈퇴 후에는 아이디 
+								<em>[[${user.username}]]</em>
+								 님의 데이터는 복구할 수 없습니다
+							</strong> <br />
+							동의하십니까??
+						</p>
+						<form id="updateForm4" action="/member/deleteOk" method="POST">
+							<input type="hidden" th:value="${user.username}" id="username">
+							<input type="checkbox" id="agreeCheckbox" onchange="toggleButton()"><em>안내 사항을 모두 확인하였으며, 이에 동의합니다.</em>
+						<!-- 체크박스의 상태 변경에 따라 버튼을 활성화하거나 비활성화하는 함수를 호출합니다. -->
+						<!-- 비활성화된 상태로 초기화합니다. -->						
+						<input id="dropoutButton" class="uk-button uk-button-danger" type="submit" value="회원 탈퇴"  disabled/>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</div>
+     <script type="text/javascript">
+     function toggleButton() {
+         var agreeCheckbox = document.getElementById('agreeCheckbox');
+         var dropoutButton = document.getElementById('dropoutButton');
+
+         // 체크박스의 상태에 따라 버튼을 활성화하거나 비활성화합니다.
+         if (agreeCheckbox.checked) {
+             dropoutButton.disabled = false;
+             dropoutButton.classList.remove('dropout_button_disabled');
+         } else {
+             dropoutButton.disabled = true;
+             dropoutButton.classList.add('dropout_button_disabled');
+         }
+     }
+
+     function submitForm() {
+         // 회원 탈퇴 버튼을 클릭할 때 실행되는 로직을 작성합니다.
+         alert('회원 탈퇴 요청이 전송되었습니다.');
+     }
+    </script>
+</body>
+</html>

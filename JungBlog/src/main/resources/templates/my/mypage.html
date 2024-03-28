@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<title>마이페이지</title>
+	<!-- font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+	<!-- 구글 아이콘 -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- Core theme CSS (includes Bootstrap)-->
+	<!-- UIkit CSS -->
+	<link rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+	
+	<!-- 부트스트랩 -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Ajax처리를 위한 포함 -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<!-- UIkit JS -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+		
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<!-- 커스텀 -->
+	<link href="/css/my/header.css" rel="stylesheet">
+	
+</head>
+<style>
+	#icon{
+		margin-right: 10px;
+		}
+		
+	#indexgreen{
+		width: 760px;
+        height: 240px;
+        background-color: #f0f0f0;
+        border: 2px solid #03D580;
+        border-radius: 10px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+		}
+		
+	#indexblack{
+		margin-top:20px;
+		width: 760px;
+        height: 110px;
+        background-color: #f0f0f0;
+        border: 2px solid #333;
+        border-radius: 10px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+		}
+	
+	#updatePw_box{
+		margin-top:20px;
+		width: 760px;
+        height: 50px;
+        background-color: #f0f0f0;
+        border: 2px solid #333;
+        border-radius: 10px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+		}
+		
+	#boxicon{
+		padding-left: 10px;
+		width: 24px;
+		height: 24px;
+		}
+		
+	.hr{
+		width: 100%; height: 1px; background: #525040; border-radius: 50%; margin: 8px 0;
+		}
+	
+	#popupBackground{
+		position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 5; display: none;
+		}
+	
+	#popup1{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup1 > div{position: relative; width: 100%; height: 100%;}
+	
+	#popup2{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup2 > div{position: relative; width: 100%; height: 100%;}
+	
+	#popup3{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup3 > div{position: relative; width: 100%; height: 100%;}
+	
+	#popup4{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup4 > div{position: relative; width: 100%; height: 100%;}
+	
+	#popup5{
+		position: absolute; top: 20%; left: 40%; background: #aaa; width: 350px; height: 500px; display: none; border-radius: 12px; padding: 15px; z-index: 7;
+	}
+	#popup5 > div{position: relative; width: 100%; height: 100%;}
+	
+	.contact_edit_titl{
+	    margin-bottom: 20px;
+	    padding: 30px 14px;
+	    border-bottom: 1px solid #303038;
+	    font-size: 20px;
+	    font-weight: 300;
+	    line-height: 28px;
+	    letter-spacing: -.8px;
+	    color: #1e1e23;
+	    word-break: break-all;
+		}
+	.accent {
+    	color: #03D580;
+    }
+    .asd{background: #fff; border-radius: 10px; width: 100%; position: absolute; bottom: 20px; left: 0;}
+</style>
+
+<body style="display: flex;">
+	<!-- header -->
+	<th:block th:insert="~{/my/header.html}"></th:block>
+	<div id="container" class="container" style="margin-left: 30px; background: #F9FBFC; width: 800px; height: 800px;">
+		<div id="content" class="content">
+			<div id="main" role="main">
+				<div id="headertop" class="headertop">
+					<div class="menuBar" style="text-align: right; margin-top: 20px; margin-right: 30px; cursor: pointer; ">
+						<span id="icon" class="material-symbols-outlined" onclick="gotohome()">home</span>
+						<span id="icon" class="material-symbols-outlined" onclick="gotoblog()">book_2</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="file()">folder_open</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="gallery()">gallery_thumbnail</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="gotovideo()">videocam</span>
+                		<span id="icon" class="material-symbols-outlined" onclick="news()">news</span>
+					</div>
+				</div>
+				<div class="container">
+					<div id="indexgreen" class="indexgreen">
+						<div id="myprofile" style="padding-top: 15px;">
+							<p style="font-size: 11px;">기본 정보 ⅰ </p>
+							<div>
+								<span id="boxusername">[[${user.name}]]</span>
+							</div><br />
+							<div>
+								<span id="boxuserId">[[${user.username}]]</span><input id="updateId" style="float: right; margin-right: 5px;" type="button" value="수정">
+								<div class="hr"></div>
+							</div>
+							<div>
+								<span  id="boxicon" class="material-symbols-outlined">phone_iphone</span>
+								<span style="font-size: 20px;">[[${user.phone}]]</span><input id="updatePh" style="float: right; margin-right: 5px;" type="button" value="수정"> 
+							</div>
+							<div class="hr"></div>
+							<div>
+								<span  id="boxicon" class="material-symbols-outlined">badge</span>
+								<span style="font-size: 20px;">[[${user.nickName}]]</span><input id="updateNick"  style="float: right; margin-right: 5px;" type="button" value="수정">
+									<!-- 수정하기 누르면 나오는 팝업창 -->
+								<div id="popupBackground"></div>	
+									 <div id="popup1" class="popup">
+									 	<div>
+	    									<form id="updateForm1" action="/member/update" method="POST">
+		       									 <!-- 수정할 정보를 입력하는 양식 -->
+		       									 <span class="material-symbols-outlined" id="popup1-close" style="cursor: pointer;">close</span>
+		       									 <h4 class="contact_edit_titl" style="width: 300px;">
+		       									 	<strong style="font-weight: bold;">[[${user.name}]]님</strong>
+		       									 	의 회원정보 중
+		       									 	<em class="accent">전화번호</em>
+		       									 	를 수정하기위한 페이지입니다
+		       									 </h4>
+		       									<div>
+										        	<label for="newPhone">현재 전화번호:</label><br>
+										        	<label>[[${user.phone}]] </label><br><br>
+										        	<label for="newPhone">새 전화번호:</label><br>
+										        	<div class="uk-inline">
+											            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
+											            <input class="uk-input" type="text" aria-label="Clickable icon" id="newPhone" name="phone" style="width: 330px;  border-radius: 5px;" placeholder="-형식 없이 기입해주세요">
+											        </div>
+											        <span id="message4"></span>
+											        <input id="pbtn" class="uk-button uk-button-default asd" type="submit" value="정보 수정" onclick="isHpFormat()" disabled="disabled" >
+		       									</div>
+									    	</form>
+									 	</div>
+									</div>
+									 <div id="popup2" class="popup">
+									 	<div>
+	    									<form id="updateForm2" action="/member/update" method="POST">
+		       									 <!-- 수정할 정보를 입력하는 양식 -->
+		       									 <span class="material-symbols-outlined" id="popup2-close" style="cursor: pointer;">close</span>
+		       									 <h4 class="contact_edit_titl" style="width: 329px;">
+		       									 	<strong style="font-weight: bold;">[[${user.name}]]님</strong>
+		       									 	의 회원정보 중
+		       									 	<em class="accent">닉네임</em>
+		       									 	을 수정하기위한 페이지입니다
+		       									 </h4>
+		       									<div>
+										        	<label for="newnickName">현재 닉네임:</label><br>
+										        	<label>[[${user.nickName}]] </label><br><br>
+										        	<label for="newnickName">새로운 닉네임:</label><br>
+										        	<div class="uk-inline">
+											            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
+											            <input class="uk-input" type="text" aria-label="Clickable icon" id="nickName" name="nickName" style="width: 330px;  border-radius: 5px;">
+											        </div>
+											        <span id="message"></span>
+											        <input id="asd" class="uk-button uk-button-default asd" type="submit" value="정보 수정" disabled="disabled" >  
+		       									</div>
+									    	</form>
+									 	</div>
+									</div>
+							</div>
+						</div>
+					</div>
+					<div id="indexblack" class="indexblack">
+						<div style="padding-left: 10px; padding-top: 10px;">
+							<span class="material-symbols-outlined">cake</span>
+							<span style="font-size: 20px;">생일 ㆍ [[${#dates.format(user.birthDate, 'yyyy-MM-dd')}]]</span>
+						</div>
+						<div class="hr"></div>
+						<div style="padding-left: 10px; padding-top: 10px;">
+							<span class="material-symbols-outlined">home</span>
+							<span style="font-size: 20px;">주소 ㆍ [[${user.stAddress}]]</span><span style="font-size: 15px;">([[${user.dtAddress}]])</span> <input id="updateAddress" style="float: right; margin-right: 5px;" type="button" value="수정"> 
+						</div>
+						<div id="popup3" class="popup">
+						 	<div>
+								<form id="updateForm3" action="/member/update" method="POST">
+   									 <!-- 수정할 정보를 입력하는 양식 -->
+   									 <span class="material-symbols-outlined" id="popup3-close" style="cursor: pointer;">close</span>
+     									 <h4 class="contact_edit_titl" style="width: 329px;">
+     									 	<strong style="font-weight: bold;">[[${user.name}]]님</strong>
+     									 	의 회원정보 중
+     									 	<em class="accent">주소</em>
+     									 	를 수정하기위한 페이지입니다
+     									 </h4>
+   									<div>
+							        	<label for="newPhone">현재 주소:</label><br>
+							        	<label>[[${user.stAddress}]]</label><span>([[${user.dtAddress}]])</span> <br><br>
+							        	<label for="newPhone">새로운 주소:</label><br><br />
+							        	<div class="row g-2 align-items-center" style="margin-bottom: 8px;">
+											<div class="col-auto">
+												<input type="text" name="postcode" id="postcode" class="form-control" aria-describedby="passwordHelpInline" readonly="readonly">
+											</div>
+											<div class="col-auto">
+												<input class="btn btn-outline-danger btn-sm" type="button" value="우편번호 검색" onclick="daumPostcode()" />
+											</div>
+										</div>
+										<input name="stAddress" id="stAddress" type="text"
+											class="form-control" placeholder="사용자 주소"
+											style="margin-bottom: 8px; width: 250px;" readonly="readonly"
+											required="required" />
+										<input name="dtAddress" id="dtAddress" type="text" class="form-control" placeholder="사용자 상세 주소" style="margin-bottom: 8px;" required="required"/>
+										<span id="message2"></span>
+								        <input id="addbtn" class="uk-button uk-button-default asd" type="submit" value="정보 수정" disabled="disabled" >
+   									</div>
+					    		</form>
+						 	</div>
+						</div>
+					</div>
+					<div id="updatePw_box" class="updatePw_box">
+						<div style="padding-left: 10px; padding-top: 10px;">
+							<span class="material-symbols-outlined">lock</span>
+							<span style="font-size: 20px;">비밀번호</span><input id="updatePW" style="float: right; margin-right: 5px;" type="button" value="수정">
+						</div>
+						<div id="popup4" class="popup">
+				 			<div>
+								 <!-- 수정할 정보를 입력하는 양식 -->
+							 	<span class="material-symbols-outlined" id="popup4-close" style="cursor: pointer;">close</span>
+								 <h4 class="contact_edit_titl" style="width: 329px;">
+								 	<strong style="font-weight: bold;">[[${user.name}]]님</strong>
+								 	의 회원정보 중
+								 	<em class="accent">비밀번호</em>
+								 	를 수정하기위한 페이지입니다
+								 </h4>
+								<div>
+						        	<label for="newPhone">현재 비밀번호:</label><br>
+								  	<div class="col-auto">
+								    	<input type="password" id="currentPw" name="currentPw" class="form-control" aria-describedby="passwordHelpInline">
+									</div>
+									<form id="updateForm4" action="/member/update" method="POST">
+							        	<label for="newPhone">새로운 비밀번호:</label><br>
+							        	<div class="col-auto">
+									    	<input type="password" id="password" name="password" class="form-control" aria-describedby="passwordHelpInline">
+										</div>
+									</form>
+									<label for="newPhone">새로운 비밀번호 확인:</label><br>
+						        	<div class="col-auto">
+								    	<input type="password" id="newPw" name="newPw" class="form-control" aria-describedby="passwordHelpInline">
+									</div>
+								</div>
+						        <input class="uk-button uk-button-default asd" type="submit" id="sendPw" value="정보 수정" >
+							</div>
+					 	</div>
+					 	<div id="popup5" class="popup">
+						 	<div>
+								<form id="updateForm5" action="/member/update" method="POST">
+									 <!-- 수정할 정보를 입력하는 양식 -->
+									 <span class="material-symbols-outlined" id="popup5-close" style="cursor: pointer;">close</span>
+									 <h4 class="contact_edit_titl" style="width: 329px;">
+   									 	<strong style="font-weight: bold;">[[${user.name}]]님</strong>
+   									 	의 회원정보 중
+   									 	<em class="accent">아이디</em>
+   									 	를 수정하기위한 페이지입니다
+   									 </h4>
+   									<div>
+							        	<label for="newusername">현재 ID:</label><br>
+							        	<label>[[${user.username}]] </label><br><br>
+							        	<label for="newnusername">새로운 ID:</label><br>
+							        	<div class="uk-inline">
+								            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
+								            <input class="uk-input" type="text" aria-label="Clickable icon" id="username" name="username" style="width: 330px;  border-radius: 5px;">
+								        </div>
+								        <span id="message3"></span>
+								        <input id="usernamebtn" class="uk-button uk-button-default asd" type="submit" value="정보 수정" disabled="disabled" >  
+   									</div>
+						    	</form>
+						 	</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+    <script type="text/javascript">
+    	$(function() {
+			$("#sendPw").click(function() {
+	    		let password = $("#currentPw").val();
+	    		
+	    		// 새로운 비밀번호와 확인 비밀번호를 가져옴
+	            let newPassword = $("#password").val();
+	            let newPasswordConfirm = $("#newPw").val();
+	            
+	            // 비밀번호가 8글자 이상인지 확인
+	            if (newPassword.includes(" ")) {
+	                alert("비밀번호는 공백을 포함 할 수 없습니다.");
+	                return;
+	            }
+	            if (newPassword.length < 8) {
+	                alert("비밀번호는 8글자 이상이어야 합니다.");
+	                return;
+	            }
+	            
+	            // 확인 비밀번호가 일치하는지 확인
+	            if (newPassword !== newPasswordConfirm) {
+	                alert("새로운 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+	                return;
+	            }
+	    		
+	   			axios.post('/member/userPwCheck', {
+	   				"password": password
+	   			})
+	   			.then(function (res) {
+					if(res.data == "0"){
+						alert("현재 비밀번호가 맞지 않습니다.")
+					}else{
+						const a = $("#newPw").val();
+						const b = $("#password").val();
+						if(a != b){
+							
+							return ;
+						}
+						const form = document.querySelector("#updateForm4")
+						form.submit();
+					}
+				})
+				.catch(function(error) {
+						console.log(error);
+				})
+	   			const form = document.querySelector("#formid")
+	   			form.submit();
+			})
+			/*
+			const url = `http://localhost`;
+            const popupWidth = 400;
+            const popupHeight = 705;
+            const leftPosition = (window.screen.width - popupWidth) / 2;
+            const topPosition = (window.screen.height - popupHeight) / 2;
+            const popupWindow = window.open(url, "ChatRoomPopup", "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition);
+            popupWindow.focus();
+            */
+           	
+            //닉네임 폼체크
+			$("#nickName").keyup(function() {
+				let nickName = $("#nickName").val();
+				// 닉네임 입력란이 비어 있는 경우
+		        if (nickName.trim() === "") {
+		            $("#asd").prop("disabled", true); // 정보 수정 버튼 비활성화
+		        } else {
+		            $("#asd").prop("disabled", false); // 정보 수정 버튼 활성화
+		        }
+					// Ajax를 호출하여 처리 한다.
+					axios.post('/member/userNickNameCheck', {
+						"nickName": nickName
+					})
+						.then(function(response) {
+							if (nickName.charAt(0) === " ") {
+								$("#message").html("처음 공백은 포함할수 없어요").css('color', 'red');
+							}else {
+								// 성공 핸들링
+								// alert(response.data);
+								if (response.data * 1 == 0) {
+									$("#message").html("가능한 닉네임입니다").css('color', 'blue');
+								} else {
+									$("#message").html("중복되는 닉네임입니다.").css('color', 'red');
+									$("#asd").prop("disabled", true); // 정보 수정 버튼 비활성화
+								}
+							}
+						})
+						.catch(function(error) {
+							// 에러 핸들링
+							console.log(error);
+						})
+						.finally(function() {
+							// 항상 실행되는 영역
+						});
+			});
+    	})
+    	// 주소 폼체크
+		$(function() {
+		    $("#postcode, #stAddress, #dtAddress").on("input", function() {
+		        try {
+		            let postcode = $("#postcode").val().trim();
+		            let stAddress = $("#stAddress").val().trim();
+		            let dtAddress = $("#dtAddress").val().trim();
+		
+		            if (postcode === "" || stAddress === "" || dtAddress === "") {
+		                $("#addbtn").prop("disabled", true);
+		                $("#message2").html("주소를 입력해주세요").css('color', 'red');
+		            } else {
+		                $("#addbtn").prop("disabled", false);
+		                $("#message2").html(""); // 메시지 초기화
+		            }
+		        } catch (error) {
+		            console.error("Error occurred while processing address input:", error);
+		        }
+		    });
+		});
+    	
+    	//id폼체크
+			$("#username").keyup(function() {
+				let username = $("#username").val();
+				// 닉네임 입력란이 비어 있는 경우
+		        if (username.trim() === "") {
+		            $("#usernamebtn").prop("disabled", true); // 정보 수정 버튼 비활성화
+		        } else {
+		            $("#usernamebtn").prop("disabled", false); // 정보 수정 버튼 활성화
+		        }
+					// Ajax를 호출하여 처리 한다.
+					axios.post('/member/userIdCheck', {
+						"username": username
+					})
+						.then(function(response) {
+							if (username.indexOf(" ") != -1) {
+								$("#message3").html("공백은 포함할수 없어요").css('color', 'red');
+								$("#usernamebtn").prop("disabled", true); // 정보 수정 버튼 비활성화
+							}else {
+								// 성공 핸들링
+								// alert(response.data);
+								if (response.data * 1 == 0) {
+									$("#message3").html("가능한 아이디입니다").css('color', 'blue');
+								} else {
+									$("#message3").html("중복되는 아이디입니다.").css('color', 'red');
+									$("#usernamebtn").prop("disabled", true); // 정보 수정 버튼 비활성화
+								}
+							}
+						})
+						.catch(function(error) {
+							// 에러 핸들링
+							console.log(error);
+						})
+						.finally(function() {
+							// 항상 실행되는 영역
+						});
+			});
+    	
+    	  $(function() {
+        // 팝업 열기 버튼 클릭 시 배경 레이어와 팝업 창 표시
+        $("#updateId").click(function() {
+            $("#popupBackground").fadeIn();
+            $("#popup5").fadeIn();
+        });
+        
+        $("#updatePh").click(function() {
+            $("#popupBackground").fadeIn();
+            $("#popup1").fadeIn();
+        });
+
+        $("#updateNick").click(function() {
+            $("#popupBackground").fadeIn();
+            $("#popup2").fadeIn();
+        });
+        $("#updateAddress").click(function() {
+            $("#popupBackground").fadeIn();
+            $("#popup3").fadeIn();
+        });
+        $("#updatePW").click(function() {
+            $("#popupBackground").fadeIn();
+            $("#popup4").fadeIn();
+        });
+
+        // 배경 레이어 클릭 시 팝업 창 닫기
+        $("#popupBackground").click(function() {
+            $(this).fadeOut();
+            $(".popup").fadeOut();
+        });
+    });
+    
+    	function view() {
+    		location.href = "/blog/" + idx
+    	}
+
+    	
+    
+    	$(function(){
+    		$("#popup1-close").click(function(){
+    			$("#popupBackground").fadeOut();
+    			$("#popup1").fadeOut();
+    		})
+    		$("#popup2-close").click(function(){
+    			$("#popupBackground").fadeOut();
+    			$("#popup2").fadeOut();
+    		})
+    		$("#popup3-close").click(function(){
+    			$("#popupBackground").fadeOut();
+    			$("#popup3").fadeOut();
+    		})
+    		$("#popup4-close").click(function(){
+    			$("#popupBackground").fadeOut();
+    			$("#popup4").fadeOut();
+    		})
+    		$("#popup5-close").click(function(){
+    			$("#popupBackground").fadeOut();
+    			$("#popup5").fadeOut();
+    		})
+    		
+    	})
+    	
+    	
+    	// 다음 우편번호 API를 이용한 우편번호 검색 함수
+		function daumPostcode() {
+			new daum.Postcode({
+				oncomplete: function(data) {
+					// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+		
+					// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+					// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+					var addr = ''; // 주소 변수
+		
+					//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+					if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+						addr = data.roadAddress;
+					} else { // 사용자가 지번 주소를 선택했을 경우
+						addr = data.jibunAddress;
+					}
+		
+					// 우편번호를 해당 필드에 넣는다.
+					document.getElementById('postcode').value = data.zonecode;
+					// 주소 정보(도로명 주소 or 지번 주소)를 해당 필드에 넣는다.
+					document.getElementById("stAddress").value = addr;
+					// 커서를 상세주소 필드로 이동한다.
+					document.getElementById("dtAddress").focus();
+				}
+			}).open();
+		}
+    	
+    	 function gotohome() {
+    	        // 여기에 이동할 주소를 입력합니다.
+    	        var address = "/";
+    	        // 현재 창에서 해당 주소로 이동합니다.
+    	        window.location.href = address;
+    	    }
+    	 
+    	 function gotoblog() {
+ 	        // 여기에 이동할 주소를 입력합니다.
+ 	        var address = "/blog";
+ 	        // 현재 창에서 해당 주소로 이동합니다.
+ 	        window.location.href = address;
+ 	    }
+    	 
+    	 function gallery() {
+ 	        // 여기에 이동할 주소를 입력합니다.
+ 	        var address = "/gallery";
+ 	        // 현재 창에서 해당 주소로 이동합니다.
+ 	        window.location.href = address;
+ 	    }
+    	 
+    	 function file() {
+  	        // 여기에 이동할 주소를 입력합니다.
+  	        var address = "/fileboard";
+  	        // 현재 창에서 해당 주소로 이동합니다.
+  	        window.location.href = address;
+  	    }
+    	
+    	 function download() {
+   	        // 여기에 이동할 주소를 입력합니다.
+   	        var address = "/gallery";
+   	        // 현재 창에서 해당 주소로 이동합니다.
+   	        window.location.href = address;
+   	    }
+    	 
+    	 function gotovideo() {
+ 	        // 여기에 이동할 주소를 입력합니다.
+ 	        var address = "/videoboard";
+ 	        // 현재 창에서 해당 주소로 이동합니다.
+ 	        window.location.href = address;
+ 		}
+    	 
+    	 function news() {
+    	        // 여기에 이동할 주소를 입력합니다.
+    	        var address = "/news";
+    	        // 현재 창에서 해당 주소로 이동합니다.
+    	        window.location.href = address;
+    	    }
+		//전화번호 폼체크
+		$(function() {
+		    $("#newPhone").on("input", function() {
+		        try {
+		            let newPhone = $("#newPhone").val().trim();
+		            var phoneRule = /^(01[016789]{1})[0-9]{4}[0-9]{4}$/;
+		            if (!phoneRule.test(newPhone)) {
+		                $("#pbtn").prop("disabled", true);
+		                $("#message4").html("전화번호를 올바르게 입력해주세요").css('color', 'red');
+		            } else {
+		                $("#pbtn").prop("disabled", false);
+		                $("#message4").html(""); // 메시지 초기화
+		            }
+		        } catch (error) {
+		            console.error("Error occurred while processing address input:", error);
+		        }
+		    });
+		});
+    	 
+    </script>
+</body>
+</html>
