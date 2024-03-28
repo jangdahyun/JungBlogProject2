@@ -145,7 +145,7 @@
       </div>
 </div>
 <th:block th:if="${session.user !=null}">
-	<th:block th:if="${session.user.idx == board.ref}">
+	<th:block th:if="${session.user.idx == board.ref and session.user.role != 'ROLE_ADMIN' }">
    		<input type="hidden" id="deleteCk" value="0">
 		<div style="text-align: right; ">
 			<!-- 게시글 삭제 버튼 -->
@@ -158,14 +158,27 @@
 			<button id="deleteButton">게시글 삭제</button>  
 		</div>
 	</th:block>
-	<th:block th:if="${session.user.role == 'ROLE_ADMIN'}">
-  		<input type="hidden" id="deleteCk" value="0">
+	<th:block th:if="${session.user.idx == board.ref and session.user.role == 'ROLE_ADMIN' }">
+   		<input type="hidden" id="deleteCk" value="0">
+		<div style="text-align: right; ">
+			<!-- 게시글 삭제 버튼 -->
+			<button id="hideButton">게시글 숨기기</button>    			
+							
+			<!-- 게시글 수정 버튼 -->
+			<button id="updateBtn">게시글 수정</button>    				
+			
+			<!-- 게시글 삭제 버튼 -->
+			<button id="deleteButton">게시글 삭제</button>  
+		</div>
+	</th:block>
+	<th:block th:if="${session.user.role == 'ROLE_ADMIN' and session.user.idx != board.ref}">
+   		<input type="hidden" id="deleteCk" value="0">
 		<div style="text-align: right; ">
 			<th:block th:if="${board.deleted != 1}">
    				<!-- 게시글 수정 버튼 -->
 				<button id="hideButton">게시글 숨기기</button>
 			</th:block>
-			<!-- 게시글 삭제 버튼 -->
+				<!-- 게시글 삭제 버튼 -->
 			<button id="deleteButton">게시글 삭제</button>  
 		</div>
 	</th:block>

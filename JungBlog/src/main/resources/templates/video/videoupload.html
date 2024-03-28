@@ -21,6 +21,9 @@
 	<!-- 언어 -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ko-KR.min.js"></script>
 	
+	<link rel="stylesheet" href="/css/mainHeader2.css">
+	<script src="/js/mainHeader.js"></script>
+	
 	<script type="text/javascript">
 		window.onload = function(){
 			$('#summernote').summernote({
@@ -44,6 +47,10 @@
 				focus : true,
 				// 이미지가 1MB를 넘을경우 수동으로 업로드를 처리하고 실행될 코드를 지정해준다.
 				callbacks : {
+					 onInit: function() {
+			                // 초기화 시 내용이 비어있도록 설정
+			                $('#summernote').summernote('code', '');
+		            },
 					onImageUpload : function(files, editor, welEditable) {
 						for (var i = files.length - 1; i >= 0; i--) {
 							sendFile(files[i], this);
@@ -51,6 +58,24 @@
 					}
 				}
 			});
+			// 폼체크
+			$("#insertForm").submit(function () {
+				let value = $("#title").val();
+				if(value.trim().length == 0) {
+					alert("제목을 입력해주세요.");
+					$("#title").val("")
+					$("#title").focus()
+					return false;
+				}
+				
+				let content = $('#summernote').summernote('code');
+				console.log(content);
+				if(content.trim().length == 0){
+					alert("내용을 입력해주세요.");
+					return false;
+				}
+				return true;
+			})
 		}
 		// 실제 업로드되는 서버의 파일을 Ajax로 호출해 줘야한다.
 		function sendFile(file, el) {
@@ -153,10 +178,8 @@ hr {
 	<input type="hidden" name="b" id="b" th:value="${cv.sizeOfBlock}" />
 	<input type="hidden" name="search" id="search" th:value="${cv.search}" />
 	
-	<header>
-		
-	</header>
-	<div id="jjj">
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<div id="jjj" style="padding: 80px 20px;">
 		<div id="writingheader">
 			<b>Youtube UPLOAD</b>
 		</div>
@@ -170,7 +193,7 @@ hr {
 				</colgroup>
 				<tr>
 					<td id="left" style="line-height: 3;">제목</td>
-					<td id="right"><input type="text" name="title" id="title" placeholder="글 제목을 입력해주세요" required="required"></td>
+					<td id="right"><input type="text" cl name="title" id="title" placeholder="글 제목을 입력해주세요" required="required"></td>
 				</tr>
 				<tr>
 					<td id="left">유튜브 주소</td>
@@ -180,7 +203,9 @@ hr {
 				</tr>
 				<tr>
 					<td id="left">영상 소개</td>
-					<td id="right"><textarea id="summernote" name="content"></textarea></td>
+					<td id="right">
+						<textarea id="summernote" name="content"></textarea>
+					</td>
 				</tr>
 			</table><br>
 		

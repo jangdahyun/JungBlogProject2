@@ -175,7 +175,7 @@
 				        <!-- 파일 정보를 표시할 영역 -->
 				        <div id="file-display-area"></div>
 				        <div id="files"></div>
-				        <textarea class="uk-textarea" name="content" id="content2" placeholder="내용을 입력해 주세요." rows="10" required="required" style="resize: none">[[${board.title}]]</textarea>
+				        <textarea class="uk-textarea" name="content" id="content2" placeholder="내용을 입력해 주세요." rows="10" required="required" style="resize: none">[[${board.content}]]</textarea>
 				        <div id="buttonsBox" style="width: 100%; display: flex; justify-content: end; gap:20px;">
 					        <input type="submit" id="updateBtn" value="수정"/>
 					        <input type="button" id="deleteBtn" th:onclick="fdeleteBtn([[${board.idx}]])" value="삭제"/>

@@ -21,6 +21,9 @@
 	<!-- 언어 -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ko-KR.min.js"></script>
 	
+	<link rel="stylesheet" href="/css/mainHeader2.css">
+	<script src="/js/mainHeader.js"></script>
+	
 	<script type="text/javascript">
 		window.onload = function(){
 			$('#summernote').summernote({
@@ -51,6 +54,24 @@
 					}
 				}
 			});
+			// 폼체크
+			$("#insertForm").submit(function () {
+				let value = $("#title").val();
+				if(value.trim().length == 0) {
+					alert("제목을 입력해주세요.");
+					$("#title").val("")
+					$("#title").focus()
+					return false;
+				}
+				
+				let content = $('#summernote').summernote('code');
+				console.log(content);
+				if(content.trim().length == 0){
+					alert("내용을 입력해주세요.");
+					return false;
+				}
+				return true;
+			})
 		}
 		// 실제 업로드되는 서버의 파일을 Ajax로 호출해 줘야한다.
 		function sendFile(file, el) {
@@ -148,10 +169,8 @@ hr {
 }
 </style>
 <body>
-	<header>
-		
-	</header>
-	<div id="jjj">
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<div id="jjj" style="padding: 80px 20px;">
 		<div id="writingheader">
 			<b>Youtube UPLOAD</b>
 		</div>

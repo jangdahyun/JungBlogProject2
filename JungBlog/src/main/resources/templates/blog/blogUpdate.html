@@ -14,9 +14,11 @@
 	<!-- UIkit JS -->
 	<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+	<link rel="stylesheet" href="/css/mainHeader2.css">
+	<script src="/js/mainHeader.js"></script>
 	
 	<style type="text/css">
-	body{ background: #302F2B; height: 100%}
+	body{ background: #302F2B; height: 100%; box-sizing: border-box;}
 	#jjj{
 		margin: auto;
 		width: 760px;
@@ -25,11 +27,8 @@
 	</style>
 </head>
 <body>
-	
-	<header>
-		
-	</header>
-	<div id="jjj">
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<div id="jjj" style="padding: 80px 0;">
 		<form action="/blog/updateOk" method="post" enctype="multipart/form-data" id="insertForm">
 			<input type="hidden" name="idx" th:value="${board.idx}">
 			<input type="hidden" name="ref" th:value="${board.ref}">

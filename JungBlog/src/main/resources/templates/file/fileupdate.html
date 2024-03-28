@@ -20,6 +20,8 @@
 	<script src="uikit/dist/js/uikit-icons.min.js"></script>
 	<!-- 언어 -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ko-KR.min.js"></script>
+	<link rel="stylesheet" href="/css/mainHeader2.css">
+	<script src="/js/mainHeader.js"></script>
 	
 	<script type="text/javascript">
 		window.onload = function(){
@@ -179,11 +181,9 @@
         
 	</style>
 </head>
-<body>
-	<header>
-		
-	</header>
-	<div id="jjj">
+<body style="padding: 0;">
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<div id="jjj" style="padding: 80px 20px;">
 		<div id="writingheader">
 			<b>FILE UPLOAD</b>
 		</div>
