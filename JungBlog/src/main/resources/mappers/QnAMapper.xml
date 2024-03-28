@@ -35,6 +35,8 @@
 						from
 							jung_board
 						where
+							ref = #{userRef}
+							AND
 							categoryNum = 5
 							<if test="search != null">
 								and (
@@ -84,6 +86,8 @@
 		from
 			jung_board
 		where
+			ref = #{userRef}
+			AND
 			categoryNum = 5
 			<if test="search != null">
 				and (

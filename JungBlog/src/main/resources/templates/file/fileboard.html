@@ -12,23 +12,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <!-- UIkit CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/file.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- UIkit JS -->
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
     
-    <script src="/js/file.js"></script>
 	<link rel="stylesheet" href="/css/mainHeader.css">
 	<script src="/js/mainHeader.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/file.css">
+    <script src="/js/file.js"></script>
 </head>
 	<th:block th:insert="~{/mainHeader.html}"></th:block>
 	<!--  <div class="image-container" style="text-align: center;">
 	<img th:src="@{'/img/fileicon/fileboardimage.jpg'}" alt="">
 	</div> -->
-    <div style="text-align: center; color: #AAAAAA; font-size: 30pt;">자료실-Download</div>
+    <div style="text-align: center; color: #AAAAAA; font-size: 30pt; padding-top: 80px;">자료실-Download</div>
     <div th:if="${#lists.isEmpty(pv.list)}">
         <p>현재 자료가 없습니다.</p>
     </div>

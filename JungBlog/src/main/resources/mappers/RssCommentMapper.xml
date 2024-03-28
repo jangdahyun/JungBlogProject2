@@ -66,7 +66,7 @@
 	<select id="findReplyByParentCommentRef" parameterType="int" resultType="RssCommentVO">
 		SELECT
 			rc.*
-			, jm.nickName as nickname
+			, jm.nickName as userNickName
 		FROM
 			rss_comment rc
 		JOIN
@@ -90,5 +90,9 @@
 	<!-- 댓글 1개 삭제 -->
 	<delete id="deleteByIdx" parameterType="int">
 		delete from rss_comment where idx = #{idx}
+	</delete>
+	<!-- 부모 댓글에대한 삭제 -->
+	<delete id="deleteByCommentRef" parameterType="int">
+		delete from rss_comment where parentCommentRef = #{commentRef}
 	</delete>
 </mapper>

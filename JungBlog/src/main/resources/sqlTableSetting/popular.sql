@@ -5,8 +5,8 @@ CREATE TABLE tb_popular(
 	userRef NUMBER NOT NULL,
 	interaction NUMBER NOT NULL,
 	interaction_time TIMESTAMP DEFAULT sysdate
---	FOREIGN KEY (boardRef) REFERENCES jung_board(idx),
---	FOREIGN KEY (userRef) REFERENCES jung_member(idx)
+	FOREIGN KEY (boardRef) REFERENCES jung_board(idx) ON DELETE cascade,
+	FOREIGN KEY (userRef) REFERENCES jung_member(idx) ON DELETE cascade
 );
 SELECT * FROM tb_popular;
 

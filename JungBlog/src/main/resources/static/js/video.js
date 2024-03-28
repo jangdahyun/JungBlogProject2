@@ -19,80 +19,7 @@ window.onpageshow = function(event) {
       document.location.reload();
    }
 };
-let totalCount = 0;
-function init(){
-   axios.post('/commentsTotalCount', {
-      'boardIdx': $("#boardIdx").val(),
-   })
-   .then(function (res) {
-      totalCount = res.data;
-      updatePage(totalCount, 1);
-      updateTable(1);
-   })
-   .catch(function (e){
-      console.log(e);
-   });
-}
-function updateTable(currentPage){
-   $("#commentList").empty();
-   axios.post('/comments', {
-      'boardIdx': $("#boardIdx").val(),
-      'currentPage': currentPage,
-   })
-   .then(function (res) {
-      const data = res.data;
-      console.log(data);
-      content=``;
-      data.forEach(comment=>{
-         const date = new Date(comment.regDate);
-         const formattedDate = new Intl.DateTimeFormat('ko-KR', {
-             year: 'numeric',
-             month: '2-digit',
-             day: '2-digit'
-         }).format(date);
-         content += `
-            <li>
-               <span class="nickName">${comment.member.nickName}</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">${formattedDate}</span>
-               <p class="reply">${comment.reply}</p>
-            </li>
-         `
-      })
-      $("#commentList").html(content);
-   })
-   .catch(function (error) {
-      console.log(error);
-   });
-}
 
-function updatePage(totalCount, currentPage) {
-   const sizeOfPage = 5;
-   const sizeOfBlock = 5;
-   page = ``;
-   if(totalCount>0){
-      let totalPage = Math.floor((totalCount - 1) / sizeOfPage) + 1;
-      if (currentPage > totalPage) currentPage = 1;
-      let startPage = Math.floor((currentPage - 1) / sizeOfBlock) * sizeOfBlock + 1;
-      let endPage = startPage + sizeOfBlock - 1;
-      if (endPage > totalPage) endPage = totalPage;
-      
-      page = `<ul class='uk-pagination' uk-margin>`
-      if(startPage>1){
-         page += `<li><span uk-pagination-previous onclick='updatePage(${totalCount},${startPage - 1})'></span></li>`
-      }
-      for(let i = startPage; i<= endPage; i++){
-         if(i==currentPage){
-            page += `<li><span class="active">${i}</span></li>`
-         } else {
-            page += `<li><span onclick='updatePage(${totalCount},${i})'>${i}</span></li>`
-         }
-      }
-      if(endPage < totalPage) {
-         page += `<li><span uk-pagination-next onclick='updatePage(${totalCount},${endPage+1})'></span></li>`
-      }
-   }
-   $("#page").html(page);
-   updateTable(currentPage);
-}
 
 $(function() {
    let time = $("#time").html();
@@ -100,7 +27,6 @@ $(function() {
    time = moment(time).format('ll');
    $("#time").html(time);
    
-   init();
    
    $("#heart2").click(function(){
       alert("로그인 후 이용가능합니다.")
@@ -152,12 +78,12 @@ $(function() {
 
         // 게시글의 고유 번호 (idx)를 가져옵니다.
         var boardIdx = document.getElementById("boardIdx").value;
-      axios.delete(`/blog/${boardIdx}`)
+      axios.delete(`/delete/${boardIdx}`)
       .then(res => {
          let data = res.data;
          if(data==1){
             alert('게시글이 성공적으로 삭제되었습니다.');
-            window.location.href="/";            
+            window.location.href="/videoboard";            
          } else {
                alert('게시글 삭제 중 오류가 발생했습니다. 다시 시도해주세요.');
          }
@@ -171,7 +97,7 @@ $(function() {
    // 수정 버튼 클릭 이벤트 리스너 등록
 $(document).ready(function() {
     // 게시글 수정 버튼 클릭 시
-    $("#updateBtn2").click(function() {
+    $("#updateBtn").click(function() {
         // 수정할 게시글의 idx 가져오기
         var boardIdx = $("#boardIdx").val();
         // 수정할 게시글의 제목 가져오기
@@ -183,5 +109,27 @@ $(document).ready(function() {
         window.location.href = "/videoboard/videoupdate/" + boardIdx;
     });
 });
+
+$("#hideButton").click(function(event) {
+	    // 기본 동작(페이지 새로고침)을 막습니다.
+	    event.preventDefault();
+	
+	    // 게시글의 고유 번호 (idx)를 가져옵니다.
+	    var boardIdx = document.getElementById("boardIdx").value;
+	    axios.delete(`/blog/${boardIdx}`)
+	    .then(res => {
+	        let data = res.data;
+	        if(data == 1) {
+	            alert('게시글이 성공적으로 숨김되었습니다.');
+	            window.location.href = "/videoboard";                
+	        } else {
+	            alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
+	        }
+	    })
+	    .catch(e => {
+	        console.error('게시글 숨김 중 오류가 발생했습니다:', e);
+	        alert('게시글 숨김 중 오류가 발생했습니다. 다시 시도해주세요.');
+	    });
+	});
 
 })

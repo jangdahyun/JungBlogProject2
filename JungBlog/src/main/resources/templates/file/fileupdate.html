@@ -56,18 +56,19 @@
 		function sendFile(file, el) {
 			// 폼 작성
 			var form_data = new FormData();
-	      	form_data.append('file', file);
+	      	form_data.append('upload', file);
 	      	// Ajax 호출
 	      	$.ajax({
 	        	data: form_data,
 	        	type: "POST",
-	        	url: 'imageUpload.jsp',
+	        	url: '/fileupload',
 	        	cache: false,
 	        	contentType: false,
 	        	enctype: 'multipart/form-data',
 	        	processData: false,
 	        	success: function(img_name) { // 성공
-	          		$(el).summernote('editor.insertImage', img_name);
+	          		$(el).summernote('editor.insertImage', img_name.url);
+	        	console.log(img_name);
 	        	}
 	      	});
 	    }

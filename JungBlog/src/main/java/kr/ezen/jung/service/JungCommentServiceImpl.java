@@ -65,30 +65,39 @@ public class JungCommentServiceImpl implements JungCommentService{
 	}
 	
 	@Override
-	public void insert(JungCommentVO jungCommentVO) {
+	public int insert(JungCommentVO jungCommentVO) {
+		int result = 0;
 		try {
 			jungCommentDAO.insert(jungCommentVO);
+			result = 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
 	@Override
-	public void update(JungCommentVO jungCommentVO) {
+	public int update(JungCommentVO jungCommentVO) {
+		int result = 0;
 		try {
 			jungCommentDAO.update(jungCommentVO);
+			result = 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
 	@Override
-	public void delete(int idx) {
+	public int delete(int idx) {
+		int result = 0;
 		try {
 			jungCommentDAO.delete(idx);
+			result = 1;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
 	@Override

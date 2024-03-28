@@ -64,7 +64,7 @@ textarea {
   	border-radius: 5px;
 }
 
-#deleteButton, #updateBtn, #hideButton{
+#deleteButton, #updateBtn, #hideButton, #showButton{
 	text-align: right;
 	background-color: white;
 	color: black;
@@ -88,6 +88,11 @@ textarea {
 	color: white;
 	}
 #updateBtn:hover{
+	background-color: black;
+	border: 1px solid grey;
+	color: white;
+	}
+#showButton:hover{
 	background-color: black;
 	border: 1px solid grey;
 	color: white;

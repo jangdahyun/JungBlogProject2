@@ -25,7 +25,6 @@
     
     <link rel="stylesheet" href="/css/mainHeader.css">
 	<script src="/js/mainHeader.js"></script>
-    
     <style type="text/css">
     	*{margin: 0; padding: 0; box-sizing: border-box;}
 		a{text-decoration: none; color: inherit;}
@@ -102,6 +101,7 @@
     </style>
 </head>
 <body>
+	<input type="hidden" id="currentUser" th:value="${currentUser}">
 	<input type="hidden" id="idx" th:value="${item.idx}">
 	<div id="goTopBtn">
 		<span class="material-symbols-outlined">expand_less</span>
@@ -262,8 +262,15 @@
 								${more}
 								<span class="replyBtn" style="font-size: 14px; color: #ccc; cursor: pointer;" onclick="replyFunc(this, ${cm.idx});">답글</span>
 							</div>
-						</li>
 					`
+					if($("#currentUser").val() == cm.userRef){
+						content += `
+							<div style="text-align: right">	
+								<span class="replyBtn"style="cursor:pointer;" onclick="commentUpdateFn(this, ${cm.idx}, '${cm.reply}')">수정</span> <span class="commentDeleteBtn" style="cursor:pointer;" onclick="commentDeleteFn(${cm.idx})">삭제</span>					
+							</div>
+						`
+					}
+					content += `</li>`
 					ul.append(content);
 				})
 			}
@@ -327,8 +334,15 @@
 						<div>
 							<div>${cmm.userNickName} <span style="font-size: 12px; color: #ccc;">${formattedDate}</span></div>
 							<div>${cmm.reply}</div>
-						</div>
 					`
+					if($("#currentUser").val() == cmm.userRef){
+						content += `
+							<div style="text-align: right">	
+								<span class="replyBtn"style="cursor:pointer;" onclick="commentUpdateFn(this, ${cmm.idx}, '${cmm.reply}')">수정</span> <span class="commentDeleteBtn" style="cursor:pointer;" onclick="commentDeleteFn(${cmm.idx})">삭제</span>					
+							</div>
+						`
+					}
+					content += `</div>`
 				})
 				content += `</div>`;
 				parentLi.innerHTML += content;
@@ -376,6 +390,88 @@
 		function autoResize(textarea) {
 			textarea.style.height = 'auto';
 			textarea.style.height = textarea.scrollHeight + 'px';
+		}
+		
+		function commentDeleteFn(commentIdx) {
+			console.log(commentIdx);
+			
+		    axios.delete(`/news/comment`,{
+				params: {
+					'idx':  commentIdx
+				}
+			})
+		    .then(res => {
+		        let data = res.data;
+		        console.log(res);
+		        if(data == 1) {
+		            alert('댓글이 성공적으로 삭제되었습니다.');
+		            window.location.reload();               
+		        } else {
+		            alert('게시글 숨김취소 중 오류가 발생했습니다. 다시 시도해주세요.');
+		        }
+		    })
+		    .catch(e => {
+		        console.error('게시글 숨김취소 중 오류가 발생했습니다:', e);
+		        alert('게시글 숨김취소 중 오류가 발생했습니다. 다시 시도해주세요.');
+		    }); 
+			
+		}
+
+		function commentUpdateFn(obj, commentIdx, commentreply) {
+			if (obj.classList.contains('active')) {
+		        return;
+		    }
+		    $(".subCommentForm").remove();
+			$(".replyBtn").removeClass('active');
+		    let div = obj.parentNode;
+		    while (div && div.tagName !== 'DIV') { // 부모노드찾기
+		    	div = div.parentNode;
+		    }
+		    content = `
+		    	<form action="/commentUpdate" method="post" class="subCommentForm" onsubmit = "subCommentForm(this, event)">
+					<input type="hidden" class="commentIdx" name="idx" value="${commentIdx}">
+					<div style="display: flex; justify-content: end; align-item:center">
+						<span style="margin-right:5px;">답글</span>
+						<textarea class="subreply" name="reply" maxlength="30" class="uk-input" style="background: #252422; color: #fff; width: 400px;height:36px; border: none; border-bottom: 2px solid black;" placeholder="답글 추가...">${commentreply}</textarea>				
+					</div>
+					<div style="text-align: right;" id="commentBtn">
+						<input type="button" class="subCancleBtn" value="취소" onclick="removeSubCommentForm(this)">
+						<input type="submit" value="댓글">
+					</div>				
+				</form>
+		    `
+		    obj.classList.add('active');
+			div.innerHTML += content;
+		}
+
+
+
+		function subCommentForm(obj ,event){
+			event.preventDefault(); // 폼의 기본 동작(전송)을 취소합니다.
+			const commentIdx = $(obj).find(".commentIdx").val();
+		    const subreply = $(obj).find(".subreply").val().trim();
+		    
+		    const requestData = {
+	            idx: commentIdx,
+	            reply: subreply
+	        };
+			if(subreply.length == 0){
+				alert('댓글내용은 필수입니다.')
+				return false;
+			}
+			axios.put('/news/comment', requestData)
+		    .then(res => {
+				if(res.data == 1){
+					alert("댓글이 수정되었습니다.");
+					window.location.reload();
+				} else {
+					alert('댓글수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+				}
+		    })
+		    .catch(err => {
+		        console.error(err);
+		    });
+			return false;
 		}
 	</script>
 </body>

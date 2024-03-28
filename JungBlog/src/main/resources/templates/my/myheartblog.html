@@ -141,6 +141,7 @@
 							<col width="90px" />
 							<col width="60px" />
 							<col width="60px" />
+							<col width="60px" />
 						</colgroup>
 						<thead>
 							<tr>
@@ -148,7 +149,7 @@
 								<th class="" >
 									<select class="uk-select" id="selectBox" style="height: 25px" onchange="handleCategoryChange()">
 						                <option selected value="0">카테고리</option>
-						                <option th:each="category : ${categoryList}" th:value="${category}" th:selected="${(category == '블로그' ? 1 : category == '자료실' ? 2 : 4) == categoryNum}">[[${category}]]</option>
+						                <option th:each="category : ${categoryList}" th:value="${category}" th:selected="${(category == '블로그' ? 1 : category == '자료실' ? 2 : category == 'Gallery' ? 4 : 6 ) == categoryNum}">[[${category}]]</option>
 						            </select>
 								</th>
 								<th class="" style="line-height: 2">제목</th>
@@ -156,6 +157,7 @@
 								<th class="" style="line-height: 2">게시일</th>
 								<th class="" style="line-height: 2">조회수</th>
 								<th class="" style="line-height: 2">좋아요</th>
+								<th class="" style="line-height: 2">공개여부</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -172,8 +174,8 @@
 									<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
 									<td>[[${vo.readCount}]]</td>
 									<td>[[${vo.countHeart}]]</td>
+									<td style="text-align: center;">[[${vo.deleted == 0 ? 'O' : 'X'}]]</td>
 								</tr>
-							</th:block>
 						</tbody>
 					</table>
 					<div style="display: flex; align-items: center;justify-content: center;">
@@ -207,6 +209,12 @@
 			    // 갤러리 페이지로 이동
 			    location.href = `/gallery/${idxText}`;
 			    break;
+			    
+			case "동영상": // 갤러리 카테고리 선택 시
+			    // 갤러리 페이지로 이동
+			    location.href = `/videoboard/blog/${idxText}`;
+			    break;
+			    
 			default:
 			    // 기본적으로 수행할 동작
 			    break;
@@ -244,6 +252,12 @@
                 // 갤러리 페이지로 이동
                 location.href = `?p=1&categoryNum=4`;
                 break;
+                
+            case "동영상": // 갤러리 카테고리 선택 시
+                // 갤러리 페이지로 이동
+                location.href = `?p=1&categoryNum=6`;
+                break;
+                
             default:
                 // 기본적으로 수행할 동작
                 break;

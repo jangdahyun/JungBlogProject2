@@ -211,6 +211,10 @@ public class NewsController {
 		model.addAttribute("commentCount", newsCommentService.getTotalCountByRssBoardRef(idx));
 		model.addAttribute("rssBoardRef", idx);
 		model.addAttribute("item", item);
+		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+		if(request.getSession().getAttribute("user")!=null) { 		
+			model.addAttribute("currentUser", memberVO.getIdx());
+		}
 		return "news/view";
 	}
 	
@@ -222,14 +226,6 @@ public class NewsController {
 	
 	@Autowired
 	private NewsCommentService newsCommentService;
-	
-	@GetMapping(value = "/view/{idx}/comment")
-	public String commentView(Model model ,@PathVariable(value = "idx") int idx) {
-		int lastItemIdx = newsCommentService.findLastItemIdx();
-		model.addAttribute("lastItemIdx", lastItemIdx + 1);
-		model.addAttribute("rssBoardRef", idx);
-		return "news/commentView";
-	}
 	
 	// 글 얻기
 	@GetMapping(value = "/comment")
@@ -253,6 +249,7 @@ public class NewsController {
 	@PutMapping(value = "/comment")
 	@ResponseBody
 	public int updateComment(@RequestBody RssCommentVO rcv) {
+		log.info("댓글쓰기 => {}", rcv);
 		int result = newsCommentService.updateRssComment(rcv.getIdx(), rcv.getReply());
 		return result;
 	}
@@ -260,8 +257,8 @@ public class NewsController {
 	// 글 삭제
 	@DeleteMapping(value = "/comment")
 	@ResponseBody
-	public int deleteComment(@RequestBody RssCommentVO rcv) {
-		int result = newsCommentService.deleteRssCommentByIdx(rcv.getIdx());
+	public int deleteComment(@RequestParam (value = "idx") int idx) {
+		int result = newsCommentService.deleteRssCommentByIdx(idx);
 		return result;
 	}
 	

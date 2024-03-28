@@ -23,11 +23,13 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
 	<title>게시글 보기</title>
 	<link rel="stylesheet" href="/css/gallery.css">
-	<script src="/js/gallery.js"></script>
 	<link rel="stylesheet" href="/css/mainHeader2.css">
 	<script src="/js/mainHeader.js"></script>
+	<script src="/js/gallery.js"></script>
+	<script src="/js/comment.js"></script>
 </head>
 <body>
+	<input type="hidden" id="currentUser" th:value="${currentUser}">
 	<th:block th:insert="~{/mainHeader.html}"></th:block>
 	
 	<main style="width: 940px; padding: 80px; margin: auto;background: #292820; max-width:1320px">
@@ -80,10 +82,8 @@
 	       <article style="width: 740px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
-				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
-					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
-					<input type="hidden" th:value="${board.idx}" name="boardidx">
-					<textarea id="comment" placeholder="Write a comments..." name="reply"></textarea>
+				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload" onsubmit="mainCommentForm(this, event)">
+					<textarea placeholder="Write a comments..." name="reply" id="reply"></textarea>
 					<div id="submitBtn">
 						<input type="submit" class="styled-button" value="Click me"/>	           
 					</div>
@@ -99,18 +99,31 @@
 				</div>
 	       </article>
       </div>
-      	<th:block th:if="${session.user !=null && session.user.idx == board.ref}">
-      		<input type="hidden" id="deleteCk" value="0">
+      	<th:block th:if="${session.user !=null}">
+      		<th:block th:if="${session.user.idx == board.ref}">
+	      		<input type="hidden" id="deleteCk" value="0">
 				<div style="text-align: right; ">
-    				<!-- 게시글 삭제 버튼 -->
-   					<button id="hideButton">게시글 숨기기</button>    			
-   						
-    				<!-- 게시글 수정 버튼 -->
-   					<button id="updateBtn">게시글 수정</button>    				
+	   				<!-- 게시글 삭제 버튼 -->
+					<button id="hideButton">게시글 숨기기</button>    			
+	  						
+	   				<!-- 게시글 수정 버튼 -->
+					<button id="updateBtn">게시글 수정</button>    				
 					
 					<!-- 게시글 삭제 버튼 -->
-   					<button id="deleteButton">게시글 삭제</button>  
+					<button id="deleteButton">게시글 삭제</button>  
 				</div>
+      		</th:block>
+      		<th:block th:if="${session.user.role == 'ROLE_ADMIN'}">
+	      		<input type="hidden" id="deleteCk" value="0">
+				<div style="text-align: right; ">
+					<th:block th:if="${board.deleted != 1}">
+		   				<!-- 게시글 수정 버튼 -->
+						<button id="hideButton">게시글 숨기기</button>
+					</th:block>
+					<!-- 게시글 삭제 버튼 -->
+					<button id="deleteButton">게시글 삭제</button>  
+				</div>
+      		</th:block>
 		</th:block>
 		
    </main>

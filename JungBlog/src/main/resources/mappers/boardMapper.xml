@@ -41,7 +41,7 @@
 							</if>
 							<if test="categoryNum == null ">
 								and (
-									categoryNum = 1 OR categoryNum = 2 OR categoryNum = 4
+									categoryNum = 1 OR categoryNum = 2 OR categoryNum = 4 OR categoryNum = 6
 								)
 							</if>
 						</where>
@@ -94,6 +94,11 @@
 			</if>
 			<if test="categoryNum != null ">
 				and categoryNum = #{categoryNum}
+			</if>
+			<if test="categoryNum == null ">
+				<![CDATA[
+					and categoryNum <> 3 AND  categoryNum <> 5
+				]]>
 			</if>
 		</where>
 	</select>

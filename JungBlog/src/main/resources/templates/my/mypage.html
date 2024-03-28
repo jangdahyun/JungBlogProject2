@@ -176,9 +176,10 @@
 										        	<label for="newPhone">새 전화번호:</label><br>
 										        	<div class="uk-inline">
 											            <a class="uk-form-icon" href="#" uk-icon="icon: pencil"></a>
-											            <input class="uk-input" type="text" aria-label="Clickable icon" id="newPhone" name="phone" style="width: 330px;  border-radius: 5px;">
+											            <input class="uk-input" type="text" aria-label="Clickable icon" id="newPhone" name="phone" style="width: 330px;  border-radius: 5px;" placeholder="-형식 없이 기입해주세요">
 											        </div>
-											        <input class="uk-button uk-button-default asd" type="submit" value="정보 수정" >
+											        <span id="message4"></span>
+											        <input id="pbtn" class="uk-button uk-button-default asd" type="submit" value="정보 수정" onclick="isHpFormat()" disabled="disabled" >
 		       									</div>
 									    	</form>
 									 	</div>
@@ -330,6 +331,10 @@
 	            let newPasswordConfirm = $("#newPw").val();
 	            
 	            // 비밀번호가 8글자 이상인지 확인
+	            if (newPassword.includes(" ")) {
+	                alert("비밀번호는 공백을 포함 할 수 없습니다.");
+	                return;
+	            }
 	            if (newPassword.length < 8) {
 	                alert("비밀번호는 8글자 이상이어야 합니다.");
 	                return;
@@ -606,7 +611,24 @@
     	        // 현재 창에서 해당 주소로 이동합니다.
     	        window.location.href = address;
     	    }
-
+		//전화번호 폼체크
+		$(function() {
+		    $("#newPhone").on("input", function() {
+		        try {
+		            let newPhone = $("#newPhone").val().trim();
+		            var phoneRule = /^(01[016789]{1})[0-9]{4}[0-9]{4}$/;
+		            if (!phoneRule.test(newPhone)) {
+		                $("#pbtn").prop("disabled", true);
+		                $("#message4").html("전화번호를 올바르게 입력해주세요").css('color', 'red');
+		            } else {
+		                $("#pbtn").prop("disabled", false);
+		                $("#message4").html(""); // 메시지 초기화
+		            }
+		        } catch (error) {
+		            console.error("Error occurred while processing address input:", error);
+		        }
+		    });
+		});
     	 
     </script>
 </body>

@@ -31,4 +31,6 @@ public interface RssCommentDAO {
 	
 	/** 삭제하기 */
 	void deleteByIdx(int idx) throws SQLException;
+	
+	void deleteByCommentRef(int commentRef) throws SQLException;
 }

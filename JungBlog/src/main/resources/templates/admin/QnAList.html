@@ -79,7 +79,7 @@
 		        	</div>
 		        	
 		        	<th:block th:if="${#lists.isEmpty(pv.list)}">
-		        		<div>등록된 공지사항이 존재하지 않습니다.</div>
+		        		<div>해당 1대1 문의사항이 존재하지 않습니다.</div>
 		        	</th:block>
 		        	<th:block th:if="${not #lists.isEmpty(pv.list)}">
 	        			<ul id="thead">
@@ -101,8 +101,8 @@
 	        						<div class="td3">[[${#dates.format(board.regDate,'yyyy-MM-dd HH:mm:ss')}]]</div>
 	        						<div class="td4">[[${board.commentCount == 0 ? 'X' : 'O'}]]</div>
 	        						<div class="td5">
-	        							<th:block th:if="board.commentCount == 0"></th:block>
-	        							<th:block th:if="board.commentCount != 0"></th:block>
+	        							<th:block th:if="${board.commentCount == 0}">답변 X</th:block>
+	        							<th:block th:if="${board.commentCount != 0}">[[${#dates.format(board.commentList[0].regDate, 'yyyy-MM-dd hh:mm')}]]</th:block>
 	        						</div>
 	        					</div>
 	        				</li>
@@ -112,7 +112,6 @@
 						[(${pv.pageList})]
 					</div>
 	        	</div>
-	        	[[${pv}]]
 	        </div>
         </div>
     </div>

@@ -164,18 +164,21 @@ public class JungFileBoardController {
 		if(boardVO == null) {
 			return "redirect:/fileboard?error=notFound";
 		}
-		if(boardVO.getDeleted() == 1) {
+		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+		if(memberVO != null && memberVO.getRole().equals("ROLE_ADMIN")) {
+			
+		} else if(boardVO.getDeleted() == 1) {
 			return "redirect:/fileboard?error=notFound";
 		}
 		if(boardVO.getCategoryNum() != 2) {
 			return "redirect:/fileboard?error=notFound";
 		}
 		
-		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		
 		if(request.getSession().getAttribute("user")!=null) {
 			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx);
 			model.addAttribute("heart", heart);
+			model.addAttribute("currentUser", memberVO.getIdx());
 		}
 		
 		model.addAttribute("board", boardVO);
@@ -225,9 +228,12 @@ public class JungFileBoardController {
 			return "redirect:/fileboard?error=notFound";
 		}
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
-		if(request.getSession().getAttribute("user")!=null) {
-			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
-			model.addAttribute("heart",heart);		
+		JungMemberVO memberVO = null;
+		if(request.getSession().getAttribute("user") != null) { // 로그인 했으면
+			int heart = jungBoardService.select(((JungMemberVO) request.getSession().getAttribute("user")).getIdx(), idx); // 좋아요 했으면 1 아니면 0
+			memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+			model.addAttribute("currentUser", memberVO.getIdx());
+			model.addAttribute("heart",heart);
 		}	
 		// 찾은 정보를 heart로 담아서 보냄
 		model.addAttribute("board",boardVO);

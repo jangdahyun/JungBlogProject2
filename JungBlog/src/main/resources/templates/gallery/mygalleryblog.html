@@ -26,9 +26,11 @@
 	<script src="/js/my/mygallery.js"></script>
 	<link rel="stylesheet" href="/css/mainHeader2.css">
 	<script src="/js/mainHeader.js"></script>
+	<script src="/js/comment.js"></script>
 </head>
 <body>
 	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<input type="hidden" id="currentUser" th:value="${currentUser}">
 	
 	<main style="width: 940px; padding: 80px; margin: auto;background: #292820; max-width:1320px">
       <div style="width: 100%; border: 1px solid #525040; margin: 20px 0;">
@@ -80,10 +82,8 @@
 	       <article style="width: 740px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
-				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
-					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
-					<input type="hidden" th:value="${board.idx}" name="boardidx">
-					<textarea id="comment" placeholder="Write a comments..." name="reply"></textarea>
+				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload" onsubmit="mainCommentForm(this, event)">
+					<textarea placeholder="Write a comments..." name="reply" id="reply"></textarea>
 					<div id="submitBtn">
 						<input type="submit" class="styled-button" value="Click me"/>	           
 					</div>

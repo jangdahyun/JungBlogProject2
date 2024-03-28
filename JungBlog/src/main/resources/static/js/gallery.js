@@ -1,136 +1,48 @@
-let totalCount = 0;
-function init(){
-	axios.post('/commentsTotalCount', {
-		'boardIdx': $("#boardIdx").val(),
-	})
-	.then(function (res) {
-		totalCount = res.data;
-		updatePage(totalCount, 1);
-		updateTable(1);
-	})
-	.catch(function (e){
-		console.log(e);
-	});
-}
-function updateTable(currentPage){
-	$("#commentList").empty();
-	axios.post('/comments', {
-		'boardIdx': $("#boardIdx").val(),
-		'currentPage': currentPage,
-	})
-	.then(function (res) {
-		const data = res.data;
-		console.log(data);
-		content=``;
-		data.forEach(comment=>{
-			const date = new Date(comment.regDate);
-			const formattedDate = new Intl.DateTimeFormat('ko-KR', {
-			    year: 'numeric',
-			    month: '2-digit',
-			    day: '2-digit'
-			}).format(date);
-			content += `
-				<li>
-					<span class="nickName">${comment.member.nickName}</span><span class="material-symbols-outlined" style="font-size: 15px; margin-right: 5px;">schedule</span><span class="regDate">${formattedDate}</span>
-					<p class="reply">${comment.reply}</p>
-				</li>
-			`
-		})
-		$("#commentList").html(content);
-	})
-	.catch(function (error) {
-		console.log(error);
-	});
-}
-
-function updatePage(totalCount, currentPage) {
-	const sizeOfPage = 5;
-	const sizeOfBlock = 5;
-	page = ``;
-	if(totalCount>0){
-		let totalPage = Math.floor((totalCount - 1) / sizeOfPage) + 1;
-		if (currentPage > totalPage) currentPage = 1;
-		let startPage = Math.floor((currentPage - 1) / sizeOfBlock) * sizeOfBlock + 1;
-		let endPage = startPage + sizeOfBlock - 1;
-		if (endPage > totalPage) endPage = totalPage;
-		
-		page = `<ul class='uk-pagination' uk-margin>`
-		if(startPage>1){
-			page += `<li><span uk-pagination-previous onclick='updatePage(${totalCount},${startPage - 1})'></span></li>`
-		}
-		for(let i = startPage; i<= endPage; i++){
-			if(i==currentPage){
-				page += `<li><span class="active">${i}</span></li>`
-			} else {
-				page += `<li><span onclick='updatePage(${totalCount},${i})'>${i}</span></li>`
-			}
-		}
-		if(endPage < totalPage) {
-			page += `<li><span uk-pagination-next onclick='updatePage(${totalCount},${endPage+1})'></span></li>`
-		}
-	}
-	$("#page").html(page);
-	updateTable(currentPage);
-}
-
 $(function() {
-   let time = $("#time").html();
-   moment.locale('en');
-   time = moment(time).format('ll');
-   $("#time").html(time);
-   
-   init();
-   
-   $("#heart2").click(function(){
-	   alert("로그인 후 이용가능합니다.")
-   })
-   $("#heart").click(function(e){
-      e.preventDefault();
-      
-      let heartCk = $("#heartCk").val();
-      
-      if(heartCk==0){
-         axios.post('/heartUpload', {
-             'boardRef': $("#boardIdx").val()
-           })
-           .then(function (res) {
-             if(res.data=='1'){
-             $("#heartCk").val("1")
-             $("#ch").html(Number($("#ch").html())+1)
-                  $("#heart").addClass("active")
-               alert('조아요 성공')
-            }
-           })
-           .catch(function (error) {
-             console.log(error);
-           });
-      } else{
-         axios.post('/heartDelete', {
-             'boardRef': $("#boardIdx").val()
-           })
-           .then(function (res) {
-             if(res.data=='1'){
-             $("#heartCk").val("0")
-             $("#ch").html(Number($("#ch").html())-1)
-               $("#heart").removeClass("active")
-               alert('조아요 취소성공')
-            }
-           })
-           .catch(function (error) {
-             console.log(error);
-           });
-      }
-
-   })
-   
-	$("#commentSubmit").submit(function(){
-		value=$("#comment").val();
-			console.log(value);
-		if(value.trim().length==0){
-			alert("댓글을 입력해주세요");
-			return false;
-		  }
+	let time = $("#time").html();
+	moment.locale('en');
+	time = moment(time).format('ll');
+	$("#time").html(time);
+	
+	$("#heart2").click(function(){
+		alert("로그인 후 이용가능합니다.")
 	})
+	$("#heart").click(function(e){
+    	e.preventDefault();
+    	let heartCk = $("#heartCk").val();
+		if(heartCk==0){
+        	axios.post('/heartUpload', {
+            	'boardRef': $("#boardIdx").val()
+        	})
+           	.then(function (res) {
+            	if(res.data=='1'){
+	            	$("#heartCk").val("1")
+	            	$("#ch").html(Number($("#ch").html())+1)
+	            	$("#heart").addClass("active")
+	            	alert('조아요 성공')
+            	}
+       		})
+           	.catch(function (error) {
+	        	console.log(error);
+	        });
+		} else {
+        	axios.post('/heartDelete', {
+            	'boardRef': $("#boardIdx").val()
+        	})
+            .then(function (res) {
+            	if(res.data=='1'){
+            		$("#heartCk").val("0")
+            		$("#ch").html(Number($("#ch").html())-1)
+            		$("#heart").removeClass("active")
+            		alert('조아요 취소성공')
+            	}
+           	})
+           	.catch(function (error) {
+            	console.log(error);
+			});
+		}
+	})
+
 	
 	// form 요소가 제출될 때
     document.getElementById("hideButton").addEventListener("click", function(event) {
@@ -189,5 +101,9 @@ $(function() {
         // 수정할 게시글 정보를 수정 폼으로 전송
         window.location.href = "/gallery/update/" + boardIdx;
 	});
-
+	$(".subCommentForm").submit(function(event){
+		event.preventDefault();
+		
+	})
 })
+
