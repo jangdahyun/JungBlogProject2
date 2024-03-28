@@ -276,16 +276,6 @@
                 $("#title").focus();
                 return false;
             }
-         	// #files 요소를 선택합니다.
-            let filesElement = document.getElementById('files');
-
-            // #files의 자식 요소 개수를 확인합니다.
-            let fileCount = filesElement.children.length;
-			
-            if(fileCount==0){
-            	alert("이미지를 넣어야합니다.")
-            	return false;
-            }
             let content = $("#content").val();
             if (content.trim().length === 0) {
                 alert("내용을 입력해주세요.");
