@@ -18,5 +18,8 @@ CREATE table tb_rssBoard(
 );
 
 
+ALTER TABLE tb_rssBoard
+MODIFY (image VARCHAR2(1000));
+
 
 SELECT * FROM jung_board;

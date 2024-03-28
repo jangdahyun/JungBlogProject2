@@ -210,6 +210,7 @@ public class NewsController {
 		model.addAttribute("commentLastItemIdx", lastItemIdx + 1);
 		model.addAttribute("commentCount", newsCommentService.getTotalCountByRssBoardRef(idx));
 		model.addAttribute("rssBoardRef", idx);
+		item.setReadCount(item.getReadCount() + 1);
 		model.addAttribute("item", item);
 		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		if(request.getSession().getAttribute("user")!=null) { 		
