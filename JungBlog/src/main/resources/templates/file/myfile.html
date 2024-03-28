@@ -28,6 +28,7 @@
 
 <link rel="stylesheet" href="/css/mainHeader.css">
 <script src="/js/mainHeader.js"></script>
+<script src="/js/comment.js"></script>
 <style>
     hr { 
         width: 100%; /* 너비를 50%로 지정 */
@@ -40,6 +41,7 @@
 <body>
 	 <!-- 헤더 -->
 	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<input type="hidden" id="currentUser" th:value="${currentUser}">
 
 	<main style="width: 940px; padding: 20px; margin: auto;">
       <div style="width: 100%;  margin: 20px; text-align: left; margin-top: 50px;">
@@ -114,12 +116,10 @@
 	       <article style="width: 740px; margin: 20px auto;">
 				<p style="font-family: Playfair Display;">COMMENTS</p>
 				<div class="hr"></div>
-				<form style="margin-top: 40px" id="commentSubmit" method="post" action="/commentupload">
-					<input type="hidden" th:value="${board.categoryNum}" name="categoryNum">
-					<input type="hidden" th:value="${board.idx}" name="boardidx">
-					<textarea id="comment" placeholder="댓글을 작성해주세요" name="reply"></textarea>
+				<form style="margin-top: 40px" id="commentSumit" method="post" action="/commentupload" onsubmit="mainCommentForm(this, event)">
+					<textarea placeholder="댓글을 작성해주세요" name="reply" id="reply"></textarea>
 					<div id="submitBtn">
-						<input type="submit" class="styled-button" value="등록"/>	           
+						<input type="submit" class="styled-button" value="Click me"/>	           
 					</div>
 				</form>
 				<div>

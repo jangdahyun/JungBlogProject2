@@ -30,6 +30,7 @@ public class SecurityConfig {
 					.requestMatchers("/", "/home", "/index","/main", "/dbinit","/blog/**","/news/**","/member/findPw","/member/userEmailCheck2","/member/userIdCheckByEmail","/member/updatePw").permitAll()
 					.requestMatchers("/gallery","/gallery/**").permitAll()
 					.requestMatchers("/new").permitAll()
+					.requestMatchers("/comments", "/commentsTotalCount").permitAll()
 					.requestMatchers("/notice/**").permitAll()
 					.requestMatchers("/fileboard","/fileboard/blog/**").permitAll()
 					.requestMatchers("/videoboard","/videoboard/blog/**").permitAll()

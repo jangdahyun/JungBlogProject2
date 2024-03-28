@@ -26,7 +26,6 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <!-- 커스텀 -->
     <link href="/css/my/header.css" rel="stylesheet">
-    
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif; /* 한글 폰트 지정 */
@@ -146,7 +145,7 @@
 								<th class="" >
 									<select class="uk-select" id="selectBox" style="height: 25px" onchange="handleCategoryChange()">
 						                <option selected value="0">카테고리</option>
-						                <option th:each="category : ${categoryList}" th:value="${category}" th:selected="${(category == '블로그' ? 1 : category == '자료실' ? 2 : 4) == categoryNum}">[[${category}]]</option>
+						                <option th:each="category : ${categoryList}" th:value="${category}" th:selected="${(category == '블로그' ? 1 : category == '자료실' ? 2 : category == 'Gallery' ? 4 : 6 ) == categoryNum}">[[${category}]]</option>
 						            </select>
 								</th>
 								<th class="" style="line-height: 2">제목</th>
@@ -225,6 +224,12 @@
            // 갤러리 페이지로 이동
            location.href = `/gallery/my/${idxText}`;
            break;
+           
+		case "동영상": // 갤러리 카테고리 선택 시
+		    // 갤러리 페이지로 이동
+		    location.href = `/videoboard/my/${idxText}`;
+		    break;   
+		    
        default:
            // 기본적으로 수행할 동작
            break;
@@ -311,6 +316,12 @@
 	                // 갤러리 페이지로 이동
 	                location.href = `?p=1&categoryNum=4`;
 	                break;
+	                
+	            case "동영상": // 갤러리 카테고리 선택 시
+	                // 갤러리 페이지로 이동
+	                location.href = `?p=1&categoryNum=6`;
+	                break;
+	                
 	            default:
 	                // 기본적으로 수행할 동작
 	                break;

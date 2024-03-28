@@ -89,7 +89,7 @@ public class JungMemberController {
          categoryList.remove("공지사항");
          
          model.addAttribute("pv",pv);
-         log.debug("pv:{}",pv);
+         log.debug("방방:{}",pv);
          if(cv.getCategoryNum() != null) {
         	 model.addAttribute("categoryNum", cv.getCategoryNum());        	 
          }
@@ -115,6 +115,7 @@ public class JungMemberController {
          categoryList.remove("공지사항");
          
          model.addAttribute("pv",pv);
+         log.debug("pv{}",pv);
          if(cv.getCategoryNum() != null) {
         	 model.addAttribute("categoryNum", cv.getCategoryNum());        	 
          }
@@ -134,7 +135,8 @@ public class JungMemberController {
          cv.setS(10);
          cv.setCategoryNum(5);
          
-         PagingVO<JungBoardVO> pv = jungBoardService.selectByRef(cv);
+         PagingVO<JungBoardVO> pv = jungBoardService.selectQnAList(cv);
+         
          model.addAttribute("pv",pv);
          model.addAttribute("user",memberVO);
          model.addAttribute("cv", cv);

@@ -70,6 +70,7 @@
 						<col width="90px" />
 						<col width="60px" />
 						<col width="60px" />
+						<col width="60px" />
 					</colgroup>
 					<thead>
 						<tr>
@@ -77,7 +78,7 @@
 							<th class="" >
 								<select class="uk-select" id="selectBox" style="height: 25px" onchange="handleCategoryChange()">
 					                <option value="0">카테고리</option>
-					                <option th:each="category : ${categoryList}" th:value="${category}" th:selected="${(category == '블로그' ? 1 : category == '자료실' ? 2 : 4) == categoryNum}">[[${category}]]</option>
+					                <option th:each="category : ${categoryList}" th:value="${category}" th:selected="${(category == '블로그' ? 1 : category == '자료실' ? 2 : category == 'Gallery' ? 4 : 6 ) == categoryNum}">[[${category}]]</option>
 					            </select>
 							</th>
 							<th class="" style="line-height: 2">제목</th>
@@ -85,6 +86,7 @@
 							<th class="" style="line-height: 2">게시일</th>
 							<th class="" style="line-height: 2">조회수</th>
 							<th class="" style="line-height: 2">좋아요</th>
+							<th class="" style="line-height: 2">숨김여부</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -100,11 +102,12 @@
 								<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
 								<td>[[${vo.readCount}]]</td>
 								<td>[[${vo.countHeart}]]</td>
+								<td>[[${vo.deleted == 1 ? 'O' : 'X' }]]</td>
 							</tr>
 						</th:block>
 					</tbody>
 				</table>
-				<div style="display: flex; align-items: center;justify-content: center;">
+				<div id="page" style="display: flex; align-items: center;justify-content: center;">
 					[(${pv.pageList})]
 				</div>
 	        </div>
@@ -115,18 +118,21 @@
 <script type="text/javascript">
 	$(function(){
 		let categoryNum = $("#categoryNum").val();
-
-	    $("#page a").click(function(e){
-	    	e.preventDefault();
-	    	content = ""
-	    	const pageNum = $(this).text();
-	    	if(categoryNum == null){
-	        	content = `?p=${pageNum}`
-	        } else {
-	        	content = `?p=${pageNum}&categoryNum=${categoryNum}`
-	        }
-	      	location.href = content;
+		
+		
+		$("#page a").click(function(e){
+			e.preventDefault();
+			content = ""
+			const pageNum = $(this).text();
+			if(categoryNum == null){
+				content = `?p=${pageNum}`
+			} else {
+				content = `?p=${pageNum}&categoryNum=${categoryNum}`
+			}
+			
+			location.href = content;
 		})
+		
 	})
 
 
@@ -138,18 +144,24 @@
 		switch (categoryNameText) {
 			case "블로그": // 블로그 카테고리 선택 시
 		    	// 블로그 페이지로 이동
-		    	location.href = `/blog/${idxText}`;
+		    	window.open(`/blog/view/${idxText}`, "_blank");
 		    	break;
 		    
 			case "자료실": // 자료실 카테고리 선택 시
 		    	// 자료실 페이지로 이동
-		    	location.href = `/fileboard/blog/${idxText}`;
+		    	window.open(`/fileboard/blog/${idxText}`, "_blank");
 		    	break;
 		    
 			case "Gallery": // 갤러리 카테고리 선택 시
 		    	// 갤러리 페이지로 이동
-		    	location.href = `/gallery/${idxText}`;
+		    	window.open(`/gallery/${idxText}`, "_blank");
 		    	break;
+		    	
+			case "동영상": // 갤러리 카테고리 선택 시
+		    	// 갤러리 페이지로 이동
+		    	window.open(`/videoboard/blog/${idxText}`, "_blank");
+		    	break;
+		    	
 			default:
 		    	// 기본적으로 수행할 동작
 		    	break;
@@ -185,6 +197,11 @@
 	        case "Gallery": // 갤러리 카테고리 선택 시
 	            // 갤러리 페이지로 이동
 	            location.href = `?p=1&categoryNum=4`;
+	            break;
+	            
+	        case "동영상": // 갤러리 카테고리 선택 시
+	            // 갤러리 페이지로 이동
+	            location.href = `?p=1&categoryNum=6`;
 	            break;
 	        default:
 	            // 기본적으로 수행할 동작

@@ -94,6 +94,7 @@ public class NewsCommentServiceImpl implements NewsCommentService{
 		int result = 0;
 		try {
 			commentDAO.deleteByIdx(idx);
+			commentDAO.deleteByCommentRef(idx);
 			result = 1;
 		} catch (SQLException e) {
 			e.printStackTrace();

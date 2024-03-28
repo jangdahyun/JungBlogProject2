@@ -55,21 +55,24 @@ public class BlogController {
 	public String blogView(Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response, @PathVariable(value = "idx") int idx) {
 		log.info("blogView 실행 idx = {}", idx);
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		
+		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		if(boardVO == null) { // 해당글이 존재하는지 or 해당글이 blog 가 맞는지 확인
 			return "redirect:/blog?error=notFound";
 		}
-		if(boardVO.getDeleted() == 1) {
+		if(memberVO != null && memberVO.getRole().equals("ROLE_ADMIN")) {
+			
+		} else if(boardVO.getDeleted() == 1) {
 			return "redirect:/blog?error=notFound";
 		}
 		if(boardVO.getCategoryNum() != 1){
 			return "redirect:/blog?error=notFound";
 		}
-		
-		JungMemberVO memberVO = null;
 		if(session.getAttribute("user") != null) { // 로그인 했으면
 			int heart = jungBoardService.select(((JungMemberVO) session.getAttribute("user")).getIdx(), idx); // 좋아요 했으면 1 아니면 0
 			memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 			model.addAttribute("heart",heart);
+			model.addAttribute("currentUser", memberVO.getIdx());
 		}
 		
 		// 조회수 증가여부 체크
@@ -127,9 +130,12 @@ public class BlogController {
 			return "redirect:/blog?error=notFound";
 		}
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
-		if(request.getSession().getAttribute("user")!=null) {
-			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
-			model.addAttribute("heart",heart);		
+		JungMemberVO memberVO = null;
+		if(request.getSession().getAttribute("user") != null) { // 로그인 했으면
+			int heart = jungBoardService.select(((JungMemberVO) request.getSession().getAttribute("user")).getIdx(), idx); // 좋아요 했으면 1 아니면 0
+			memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+			model.addAttribute("currentUser", memberVO.getIdx());
+			model.addAttribute("heart",heart);
 		}	
 		// 찾은 정보를 heart로 담아서 보냄
 		model.addAttribute("board",boardVO);

@@ -73,6 +73,9 @@
 	<!-- jung_member 테이블에 계정 정보를 수정. -->
 	<update id="update" parameterType="JungMemberVO">
 		UPDATE jung_member SET
+			<if test="username != null">
+				username = #{username}
+			</if>
 			<if test="password != null">
 				password = #{password}
 			</if>

@@ -91,19 +91,25 @@ public class JungVideoController {
 	@GetMapping(value = "/blog/{idx}")
 	public String as (@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
-		boardVO.setMember(jungMemberService.selectByIdx(boardVO.getRef()));
-		
-		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
-	
-		boardVO.setCountHeart(jungBoardService.countHeart(idx));
-		
-		boardVO.setVideoVO(jungVideoService.selectvideoByRef(boardVO.getIdx()));
 		
 		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+		if(boardVO == null) { // 해당글이 존재하는지 or 해당글이 blog 가 맞는지 확인
+			return "redirect:/videoboard?error=notFound";
+		}
+		if(memberVO != null && memberVO.getRole().equals("ROLE_ADMIN")) {
+			
+		} else if(boardVO.getDeleted() == 1) {
+			return "redirect:/videoboard?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 6){
+			return "redirect:/videoboard?error=notFound";
+		}
+		
 		
 		if(request.getSession().getAttribute("user")!=null) {
 			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx);
 			model.addAttribute("heart", heart);
+			model.addAttribute("currentUser", memberVO.getIdx());
 		}
 		
 		model.addAttribute("board", boardVO);
@@ -123,14 +129,15 @@ public class JungVideoController {
 				oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
 				oldCookie.setPath("/");
 				oldCookie.setMaxAge(60);
-				PopularVO p = new PopularVO();
-				p.setBoardRef(idx);
-				if(request.getSession().getAttribute("user")!=null) {
-					p.setUserRef(memberVO.getIdx());					
+				
+				if(memberVO != null) {
+					PopularVO p = new PopularVO();
+					p.setUserRef(memberVO.getIdx());
+					p.setBoardRef(idx);
+					p.setInteraction(1);
+					popularService.insertPopular(p);
+					log.info("무야:{}", p);
 				}
-				p.setInteraction(1);
-				popularService.insertPopular(p);
-				log.info("무야:{}", p);
 				response.addCookie(oldCookie);
 			}
 		}	else {
@@ -138,54 +145,40 @@ public class JungVideoController {
 				Cookie newCookie = new Cookie("blog", "[" + idx + "]");
 				newCookie.setPath("/");
 				newCookie.setMaxAge(60);
+				if(memberVO != null) {
+					PopularVO p = new PopularVO();
+					p.setUserRef(memberVO.getIdx());
+					p.setBoardRef(idx);
+					p.setInteraction(1);
+					popularService.insertPopular(p);
+					log.info("무야:{}", p);
+				}
 				response.addCookie(newCookie);
 		}
 		
 		return "video/video"; // 임시값
 	}
 	
-	@PostMapping(value = "/commentupload")
-	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
-		log.debug("값 : {}", commentVO);
-		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
-		commentVO.setUserRef(memberVO.getIdx());
-		commentVO.setBoardRef(boardidx);
-		PopularVO p = new PopularVO();
-		p.setBoardRef(boardidx);
-		p.setUserRef(memberVO.getIdx());
-		p.setInteraction(2);
-		popularService.insertPopular(p);
-		jungCommentService.insert(commentVO);
-		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
-		return "redirect:/videoboard/blog/" + boardidx;
+	@GetMapping(value = "/my/{idx}")
+	public String asd (@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {
+			return "redirect:/videoboard?error=notFound";
+		}
+		if(boardVO.getCategoryNum() != 6) {
+			return "redirect:/videoboard?error=notFound";
+		}
+		
+		JungMemberVO memberVO = null;
+		if(request.getSession().getAttribute("user") != null) { // 로그인 했으면
+			int heart = jungBoardService.select(((JungMemberVO) request.getSession().getAttribute("user")).getIdx(), idx); // 좋아요 했으면 1 아니면 0
+			memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+			model.addAttribute("currentUser", memberVO.getIdx());
+			model.addAttribute("heart",heart);
+		}	
+		model.addAttribute("board", boardVO);
+		return "video/myvideo";
 	}
-	
-	/**
-	 * boardIdx와 currentPage를 넘기면 boardIdx의 댓글중 currentPage의 댓글을 보내주는 api
-	 * @param map
-	 * @return List<JungCommentVO>
-	 */
-	@PostMapping(value = "/comments")
-	@ResponseBody
-	public List<JungCommentVO> getComments(@RequestBody HashMap<String, Integer> map){
-		log.info("map : {}", map);
-		PagingVO<JungCommentVO> pv = null;
-		int boardIdx = map.get("boardIdx");
-		CommonVO cv = new CommonVO();
-		cv.setP(map.get("currentPage"));
-		pv = jungCommentService.selectByRef(boardIdx, cv);
-		return pv.getList();
-	}
-	@PostMapping(value = "/commentsTotalCount")
-	@ResponseBody
-	public int getCommentsTotalCount(@RequestBody HashMap<String, Integer> map){
-		int result = 0;
-		int boardIdx = map.get("boardIdx");
-		result = jungCommentService.selectCountByRef(boardIdx);
-		return result;
-	}
-	
-	
 	
 	@PostMapping(value = "/heartUpload")
 	@ResponseBody

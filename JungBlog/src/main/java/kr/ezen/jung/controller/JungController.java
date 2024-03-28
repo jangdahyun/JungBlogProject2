@@ -79,6 +79,7 @@ public class JungController {
 		PagingVO<JungBoardVO> pvvideo = jungBoardService.selectList(cv);
 		
 		model.addAttribute("pvall", pvall);
+		log.debug("pvall{}",pvall);
 		model.addAttribute("pvblog", pvblog);
 		model.addAttribute("pvfileboard", pvfileboard);
 		model.addAttribute("pvgallery", pvgallery);
@@ -96,6 +97,7 @@ public class JungController {
 	@ResponseBody
 	@Transactional
 	public String deleteBoard(@PathVariable(value = "idx") int idx, HttpSession session) {
+		log.debug("삭제실행{}",idx);
 		if(session.getAttribute("user") == null) {			// 로그인 했는지 확인
 			return "0";
 		}
@@ -104,7 +106,10 @@ public class JungController {
 		if(boardVO == null) {								// 있는 게시글인지 확인
 			return "0";
 		}
-		if(boardVO.getRef() != sessionUser.getIdx()){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+		if (sessionUser.getRole().equals("ROLE_ADMIN")) {
+			
+		} else if(boardVO.getRef() != sessionUser.getIdx() ){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+			log.debug("삭제실행sss1{}",sessionUser);
 			return "0";
 		}
 		jungFileBoardService.deleteByRef(boardVO.getIdx());	// 게시글에 해당하는 파일 삭제
@@ -177,28 +182,32 @@ public class JungController {
 	}
 	
 	@PostMapping(value = "/commentupload")
-	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx,@RequestParam(value = "categoryNum") int categoryNum) {
+	@ResponseBody
+	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO) {
 		log.debug("값 : {}", commentVO);
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		commentVO.setUserRef(memberVO.getIdx());
-		commentVO.setBoardRef(boardidx);
 		PopularVO p = new PopularVO();
-		p.setBoardRef(boardidx);
+		p.setBoardRef(commentVO.getBoardRef());
 		p.setUserRef(memberVO.getIdx());
 		p.setInteraction(2);
 		popularService.insertPopular(p);
-		jungCommentService.insert(commentVO);
-		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
-		String path="";
-		if (categoryNum == 1) {
-			path="/blog/view/";
-		}
-		else if(categoryNum==2){
-			path="/fileboard/blog/";
-		}else if(categoryNum==4) {
-			path="/gallery/";
-		}
-		return "redirect:" + path + boardidx;
+		int result = jungCommentService.insert(commentVO);
+		return result+"";
+	}
+	
+	@PostMapping(value = "/commentUpdate")
+	@ResponseBody
+	public String commentUpdate(@ModelAttribute(value = "commentVO") JungCommentVO commentVO) {
+		log.debug("값 : {}", commentVO);
+		int result = jungCommentService.update(commentVO);
+		return result + "";
+	}
+	@DeleteMapping(value = "/comment/{idx}")
+	@ResponseBody
+	public String commentDelete(@PathVariable(value = "idx") int idx) {
+		int result = jungCommentService.delete(idx);
+		return result + "";
 	}
 	
 	/**

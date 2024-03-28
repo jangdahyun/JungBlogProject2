@@ -245,7 +245,6 @@ public class JungBoardServiceImpl implements JungBoardService {
 				map.put("endNo", pv.getEndNo());
 				
 				List<JungBoardVO> list = jungBoardDAO.selectList(map);
-				
 				for(JungBoardVO board : list) {
 					// 카테고리 이름
 					board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
@@ -445,6 +444,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 		try {
 				HashMap<String, Object> map = new HashMap<>();
 				map.put("search", cv.getSearch());
+				map.put("userRef", cv.getUserRef());
 				if(cv.getOrderCode() != null) {
 					if(cv.getOrderCode().equals("0")) {
 						map.put("commentSize", 0);
@@ -465,14 +465,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 					board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
 					// 유저정보 넣어주기
 					board.setMember(jungMemberService.selectByIdx(board.getRef()));
-					// 좋아요 갯수 넣어주기
-					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
-					// 파일
-					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-					// 비디오
-					board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
-					// 댓글수
-					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+	
 					HashMap<String, Object> commentMap = new HashMap<>();
 					commentMap.put("boardRef", board.getIdx());
 					commentMap.put("startNo", 1);

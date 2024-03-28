@@ -77,20 +77,24 @@ public class GalleryController {
 	@GetMapping(value = "/{idx}")
 	public String as(@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
 		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		if(boardVO == null) {
 			return "redirect:/gallery?error=notFound";
 		}
-		if(boardVO.getDeleted() == 1) {
+		
+		if(memberVO != null && memberVO.getRole().equals("ROLE_ADMIN")) {
+			
+		} else if(boardVO.getDeleted() == 1) {
 			return "redirect:/gallery?error=notFound";
 		}
 		if(boardVO.getCategoryNum() != 4) {
 			return "redirect:/gallery?error=notFound";
 		}
-		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
 		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
 		if(request.getSession().getAttribute("user")!=null) {
 			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
 			model.addAttribute("heart",heart);		
+			model.addAttribute("currentUser", memberVO.getIdx());
 		}
 				
 		// 찾은 정보를 heart로 담아서 보냄
@@ -140,10 +144,12 @@ public class GalleryController {
 		if(boardVO.getCategoryNum() != 4) {
 			return "redirect:/gallery?error=notFound";
 		}
-		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
-		if(request.getSession().getAttribute("user")!=null) {
-			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
-			model.addAttribute("heart",heart);		
+		JungMemberVO memberVO = null;
+		if(request.getSession().getAttribute("user") != null) { // 로그인 했으면
+			int heart = jungBoardService.select(((JungMemberVO) request.getSession().getAttribute("user")).getIdx(), idx); // 좋아요 했으면 1 아니면 0
+			memberVO = (JungMemberVO) request.getSession().getAttribute("user");
+			model.addAttribute("currentUser", memberVO.getIdx());
+			model.addAttribute("heart",heart);
 		}	
 		// 찾은 정보를 heart로 담아서 보냄
 		model.addAttribute("board",boardVO);
