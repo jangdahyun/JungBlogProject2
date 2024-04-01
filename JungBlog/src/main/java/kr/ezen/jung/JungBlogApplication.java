@@ -9,4 +9,5 @@ public class JungBlogApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JungBlogApplication.class, args);
 	}
+	
 }

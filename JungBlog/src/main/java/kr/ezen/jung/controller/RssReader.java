@@ -36,7 +36,7 @@ public class RssReader {
 	private RssDAO rssDAO;
 	
 
-	// @Scheduled(fixedRate = 60000) // 1분마다 실행
+	@Scheduled(fixedRate = 60000) // 1분마다 실행
     public void checkForUpdates() {
 		log.info("뉴스 읽기 시작");
         try {
