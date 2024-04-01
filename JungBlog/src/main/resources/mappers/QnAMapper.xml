@@ -35,9 +35,11 @@
 						from
 							jung_board
 						where
-							ref = #{userRef}
-							AND
 							categoryNum = 5
+							<if test="userRef != null">
+								AND
+								ref = #{userRef}
+							</if>
 							<if test="search != null">
 								and (
 									title like '%' || #{search} || '%'
@@ -86,9 +88,11 @@
 		from
 			jung_board
 		where
-			ref = #{userRef}
-			AND
 			categoryNum = 5
+			<if test="userRef != null">
+				AND
+				ref = #{userRef}
+			</if>
 			<if test="search != null">
 				and (
 					title like '%' || #{search} || '%'
