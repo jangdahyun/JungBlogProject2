@@ -39,7 +39,7 @@
 							<if test="userRef != null">
 								AND
 								ref = #{userRef}
-							</if>
+							</if>							
 							<if test="search != null">
 								and (
 									title like '%' || #{search} || '%'
@@ -92,7 +92,7 @@
 			<if test="userRef != null">
 				AND
 				ref = #{userRef}
-			</if>
+			</if>	
 			<if test="search != null">
 				and (
 					title like '%' || #{search} || '%'

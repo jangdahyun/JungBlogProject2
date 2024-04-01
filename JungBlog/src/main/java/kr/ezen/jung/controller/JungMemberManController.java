@@ -531,7 +531,7 @@ public class JungMemberManController {
 	        return "redirect:/";
 	    }
 	    
-	    model.addAttribute("name", memberVO.getNickName());
+	    model.addAttribute("name", memberVO.getName());
 	    
 	    JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
 	    if (boardVO == null) {
@@ -552,6 +552,7 @@ public class JungMemberManController {
 	    if(!memberVO.getRole().equals("ROLE_ADMIN")) {
 	        return "redirect:/";
 	    }
+	    model.addAttribute("name", memberVO.getName());
 	    JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
 	    if(boardVO == null ||boardVO.getRef() != memberVO.getIdx()) {
 	    	return "redirect:/";
@@ -559,7 +560,6 @@ public class JungMemberManController {
 	    if(error != null) {
 	    	model.addAttribute("error", error);
 	    }
-	    model.addAttribute("name", memberVO.getNickName());
 	    model.addAttribute("board", boardVO);
 		return "admin/noticeUpload";
 	}
