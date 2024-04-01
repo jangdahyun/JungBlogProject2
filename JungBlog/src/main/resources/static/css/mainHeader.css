@@ -1,0 +1,87 @@
+@charset "utf-8";
+*{margin: 0; padding: 0; box-sizing: border-box;}
+img {max-width: 100%;}
+header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	background-color: transparent; /* 배경색을 투명하게 설정 */
+	box-shadow: none; /* 그림자 효과 제거 */
+}
+nav{
+    width: 100%;
+    height: 80px;
+    background-color: white;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.logo {
+	width: 150px;
+}
+/* 메인 페이지 그림 */
+.main-image {
+	background-image: url('mainpage.jpg'); /* 배경 이미지 지정 */
+	background-size: cover; /* 배경 이미지를 컨테이너에 맞게 조정 */
+	height: 400px; /* 그림의 높이 설정 */
+}
+#menuContent {
+	position: fixed;
+	width: 520px;
+	margin-top: 80px;
+	left: -520px;
+	height: calc(100vh - 80px);
+	background-color: rgba(0,0,0,0.9);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	z-index: 1;
+	color: #fff;
+	padding: 50px 40px;
+	transition: 0.3s;
+}
+#menuCloseBtn{
+	position: absolute;
+	top: 20px; right: 20px;
+	width: 30px; height: 30px;
+	cursor: pointer;
+}
+#menuContent img {
+	max-width: 100%;
+	filter: invert();
+}
+#menuContent ul {
+	padding: 0; margin: 0;
+}
+#menuContent ul li a {
+	padding: 20px 0;
+	display: block;
+	color: #fff;
+	font-size: 16px;
+	text-decoration: none;
+	position: relative;
+}
+#menuContent ul li a::before{
+	content: "";
+	width: 100%;
+	height: 1px;
+	position: absolute;
+	top: 0; left: 0;
+	background: #929292;
+}
+#menuContent ul li:last-child a::after {
+	content: "";
+	width: 100%;
+	height: 1px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background: #929292;
+}
+li{list-style: none;}
+#info{
+	margin-bottom: 50px;
+	font-size: 24px;
+	font-weight: bold;
+}

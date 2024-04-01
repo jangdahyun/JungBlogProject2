@@ -1,6 +1,7 @@
 package kr.ezen.jung.vo;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,10 +46,28 @@ public class RssVO {
     @Data
     @XmlRootElement
     public static class Item {
+    	private int idx;
         private String title;
         private String link;
         private String image;
         private String author;
         private String pubDate;
+        private String category;
+        private int readCount;
+        private int likeCount;
+        private String content;
+        
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Item item = (Item) o;
+            return Objects.equals(link, item.link);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(link);
+        }
     }
 }

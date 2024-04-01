@@ -13,13 +13,17 @@ import kr.ezen.jung.dao.HeartDAO;
 import kr.ezen.jung.dao.JungBoardDAO;
 import kr.ezen.jung.dao.JungCommentDAO;
 import kr.ezen.jung.dao.JungFileBoardDAO;
-import kr.ezen.jung.dao.JungMemberDAO;
+import kr.ezen.jung.dao.JungQnABoardDAO;
+import kr.ezen.jung.dao.JungScrollBoardDAO;
+import kr.ezen.jung.dao.JungVideoDAO;
 import kr.ezen.jung.dao.PopularDAO;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
 import kr.ezen.jung.vo.JungBoardVO;
 import kr.ezen.jung.vo.PagingVO;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service(value = "jungBoardService")
 public class JungBoardServiceImpl implements JungBoardService {
 
@@ -27,7 +31,7 @@ public class JungBoardServiceImpl implements JungBoardService {
 	private JungBoardDAO jungBoardDAO;
 	
 	@Autowired
-	private JungMemberDAO jungMemberDAO;
+	private JungMemberService jungMemberService;
 	
 	@Autowired
 	private HeartDAO heartDAO;
@@ -37,6 +41,9 @@ public class JungBoardServiceImpl implements JungBoardService {
 	
 	@Autowired
 	private JungFileBoardDAO jungFileBoardDAO;
+	
+	@Autowired
+	private JungVideoDAO jungVideoDAO;
 	
 	@Autowired
 	private JungCommentDAO jungCommentDAO;
@@ -66,25 +73,25 @@ public class JungBoardServiceImpl implements JungBoardService {
 			map.put("startNo", pv.getStartNo());
 			map.put("endNo", pv.getEndNo());
 			
-			
 			List<JungBoardVO> list = jungBoardDAO.selectList(map);
 			
 			for(JungBoardVO board : list) {
 				// 카테고리 이름
 				board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
 				// 유저정보 넣어주기
-				board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+				board.setMember(jungMemberService.selectByIdx(board.getRef()));
 				// 좋아요 갯수 넣어주기
 				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 				// 파일
 				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				// 비디오
+				board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 
 				// 댓글수
 				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
-
-			
 			}
-			pv.setList(list);
+			pv.setList(list); 
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -102,16 +109,21 @@ public class JungBoardServiceImpl implements JungBoardService {
 		JungBoardVO board = null;
 		try {
 			board = jungBoardDAO.selectByIdx(idx);
-			// 카테고리 이름
-			board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
-			// 유저정보 넣어주기
-			board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
-			// 좋아요 갯수 넣어주기
-			board.setCountHeart(heartDAO.countHeart(board.getIdx()));
-			// 파일
-			board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-			// 댓글수
-			board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+			if(board != null) {
+				// 카테고리 이름
+				board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+				// 유저정보 넣어주기
+				board.setMember(jungMemberService.selectByIdx(board.getRef()));
+				// 좋아요 갯수 넣어주기
+				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+				// 파일
+				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				// 비디오
+				board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
+				// 댓글수
+				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));				
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -177,11 +189,22 @@ public class JungBoardServiceImpl implements JungBoardService {
 		try {
 			// 개선점: 비번을 입력하여 확인 후 지울 것인지 아님 그냥 지울 것인가?
 			jungBoardDAO.delete(idx);
+			jungFileBoardDAO.deleteByRef(idx);
+			jungVideoDAO.deleteByRef(idx);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	public void deleteByUserRef(int ref) {
+		try {
+			// 개선점: 비번을 입력하여 확인 후 지울 것인지 아님 그냥 지울 것인가?
+			jungBoardDAO.deleteByUserRef(ref);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	/**
 	 * 5. 글 수정하기
@@ -204,28 +227,48 @@ public class JungBoardServiceImpl implements JungBoardService {
 	 * 
 	 * @return idx와 일치하는 JungBoardVO의 ref
 	 */
-	public List<JungBoardVO> selectByRef(int idx) {
-		List<JungBoardVO> list = null;
+	public PagingVO<JungBoardVO> selectByRef(CommonVO commonVO) {
+		PagingVO<JungBoardVO> pv = null;
 		try {
-			list = jungBoardDAO.selectByUserIdx(idx);
-			for(JungBoardVO board : list) {
-				// 카테고리 이름
-				board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
-				// 유저정보 넣어주기
-				board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
-				// 좋아요 갯수 넣어주기
-				board.setCountHeart(heartDAO.countHeart(board.getIdx()));
-				// 파일
-				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
-				// 댓글수
-				board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("search", commonVO.getSearch());
+				map.put("categoryNum", commonVO.getCategoryNum());
+				map.put("orderCode", commonVO.getOrderCode());
+				map.put("deleted","all");
+				map.put("userRef", commonVO.getUserRef());
+				int totalCount = jungBoardDAO.selectCount(map); // 서치가 되면 서치가 되게 수정해함!
+				log.info("갱:{}",totalCount);
+				pv = new PagingVO<>(totalCount, commonVO.getCurrentPage(), commonVO.getSizeOfPage(),
+						commonVO.getSizeOfBlock()); // 페이지 계산 완료
 				
-			}
+				map.put("startNo", pv.getStartNo());
+				map.put("endNo", pv.getEndNo());
+				
+				List<JungBoardVO> list = jungBoardDAO.selectList(map);
+				for(JungBoardVO board : list) {
+					// 카테고리 이름
+					board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+					// 유저정보 넣어주기
+					board.setMember(jungMemberService.selectByIdx(board.getRef()));
+					
+					// 좋아요 갯수 넣어주기
+					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+					// 파일
+					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+					// 비디오
+					board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
+					// 댓글수
+					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+				
+				}
+				pv.setList(list);
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return list;
+		return pv;
 	}
+
 	/**
 	 * @param jung_board의 idx
 	 * @author 정다현
@@ -282,18 +325,45 @@ public class JungBoardServiceImpl implements JungBoardService {
 		return result;
 			
 	}
-	//유저가 좋아요 누른 게시글 번호 가져오기
+	/**유저가 좋아요 누른 게시글 가져오기*/
 	@Override
-	public List<Integer> selectHeartByUseridx(int userRef) {
-		List<Integer> list= null;
+	public PagingVO<JungBoardVO> selectHeartByUseridx(CommonVO cv) {
+		PagingVO<JungBoardVO> pv= null;
 		try {
-			list = heartDAO.selectHeartByUseridx(userRef);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			HashMap<String, Integer> map = new HashMap<>();
+			map.put("userRef", cv.getUserRef());
+			
+			if (cv.getCategoryNum() != null) {
+				map.put("categoryNum",cv.getCategoryNum());
+			}
+			int totalCount = heartDAO.totalCount(map); // 서치가 되면 서치가 되게 수정해함!
+			pv = new PagingVO<>(totalCount, cv.getCurrentPage(), cv.getSizeOfPage(), cv.getSizeOfBlock()); // 페이지 계산 완료
+			map.put("startNo", pv.getStartNo());
+			map.put("endNo", pv.getEndNo());
+			List<JungBoardVO> boardList = heartDAO.selectHeartByUseridxAndcate(map);
+			for(JungBoardVO board: boardList) {
+				if(board != null) {
+					// 카테고리 이름
+					board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+					// 유저정보 넣어주기
+					board.setMember(jungMemberService.selectByIdx(board.getRef()));
+					// 좋아요 갯수 넣어주기
+					board.setCountHeart(heartDAO.countHeart(board.getIdx()));
+					// 파일
+					board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+					// 비디오
+					board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
+					// 댓글수
+					board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
+				}
+			}
+			pv.setList(boardList);
+		}catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return list;
+		return pv;
 	}
+	
 
 	@Override
 	public int select(int userRef, int boardRef) {
@@ -347,11 +417,13 @@ public class JungBoardServiceImpl implements JungBoardService {
 	                // 카테고리 이름
 	                board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
 	                // 유저정보 넣어주기
-	                board.setMember(jungMemberDAO.selectByIdx(board.getRef()));
+	                board.setMember(jungMemberService.selectByIdx(board.getRef()));
 	                // 좋아요 갯수 넣어주기
 	                board.setCountHeart(heartDAO.countHeart(board.getIdx()));
 	                // 파일
 	                board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+	                // 비디오
+	                board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
 	                // 댓글수
 	                board.setCommentCount(jungCommentDAO.selectCountByRef(board.getIdx()));
 	                list.add(board);
@@ -362,5 +434,105 @@ public class JungBoardServiceImpl implements JungBoardService {
 		}
 		return list;
 	}
+	
+	@Autowired
+	JungQnABoardDAO jungQnABoardDAO;
+	
+	@Override
+	public PagingVO<JungBoardVO> selectQnAList(CommonVO cv){
+		PagingVO<JungBoardVO> pv = null;
+		try {
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("search", cv.getSearch());
+				map.put("userRef", cv.getUserRef());
+				if(cv.getOrderCode() != null) {
+					if(cv.getOrderCode().equals("0")) {
+						map.put("commentSize", 0);
+					} else {
+						map.put("commentSize", 1);
+					}
+				}
+				int totalCount = jungQnABoardDAO.selectQnACount(map);
+				pv = new PagingVO<>(totalCount, cv.getCurrentPage(), cv.getSizeOfPage(), cv.getSizeOfBlock()); // 페이지 계산 완료
+				
+				map.put("startNo", pv.getStartNo());
+				map.put("endNo", pv.getEndNo());
+				
+				List<JungBoardVO> list = jungQnABoardDAO.selectQnAList(map);
+				
+				for(JungBoardVO board : list) {
+					// 카테고리 이름
+					board.setCategoryName(categoryDAO.selectCategoryBycategoryNum(board.getCategoryNum()));
+					// 유저정보 넣어주기
+					board.setMember(jungMemberService.selectByIdx(board.getRef()));
+	
+					HashMap<String, Object> commentMap = new HashMap<>();
+					commentMap.put("boardRef", board.getIdx());
+					commentMap.put("startNo", 1);
+					commentMap.put("endNo", 1);
+					board.setCommentList(jungCommentDAO.selectByRef(commentMap));
+					
+				}
+				pv.setList(list);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pv;
+	}
+	
+	@Override
+	public String getQnAInfo(){
+		String result = null;
+		try {
+			HashMap<String, Object> map = new HashMap<>();
+			int totalCount = jungQnABoardDAO.selectQnACount(map);
+			map.put("commentSize", 0);
+			int unCommentCount = jungQnABoardDAO.selectQnACount(map);
+			map.put("commentSize", 1);
+			int commentCount = jungQnABoardDAO.selectQnACount(map);
+			result = "<span class='title-info'>답변하지 않은 문의 수 : "+unCommentCount+"건 / 답변한 문의 수 : "+commentCount+"건 / 총 문의 수: "+totalCount+"건)</span>";
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	@Autowired
+	private JungScrollBoardDAO jungScrollBoardDAO;
+	
+	@Override
+	public ArrayList<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, Integer categoryNum, String search) {
+		ArrayList<JungBoardVO> list = null;
+		try {
+			HashMap<String, Object> map = new HashMap<>();
+			map.put("lastItemIdx", lastItemIdx);
+			map.put("sizeOfPage", sizeOfPage);
+			map.put("categoryNum", categoryNum);
+			map.put("search", search);
+			list = jungScrollBoardDAO.selectScrollList(map);
+			for(JungBoardVO board : list) {
+				// 유저정보 넣어주기
+				board.setMember(jungMemberService.selectByIdx(board.getRef()));
+				// 파일
+				board.setFileboardVO(jungFileBoardDAO.selectfileByRef(board.getIdx()));
+				// 파일
+				board.setVideoVO(jungVideoDAO.selectvideoByRef(board.getIdx()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
+	@Override
+	public int findLastItemIdx() {
+		int result=0;
+		try {
+			result = jungScrollBoardDAO.findLastItemIdx();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 }

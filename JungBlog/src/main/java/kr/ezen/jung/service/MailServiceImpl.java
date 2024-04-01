@@ -29,9 +29,9 @@ public class MailServiceImpl implements MailService{
 		try {
 			mailHandler = new MailHandler(javaMailSender);
 		     
-			mailHandler.setFrom("tjdtlr12349@naver.com", "jungBlogCompany");   // 누가
+			mailHandler.setFrom("wldwld991@naver.com", "jungBlogCompany");   // 누가
 			mailHandler.setTo(to);                                    // 누구에게
-			mailHandler.setSubject("jungBlog 회원가입 인증 번호");           // 제목
+			mailHandler.setSubject("jungBlog 인증 번호");           // 제목
 		 
 			// 1. 인증번호 만들기
 			authCode = createCode(); // 인증 코드 생성
@@ -90,8 +90,8 @@ public class MailServiceImpl implements MailService{
 	        try {
 	            mailHandler = new MailHandler(javaMailSender);
 	            
-	            email = jungMemberService.selectByIdx(userIdx).getUsername();
-	            mailHandler.setFrom("tjdtlr12349@naver.com", "jungBlogCompany");
+	            email = jungMemberService.selectByIdx(userIdx).getEmail();
+	            mailHandler.setFrom("wldwld991@naver.com", "jungBlogCompany");
 	            
 	            mailHandler.setTo(email);
 	            

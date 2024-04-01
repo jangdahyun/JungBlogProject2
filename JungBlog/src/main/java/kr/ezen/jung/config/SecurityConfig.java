@@ -27,7 +27,13 @@ public class SecurityConfig {
 		http.authorizeHttpRequests((authorize) -> {
 			authorize
 					// 지정 주소에 대한 권한 설정 : .permitAll() 은 권한이 없다.(누구나 접근 가능)
-					.requestMatchers("/", "/home", "/index","/main", "/dbinit","/blog/**").permitAll()
+					.requestMatchers("/", "/home", "/index","/main", "/dbinit","/blog/**","/news/**","/member/findPw","/member/userEmailCheck2","/member/userIdCheckByEmail","/member/updatePw").permitAll()
+					.requestMatchers("/gallery","/gallery/**").permitAll()
+					.requestMatchers("/new").permitAll()
+					.requestMatchers("/comments", "/commentsTotalCount").permitAll()
+					.requestMatchers("/notice/**").permitAll()
+					.requestMatchers("/fileboard","/fileboard/blog/**").permitAll()
+					.requestMatchers("/videoboard","/videoboard/blog/**").permitAll()
 					// 회원가입 폼과 회원가입 완료는 누구나 접근 가능 
 					.requestMatchers("/member/**").permitAll()
 					.requestMatchers("/member/mypage").hasRole("USER")

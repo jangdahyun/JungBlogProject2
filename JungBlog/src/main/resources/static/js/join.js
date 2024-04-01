@@ -1,21 +1,22 @@
 $(function() {
 	$("#username").keyup(function() {
-		let username = $("#username").val();
+		let username = $(this).val();
 		if (username.length >= 4) {
 			if (username.indexOf(" ") != -1) {
-				$("#message").html("공백은 포함할수 없어요").css('color', 'red');
+				$("#message2").html("공백은 포함할수 없어요").css('color', 'red');
 			} else {
 				// Ajax를 호출하여 처리 한다.
 				axios.post('/member/userIdCheck', {
 					"username": username
 				})
 					.then(function(response) {
+						console.log(response.data);
 						// 성공 핸들링
 						// alert(response.data);
 						if (response.data * 1 == 0) {
-							$("#message").html("사용가능한 아이디입니다.").css('color', 'blue');
+							$("#message2").html("사용가능한 아이디입니다.").css('color', 'blue');
 						} else {
-							$("#message").html("사용 불가능한 아이디입니다.").css('color', 'red');
+							$("#message2").html("사용 불가능한 아이디입니다.").css('color', 'red');
 						}
 					})
 					.catch(function(error) {
@@ -27,50 +28,87 @@ $(function() {
 					});
 			}
 		} else {
-			$("#message").html("").css('color', 'black');
+			$("#message2").html("").css('color', 'black');
 		}
+	});
+	
+	$("#nickName").keyup(function() {
+		let nickName = $("#nickName").val();
+			// Ajax를 호출하여 처리 한다.
+			axios.post('/member/userNickNameCheck', {
+				"nickName": nickName
+			})
+				.then(function(response) {
+					// 성공 핸들링
+					// alert(response.data);
+					if (response.data * 1 == 0) {
+						$("#message").html("가능한 닉네임입니다").css('color', 'blue');
+					} else {
+						$("#message").html("중복되는 닉네임입니다.").css('color', 'red');
+					}
+				})
+				.catch(function(error) {
+					// 에러 핸들링
+					console.log(error);
+				})
+				.finally(function() {
+					// 항상 실행되는 영역
+				});
 	});
 
 	let checkVal = "";
 	$("#sendEmail").click(function() {
-		let username = $("#username").val();
-		if (username.trim().length == 0) {
-			alert("아이디를 입력해주세요")
-			$("#username").val("");
-			$("#username").focus();
-			return;
-		}
-		if (username.indexOf(" ") != -1) {
-			alert("공백은 포함할 수 없어요");
-			$("#username").val("");
-			$("#username").focus();
-			return;
-		}
 		let email = $("#email").val();
-		alert(email)
-		if (email == 0) {
+		
+		if (email.trim().length == 0) {
+			alert("이메일을 입력해주세요")
+			$("#email").val("");
+			$("#email").focus();
+			return;
+		}
+		if (email.indexOf(" ") != -1) {
+			alert("공백은 포함할 수 없어요");
+			$("#email").val("");
+			$("#email").focus();
+			return;
+		}
+		let email2 = $("#email2").val();
+		if (email2 == 0) {
 			alert("이메일을 선택해주세요");
 			$("#message").focus();
 			return;
 		}
-		username = username + '@' + email;
-		// Ajax를 호출하여 처리 한다.
-		axios.get('/member/send?to=' + username)
-			.then(function(response) {
-				if (response.data != "") {
-					alert("메일 발송 성공")
-					$("#emailCheckBox").css('display', 'flex')
-					checkVal = response.data;
-				} else {
-					alert("메일 발송 실패")
-				}
-			})
-			.catch(function(error) {
-				console.log(error);
-			})
-			.finally(function() {
-				// 항상 실행되는 영역
-			});
+		email = email + '@' + email2;
+		axios.post('/member/userEmailCheck2',{
+			'email':email,
+		}).then(function(response) {
+			console.log(response.data);
+			if (response.data == 1) {
+				alert("중복된 이메일이 있습니다")
+			} else {
+				axios.get('/member/send?to=' + email)
+				.then(function(response) {
+					if (response.data != "") {
+						alert("메일 발송 성공")
+						$("#emailCheckBox").css('display', 'flex')
+						checkVal = response.data;
+					} else {
+						alert("메일 발송 실패")
+					}
+				})
+				.catch(function(error) {
+					console.log(error);
+				})
+				.finally(function() {
+					// 항상 실행되는 영역
+				});
+			}
+		})
+		.catch(function(error) {
+			console.log(error);
+		})
+		
+		
 	})
 
 	$("#checkMail").click(function() {
@@ -78,6 +116,7 @@ $(function() {
 		if (check == checkVal) {
 			alert("인증 완료");
 			$("#dtAddress").attr("disabled",false);
+			$("#username").attr("disabled",false);
 			$("#password").attr("disabled",false);
 			$("#confirmPassword").attr("disabled",false);
 			$("#name").attr("disabled",false);
@@ -141,14 +180,14 @@ function checkPasswordMatch() {
 
 // 회원가입 로직
 function submitForm() {
-	let username = $("#username").val();
-	if (username.trim().length === 0) {
+	let email = $("#email").val();
+	if (email.trim().length === 0) {
 		alert("아이디를 입력해주세요.");
 		return;
 	}
 
-	let email = $("#email").val();
-	if (email === "0") {
+	let email2 = $("#email2").val();
+	if (email2 === "0") {
 		alert("이메일을 선택해주세요.");
 		return;
 	}
@@ -162,6 +201,12 @@ function submitForm() {
 	let emailVerificationCode = $("#check").val();
 	if (emailVerificationCode.trim().length === 0) {
 		alert("이메일 인증번호를 입력해주세요.");
+		return;
+	}
+	
+	let username = $("#username").val();
+	if (username.trim().length === 0) {
+		alert("아이디를 입력해주세요.");
 		return;
 	}
 
@@ -237,8 +282,8 @@ function submitForm() {
 		alert("사용자 상세 주소를 입력해주세요.");
 		return;
 	}
-	const realUserName = username + "@" + email;
-	$("#realUserName").val(realUserName);
+	const realUserEmail = email + "@" + email2;
+	$("#realUserEmail").val(realUserEmail);
 	if (checkPasswordMatch()) {
 		showRegistrationMessage();
 		// 로그인 페이지로 이동

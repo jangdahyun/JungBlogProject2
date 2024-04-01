@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>뉴스 - 댓글</title>
+	<!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- ChartJs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css"/>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style type="text/css">
+    	*{padding: 0; margin: 0; box-sizing: border-box;}
+    	#wrap{margin: auto;}
+    	#main{width: 400px; height: 100vh; background: #302F2B; color: #fff;}
+    	#header{
+    		position: fixed; top:0; left:0;
+    		width: 400px;
+    		height: 50px;
+    		background: #302F2B;
+    		z-index: 999;
+    		border-bottom: 1px solid #fff;
+    	}
+    	#commentList {padding: 50px 0; height: calc(100vh - 50px); overflow-x: hidden; overflow-y: hidden;}
+    	#commentList li {list-style: none;}
+    </style>
+</head>
+<body>
+<div id="wrap">
+	<input type="hidden" id="lastItemIdx" th:value="${lastItemIdx}">
+	<input type="hidden" id="rssBoardRef" th:value="${rssBoardRef}">
+	<main id="main">
+		<div id="header">
+			<h4 style="color: #fff;font-weight: 700; padding: 0 10px; margin: 5px 0 3px 0;">댓글</h4>
+		</div>
+		<ul id="commentList">
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+			<li>asfasf</li>
+		</ul>
+	</main>	
+</div>
+	
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

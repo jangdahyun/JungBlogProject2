@@ -1,6 +1,7 @@
 package kr.ezen.jung.service;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
@@ -26,12 +27,14 @@ public interface JungBoardService {
 	// 5. 게시글 삭제
 	void delete(int idx);
 	
+	//5-1 userRef를 통한 게시글 삭제
+	void deleteByUserRef(int ref);
 	
 	// 6.수정
 	void update(JungBoardVO jungBoardVO);
 	
 	// 7. 내가 쓴 글만 보기
-	List<JungBoardVO> selectByRef(int idx);
+	PagingVO<JungBoardVO> selectByRef(CommonVO commonVO);
 	// 8. 임시저장
 	
 	//9.조회수 증가
@@ -44,7 +47,7 @@ public interface JungBoardService {
 	//좋아요 삭제
 	int deleteHeart(HeartVO HeartVO);
 	//유저가 좋아요 누른 게시글 번호 가져오기
-	List<Integer> selectHeartByUseridx(int userRef);
+	PagingVO<JungBoardVO> selectHeartByUseridx(CommonVO cv);
 	
 	//<!-- 하트 중복확인 -->
 	int select(int userRef,int boardRef);
@@ -57,4 +60,13 @@ public interface JungBoardService {
 	// 인기게시물 가져오기 (20개 한정임)
 	List<JungBoardVO> findPopularBoard();
 	
+	PagingVO<JungBoardVO> selectQnAList(CommonVO cv);
+	String getQnAInfo();
+	
+	
+	
+	
+	List<JungBoardVO> selectScrollBoard(int lastItemIdx, int sizeOfPage, Integer categoryNum, String search);
+	
+	int findLastItemIdx();
 }

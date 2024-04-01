@@ -70,6 +70,7 @@
 					        <tr>
 					            <th>No</th>
 					            <th>아이디</th>
+					            <th>이메일</th>
 					            <th>이름</th>
 					            <th>닉네임</th>
 					            <th>권한</th>
@@ -82,6 +83,7 @@
 					    	<tr th:each="user : ${users}">
 					    		<td>[[${user.idx}]]번째로 가입한 회원</td>
 					    		<td>[[${user.username}]]</td>
+					    		<td>[[${user.email}]]</td>
 					    		<td>[[${user.name}]]</td>
 					    		<td>[[${user.nickName}]]</td>
 					    		<td>[[${user.role}]]</td>
@@ -115,7 +117,7 @@
 					    	<tr th:each="board : ${boards}">
 					    		<td>[[${board.idx}]]</td>
 					    		<td>[[${board.categoryName}]]</td>
-					    		<td>[[${board.title}]]</td>
+					    		<td style="max-width: 500px;text-align: left;overflow: hidden;text-overflow: ellipsis;">[[${board.title}]]</td>
 					    		<td>[[${board.member.nickName}]]</td>
 					    		<td>[[${board.readCount}]]</td>
 					    		<td>[[${board.commentCount}]]</td>
@@ -124,7 +126,7 @@
 					    </tbody>
 					</table>
 					<div class="btn-right">
-						<a href="" class="uk-button uk-button-small uk-button-primary">게시글 관리하기</a>
+						<a href="/adm/boardManagement" class="uk-button uk-button-small uk-button-primary">게시글 관리하기</a>
 					</div>
 	        	</div>
 	        </div>

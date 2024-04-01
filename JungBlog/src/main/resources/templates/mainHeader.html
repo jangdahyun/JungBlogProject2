@@ -1,0 +1,39 @@
+
+<!-- 메뉴바 -->
+<div id="menuContent">
+	<span id="menuCloseBtn"><img src="/img/mainpageImg/closeBtn.png" alt=""></span>
+	<p id="info">메뉴</p>
+	<ul>
+		<li><a href="/blog">블로그 페이지</a></li>
+		<li><a href="/gallery">갤러리 페이지</a></li>
+		<li><a href="/fileboard">fileupload</a></li>
+		<li><a href="/videoboard">비디오 페이지</a></li>
+		<li><a href="/news">NEWS</a></li>
+		<th:block th:if="${session.user != null}">
+			<th:block th:if="${session.user.role == 'ROLE_ADMIN'}">
+				<li><a href="/adm">관리자 페이지</a></li>			
+			</th:block>
+			<li><a href="/member/mypage">My Page</a></li>
+		</th:block>
+		<li><a href="/notice">공지사항</a></li>
+	</ul>
+</div>
+<!-- 헤더 -->
+<header>
+	<nav>
+		<img src="/img/mainpageImg/menubar.png" id="menuIcon" alt="menuIcon" style="width:30px; height: 30px; text-align: left;">   
+		<div class="logo" style="text-align: center;">
+			<a href="/"><img src="/img/mainpageImg/JungProjectLogo.png" alt="logo"></a>
+		</div>
+		<th:block th:if="${session.user == null}">
+            <div>
+	            <a href="/member/login" style="color: black; text-align: right;"><b>Log in</b></a>
+	            &nbsp;&nbsp;
+	            <a href="/member/join" style="color: black; text-align: right;"><b>Sign up</b></a>
+            </div>
+        </th:block>
+        <th:block th:if="${session.user != null}">
+        	<a href="/logout" style="color: black; text-align: right;"><b>Log out</b></a>              
+        </th:block>
+	</nav>
+</header>

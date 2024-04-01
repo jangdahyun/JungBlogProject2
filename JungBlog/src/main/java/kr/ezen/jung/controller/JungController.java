@@ -8,7 +8,10 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,15 +28,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import kr.ezen.jung.service.JungBoardService;
 import kr.ezen.jung.service.JungCommentService;
 import kr.ezen.jung.service.JungFileBoardService;
 import kr.ezen.jung.service.JungMemberService;
-import kr.ezen.jung.service.JungQnaBoardService;
 import kr.ezen.jung.service.PopularService;
 import kr.ezen.jung.vo.CommonVO;
 import kr.ezen.jung.vo.HeartVO;
@@ -49,7 +49,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JungController {
 
-
 	@Autowired
 	private JungBoardService jungBoardService;
 	
@@ -60,9 +59,6 @@ public class JungController {
 	private JungMemberService jungMemberService;
 	
 	@Autowired
-	private JungQnaBoardService JungQnaBoardService;
-	
-	@Autowired
 	private JungFileBoardService jungFileBoardService;
 	
 	@Autowired
@@ -71,87 +67,102 @@ public class JungController {
 	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
 		log.info("cv: {}",cv);
-		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
+		cv.setS(3);
+		PagingVO<JungBoardVO> pvall = jungBoardService.selectList(cv);
+		cv.setCategoryNum(1);
+		PagingVO<JungBoardVO> pvblog = jungBoardService.selectList(cv);
+		cv.setCategoryNum(2);
+		PagingVO<JungBoardVO> pvfileboard = jungBoardService.selectList(cv);
+		cv.setCategoryNum(4);
+		PagingVO<JungBoardVO> pvgallery = jungBoardService.selectList(cv);
+		cv.setCategoryNum(6);
+		PagingVO<JungBoardVO> pvvideo = jungBoardService.selectList(cv);
 		
-		model.addAttribute("pv", pv);
+		model.addAttribute("pvall", pvall);
+		log.debug("pvall{}",pvall);
+		model.addAttribute("pvblog", pvblog);
+		model.addAttribute("pvfileboard", pvfileboard);
+		model.addAttribute("pvgallery", pvgallery);
+		model.addAttribute("pvvideo", pvvideo);
 		model.addAttribute("cv", cv);
 		model.addAttribute("categoryList",jungBoardService.findCategoryList());
 		return "index";
 	}
-	//카테고리 블로그 전체 보기
-//	@RequestMapping(value = "/{categoryNum}", method = { RequestMethod.GET, RequestMethod.POST })
-//	public String list2(@PathVariable(value = "categoryNum") int categoryNum,@ModelAttribute(value = "cv") CommonVO cv, Model model,JungMemberVO vo) {
-//		PagingVO<JungBoardVO> pv = jungBoardService.selectList(cv);
-//		List<JungBoardVO> list = pv.getList();
-//		list.forEach((board)->{
-//			board.setCountHeart(jungBoardService.countHeart(board.getIdx()));
-//		});
-//		pv.setList(list);
-//		log.info("{}",pv.getTotalPage());
-//		log.info("{}",pv.getStartPage());
-//		log.info("{}",pv.getEndPage());
-//		model.addAttribute("pv", jungBoardService.selectList(cv));
-//		
-//		return "index";
-//	}
 	
-	
-	@GetMapping(value = "/blog/{idx}")
-	public String as(@PathVariable(value = "idx") int idx, Model model, HttpServletRequest request, HttpServletResponse response) {
-		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
-		boardVO.setMember(jungMemberService.selectByIdx(boardVO.getRef()));
-		
-		boardVO.setCommentCount(jungCommentService.selectCountByRef(boardVO.getIdx()));
-		
-		boardVO.setCountHeart(jungBoardService.countHeart(idx));
-		
-		boardVO.setFileboardVO(jungFileBoardService.selectfileByRef(boardVO.getIdx()));
-		
-		JungMemberVO memberVO = (JungMemberVO) request.getSession().getAttribute("user");
-		
-		// 좋아요가 되있는지 찾기위해 게시글번호와 회원번호를 보냄.
-		if(request.getSession().getAttribute("user")!=null) {
-			int heart = jungBoardService.select(((JungMemberVO)request.getSession().getAttribute("user")).getIdx(), idx); 			
-			model.addAttribute("heart",heart);		
+	/**
+	 * 게시글을 삭제하는 주소
+	 * @return 게시글 삭제후 가야 될 주소 리턴
+	 */
+	@DeleteMapping(value = "/delete/{idx}")
+	@ResponseBody
+	@Transactional
+	public String deleteBoard(@PathVariable(value = "idx") int idx, HttpSession session) {
+		log.debug("삭제실행{}",idx);
+		if(session.getAttribute("user") == null) {			// 로그인 했는지 확인
+			return "0";
 		}
-				
-		// 찾은 정보를 heart로 담아서 보냄
-		model.addAttribute("board",boardVO);
-		Cookie oldCookie = null;
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("blog")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + idx + "]")) {
-                jungBoardService.updateReadCount(idx);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + idx + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60);
-                PopularVO p = new PopularVO();
-        		p.setBoardRef(idx);
-        		p.setUserRef(memberVO.getIdx());
-        		p.setInteraction(1);
-        		popularService.insertPopular(p);
-        		log.info("무야:{}",p);
-                response.addCookie(oldCookie);
-            }
-        } else {
-            jungBoardService.updateReadCount(idx);
-            Cookie newCookie = new Cookie("blog","[" + idx + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60);
-            response.addCookie(newCookie);
-        }
-    
-		//jungBoardService.updateReadCount(idx);
-		return "blog"; // 임시값 blog.html
+		JungMemberVO sessionUser = (JungMemberVO) session.getAttribute("user");
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {								// 있는 게시글인지 확인
+			return "0";
+		}
+		if (sessionUser.getRole().equals("ROLE_ADMIN")) {
+			
+		} else if(boardVO.getRef() != sessionUser.getIdx() ){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+			log.debug("삭제실행sss1{}",sessionUser);
+			return "0";
+		}
+		jungFileBoardService.deleteByRef(boardVO.getIdx());	// 게시글에 해당하는 파일 삭제
+		jungBoardService.delete(boardVO.getIdx());			// 게시글 삭제
+		String result = "1";
+		return result;
+	}
+	
+	/**
+	 * 게시글 숨김 취소 페이지
+	 * @return 게시글 숨김 취소 후 가야 될 주소 리턴
+	 */
+	@PutMapping(value = "/show/{idx}")
+	@ResponseBody
+	@Transactional
+	public String show(@PathVariable(value = "idx") int idx, HttpSession session) {
+		if(session.getAttribute("user") == null) {			// 로그인 했는지 확인
+			return "0";
+		}
+		JungMemberVO sessionUser = (JungMemberVO) session.getAttribute("user");
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {								// 있는 게시글인지 확인
+			return "0";
+		}
+		if(boardVO.getRef() != sessionUser.getIdx()){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+			return "0";
+		}
+		jungBoardService.show(boardVO.getIdx());
+		String result = "1";
+		return result;
+	}
+	
+	/**
+	 * 게시글 숨김 페이지
+	 * @return 게시글 숨김 취소 후 가야 될 주소 리턴
+	 */
+	@PutMapping(value = "/hide/{idx}")
+	@ResponseBody
+	@Transactional
+	public String hide(@PathVariable(value = "idx") int idx, HttpSession session) {
+		if(session.getAttribute("user") == null) {			// 로그인 했는지 확인
+			return "0";
+		}
+		JungMemberVO sessionUser = (JungMemberVO) session.getAttribute("user");
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null) {								// 있는 게시글인지 확인
+			return "0";
+		}
+		if(boardVO.getRef() != sessionUser.getIdx()){		// 맞는 유저가 게시글을 삭제한 것인지 확인
+			return "0";
+		}
+		int result = jungBoardService.hide(boardVO.getIdx());
+		return result + "";
 	}
 	
 	@DeleteMapping(value = "/blog/{boardIdx}")
@@ -162,27 +173,41 @@ public class JungController {
 		return result+"";
 	}
 	
-	
-	
-
-    
-	
-	
+	@PutMapping(value = "/show2/{boardIdx}")
+	@ResponseBody
+	public String show2(HttpSession session, @PathVariable(value = "boardIdx") int boardIdx) {
+		log.info("deleteblog({}) 실행", boardIdx);
+		int result = jungBoardService.show(boardIdx);
+		return result+"";
+	}
 	
 	@PostMapping(value = "/commentupload")
-	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO, @RequestParam(value = "boardidx") int boardidx) {
+	@ResponseBody
+	public String comment(HttpSession session, @ModelAttribute(value = "commentVO") JungCommentVO commentVO) {
 		log.debug("값 : {}", commentVO);
 		JungMemberVO memberVO = (JungMemberVO)session.getAttribute("user");
 		commentVO.setUserRef(memberVO.getIdx());
-		commentVO.setBoardRef(boardidx);
 		PopularVO p = new PopularVO();
-		p.setBoardRef(boardidx);
+		p.setBoardRef(commentVO.getBoardRef());
 		p.setUserRef(memberVO.getIdx());
 		p.setInteraction(2);
 		popularService.insertPopular(p);
-		jungCommentService.insert(commentVO);
-		log.info("{} 님이 {}글에 댓글을 남김",memberVO.getNickName(), boardidx);
-		return "redirect:/blog/" + boardidx;
+		int result = jungCommentService.insert(commentVO);
+		return result+"";
+	}
+	
+	@PostMapping(value = "/commentUpdate")
+	@ResponseBody
+	public String commentUpdate(@ModelAttribute(value = "commentVO") JungCommentVO commentVO) {
+		log.debug("값 : {}", commentVO);
+		int result = jungCommentService.update(commentVO);
+		return result + "";
+	}
+	@DeleteMapping(value = "/comment/{idx}")
+	@ResponseBody
+	public String commentDelete(@PathVariable(value = "idx") int idx) {
+		int result = jungCommentService.delete(idx);
+		return result + "";
 	}
 	
 	/**
@@ -245,69 +270,6 @@ public class JungController {
 		log.debug("{}번 유저가 {}번 글에 좋아요취소", memberVO.getIdx(), map.get("boardRef"));
 		return result+"";
 	}
-	
-
-//	@GetMapping(value = { "/login" })
-//	public String login(@RequestParam(value = "error", required = false) String error,
-//			@RequestParam(value = "logout", required = false) String logout, Model model) {
-//		if (error != null)
-//			model.addAttribute("error", "error");
-//		if (logout != null)
-//			model.addAttribute("logout", "logout");
-//		return "login";
-//	}
-//	//회원가입 폼
-//	@GetMapping(value = {"/join"})
-//	public String join(HttpSession session) {
-//		// 현재 로그인이 되어있는데 회원가입을 하려고 한다. 막아야 한다.
-//		if(session.getAttribute("user")!=null) {
-//			session.removeAttribute("user");// 세션에 회원정보만 지운다.
-//			session.invalidate();// 세션자체를 끊고 다시 연결한다.
-//			return "redirect:/";
-//		}
-//		return "join";
-//	}
-//	@GetMapping(value = "/test/userIdCheck", produces = "text/plain;charset=UTF-8")
-//	@ResponseBody
-//	public String userIdCheck(@RequestParam(value = "username")String username) {
-//		return jungMemberService.selectByUsername(username)+"";
-//	}
-//	//회원가입 완료
-//	@GetMapping("/joinok")
-//	public String joinOkGet() {
-//		return "redirect:/";
-//	}
-//	@PostMapping("/joinok")
-//	public String joinOkPost(@ModelAttribute(value = "vo") JungMemberVO vo,Model model,@RequestParam(value = "bd")String bd ) {
-//		// 내용 검증을 해줘야 한다.
-//		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
-//		Date date = null;
-//		try {
-//			date = formatter.parse(bd);
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-//		vo.setBirthDate(date);
-//		vo.setRole("ROLE_USER");
-//		model.addAttribute("vo",vo);
-////		memberService.insert(vo); // 저장
-//		return "joinOk";
-//	}
-//	
-//	@GetMapping(value = "/myblog/{idx}")
-//	public String myblog(@PathVariable(value = "idx") int idx, Model model) {
-//		JungMemberVO jungMemberVO=jungMemberService.selectByRef
-//		
-////		boardVO.setMember();
-//		List<JungCommentVO> commentList = jungCommentService.selectByRef(idx);
-//		
-//		boardVO.setCommentList(commentList);
-//		
-//		model.addAttribute("board",boardVO);
-//		return "myblog"; // 임시값 blog.html
-//	}
-	
-	
 
 	// 파일 업로드 처리 함
 	@PostMapping("/ckeditor2")
@@ -384,24 +346,48 @@ public class JungController {
 		return map;
 	}
 	
+	@PostMapping("/getScrollItem")
+	@ResponseBody
+	public List<JungBoardVO> getScrollItem(@RequestBody Map<String, String> map){
+		log.info("getScrollItem : {}", map);
+		List<JungBoardVO> result = jungBoardService.selectScrollBoard(Integer.parseInt(map.get("lastItemIdx")), Integer.parseInt(map.get("sizeOfPage")), Integer.parseInt(map.get("categoryNum")), map.get("search"));
+		return result;
+	}
+
+
+	@GetMapping(value = "/notice")
+	public String notice(Model model ,@ModelAttribute(value = "cv") CommonVO cv, @RequestParam(value = "error", required = false) String error) {
+		cv.setS(10);
+	    cv.setB(5);
+	    cv.setCategoryNum(3);
+	    PagingVO<JungBoardVO> noticeList = jungBoardService.selectList(cv);
+	    model.addAttribute("pv", noticeList);
+		return "notice";
+	}
+	@GetMapping(value = "/notice/detail/{idx}")
+	public String notice(Model model , @PathVariable(value = "idx") int idx) {
+		JungBoardVO boardVO = jungBoardService.selectByIdx(idx);
+		if(boardVO == null || boardVO.getCategoryNum() != 3) {
+			return "redirect:/notice?error=notFound";
+		}
+		model.addAttribute("board", boardVO);
+		return "noticeDetail";
+	}
 	
+	//딱! 한번만 실행해야한다!
+	@Autowired	
+	private JdbcTemplate jdbcTemplate;
 
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
- //딱! 한번만 실행해야한다!
-
-//	@Autowired	
-//	private JdbcTemplate jdbcTemplate;
-//	
-//		@Autowired
-//		private BCryptPasswordEncoder passwordEncoder;
-//	
-//		@GetMapping("/dbinit") // 기존에 등록된 비번을 암호화 해서 변경한다. 1번만 실행하고 지워줘라~~~
-//		public String dbInit() {
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"admin");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"master");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"webmaster");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"root");
-//			jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"dba");
-//			return "redirect:/";
-//		}
+	//@GetMapping("/dbinit") // 기존에 등록된 비번을 암호화 해서 변경한다. 1번만 실행하고 지워줘라~~~
+	public String dbInit() {
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"admin");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"master");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"webmaster");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"root");
+		jdbcTemplate.update("update jung_member set password = ? where username = ?", passwordEncoder.encode("123456"),"dba");
+		return "redirect:/";
+	}
 }

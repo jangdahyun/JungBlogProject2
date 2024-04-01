@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<head>
+    <meta charset="UTF-8">
+    <title>자료실</title> 
+    
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    
+	<link rel="stylesheet" href="/css/mainHeader.css">
+	<script src="/js/mainHeader.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/file.css">
+    <script src="/js/file.js"></script>
+</head>
+	<th:block th:insert="~{/mainHeader.html}"></th:block>
+	<!--  <div class="image-container" style="text-align: center;">
+	<img th:src="@{'/img/fileicon/fileboardimage.jpg'}" alt="">
+	</div> -->
+    <div style="text-align: center; color: #AAAAAA; font-size: 30pt; padding-top: 80px;">자료실-Download</div>
+    <div th:if="${#lists.isEmpty(pv.list)}">
+        <p>현재 자료가 없습니다.</p>
+    </div>
+    
+    <br>
+    <div style="text-align: center;">
+    <table style="margin: 0 auto;">
+			<colgroup>
+				<col width="75px" /> 
+				<col width="400px" />
+				<col width="100px" />
+				<col width="100px" />
+				<col width="150px" />
+				<col width="50px" />
+				<col width="50px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="">NO</th>
+					<th class="" >제목</th>
+					<th class="">글쓴이</th>
+					<th class="">게시일</th>
+					<th class="">다운로드</th>
+					<th class="">조회수</th>
+					<th class="">좋아요</th>
+				</tr>
+			</thead>
+			<tbody style="text-align: center; ">
+			<th:block th:if="${pv.totalCount > 0}">
+				<tr th:each="vo, vs : ${pv.list}" >
+					<td>[[${pv.totalCount - (pv.currentPage-1)*pv.sizeOfPage -
+						vs.index}]]</td>
+					<td th:onclick="viewfile([[${vo.idx}]])" style="cursor: pointer;">[[${vo.title}]]</td>
+					<td>글쓴이</td>
+					<td th:text="${#dates.format(vo.regDate, 'yy-MM-dd')}"></td>
+					<td th:each="file : ${vo.fileboardVO}"><img th:onclick='fileDown([[${file.url}]] , [[${file.filepath}]]);' th:src="@{'/img/fileicon/download.png'}"  alt="" width="25" height="25" style="cursor: pointer;"/></td>
+					<td>[[${vo.readCount}]]</td>
+					<td>[[${vo.countHeart}]]</td>
+				</tr>
+			</th:block>
+			</tbody>
+    </table>
+    </div>
+    <br>
+    <div style="text-align: right;">
+			<form action="/fileboard/fileupload" method="post" id="writeBtn">
+				<input type="hidden" name="p" th:value="${cv.p}">
+				<input type="hidden" name="search" th:value="${cv.search}">
+				<input type="hidden" name="categoryNum" th:value="${cv.categoryNum}">
+				
+				<input type="submit" class="uk-button uk-button-default" value="글 쓰 기"/>			
+			</form>
+		</div>
+		<div style="display: flex; align-items: center;justify-content: center;">
+			[(${pv.pageList})]
+		</div>
+    <!-- 검색어 입력란 -->
+    <div style="text-align: center;">
+        <form action="/fileboard/" method="get">
+            <div class="uk-inline"style="width: 30%;">
+                <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: search"></span>
+                <input name="search" class="uk-input" type="text" autocomplete='off'
+                    aria-label="Not clickable icon" placeholder="검색어를 입력해주세요">
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+    	
+        function fileDown(ofile, sfile){
+            location.href='/fileboard/download?of=' + encodeURI(ofile) +'&sf=' + encodeURI(sfile);
+        }       
+        function filecontents(){
+        	location.href='/fileboard/'
+        }
+        
+    </script>
+</body>
+</html>
+
+   
